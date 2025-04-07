@@ -23,3 +23,46 @@
 - RSID analysis tool
     - Pros: Useful tool
     - Cons: Limited types of analysis
+
+
+## SpeedCoding
+Decided topic, for interest and foreseable path 
+
+
+### Application Requirements:
+
+- Launch page
+- User Page
+    - Login/Signup
+    - User Stats
+    - Upload coding question (potential for verified and unverified questions?)
+    - menu for uploaded questions and participated questions. 
+- Select question menu - Search Page for questions?
+- Question Page 
+    - Some Considerations:
+        - Should we let data stats be visible before attemps or just descriptoins and metadata like tags.
+    - Accept Question feature regardless of if the user is able to complete the question or not.
+    - after successful attempt-  
+        - Coding question answer
+        - review Question 5stars
+    - Question Data
+        - question reviews
+         - View Your time completed
+         - Average time of other users
+         - Best time
+         - Worst time?(probably not, for user motivation)
+         - Total speedruns
+- Question database (Unless we want them to store them locally, -we do not) 
+    - What do we want to put in our questions metadata wise to describe the questions? Tags like: DP, Searching, pointer ect
+- User database 
+    - Hashing for login
+    - Encryption
+    - Secure Transfer
+- Coding Environment for the user
+    - Must be Secure!!!
+    - Must look good on User End
+- Community Aspect
+    - comments
+    - discussion board for question
+    - site discussion board?
+    - after completion discussion or review page?
