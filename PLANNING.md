@@ -66,3 +66,5 @@ Decided topic, for interest and foreseable path
     - discussion board for question
     - site discussion board?
     - after completion discussion or review page?
+-Admin Page "Low Priority"
+    - uploaded questions could be offensive or wrong so being able to report them would be good and admin can delete it
