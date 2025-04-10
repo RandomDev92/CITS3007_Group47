@@ -48,3 +48,9 @@
 - Cons:
     - The design is very corperate with its png faces and icons and the modern asthetic would be hard to replicate.
     - While the questions are simply laid out they arent very categorisable aside from languages.
+ 
+
+## Group Thoughts
+- Bill:
+  - I like the simplicity of EdaBit with the Style of CodeWars so I think a simple dark themed website would be great for this.
+ 
