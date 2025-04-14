@@ -53,4 +53,9 @@
 ## Group Thoughts
 - Bill:
   - I like the simplicity of EdaBit with the Style of CodeWars so I think a simple dark themed website would be great for this.
+
+- Fanhua:
+    - I agree with the dark themed website and I think we should leave access to different pages with a navigation menu like leetcode.
+
+
  

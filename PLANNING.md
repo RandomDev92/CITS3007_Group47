@@ -68,3 +68,9 @@ Decided topic, for interest and foreseable path
     - after completion discussion or review page?
 -Admin Page "Low Priority"
     - uploaded questions could be offensive or wrong so being able to report them would be good and admin can delete it
+
+### Comments
+- Fanhua
+    - I think the worst time isnt needed it wouldnt be too useful for the analysis
+    - might need to add in a share results as a link
+    - i also think the discussion board priority comes under the admin page for me.
