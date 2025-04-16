@@ -56,6 +56,10 @@
 
 - Fanhua:
     - I agree with the dark themed website and I think we should leave access to different pages with a navigation menu like leetcode.
+ 
+- Wesley:
+    - I like the idea of dark themed or at least the option for it
+    - I think the home page would be cool if it looked somewhat similar to leet codes with different challenges then when clicked the different times in a leaderboard
 
 
  
