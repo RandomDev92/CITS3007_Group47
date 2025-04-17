@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            body{
+                background-image: linear-gradient(to bottom, #6d1d1d, #612020, #552121, #482322, #3b2323, #332121, #2b2020, #231e1e, #1f1a1a, #1a1616, #161212, #110d0d);                margin: 0;
+                background-repeat: no-repeat;
+                background-attachment: fixed;                
+            }
+            .nav-bar{
+                background-color: #353030;
+                height: 100px;
+                box-shadow: 5px 5px 10px #FF0505;
+            }
+            .content-window{
+                background-color: #353030;
+                border: 1px solid #D9D9D9;
+                border-radius: 8px;
+                height: 450px;
+                width: 700px;
+                margin: 40px auto 0;
+                color: #F5F5F5; 
+            }
+            div img{
+                height: 100%;
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+            }
+            div .login-form{
+                padding: 35px;
+                line-height: 40px;
+                font-family: sans-serif;
+            }
+            .login-form input{
+                width: 99%;
+                border-radius: 8px;
+                border: 1px solid #D9D9D9;
+                background-color: #353030;
+                color: #B3B3B3;
+                height: 30px;
+                padding-left: 5px;
+            }
+            .login-form button[type="submit"]{
+                width: 99%;
+                background-color: #85050B;
+                color: #B3B3B3;
+                border: 1px solid #2c2c2c;
+                height: 25px;
+                border-radius: 8px;
+                box-sizing: content-box
+            }
+            .login-form button[type="submit"]:hover{
+                width: 98%;
+                background-color: #740006;
+                color: #B3B3B3;
+                border: 4px solid #2c2c2c;
+                height: 25px;
+                border-radius: 8px;
+                box-sizing: content-box
+            }
+            .login-form a{
+                color: #F5F5F5;
+            }
+            .login-form a:hover{
+                color: #B3B3B3;
+            }
+            ::-ms-reveal {
+                filter: invert(100%);
+            }
+            </style>
+    </head>
+    <body >
+        <div class="nav-bar">
+            <img src="logo-Placeholder.jpg" alt="logo">
+        </div>
+        <div class="content-window">
+            <form class="login-form" action="">
+
+                <label for="Email">
+                    Email:
+                </label><br>
+
+                <input type="text" id="first" name="first" 
+                    placeholder="Enter your Email" required><br><br>
+                
+                <label for="password">
+                    Password:
+                </label><br>
+
+                <input type="password" id="password" name="password" 
+                    placeholder="Enter your Password" required><br><br>
+
+                <button type="submit">
+                    Sign In
+                </button><br>
+                <a href="/Signup Site">Don't have an account? Sign up</a>
+            </form>
+    
+        </div>
+    </body>
+</html>
