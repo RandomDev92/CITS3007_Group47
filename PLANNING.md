@@ -74,3 +74,7 @@ Decided topic, for interest and foreseable path
     - I think the worst time isnt needed it wouldnt be too useful for the analysis
     - might need to add in a share results as a link
     - i also think the discussion board priority comes under the admin page for me.
+
+### Figma Designs
+- through figma make designs for the most necessary pages
+- added pages figma as pdf, some duplicate designes, we have decided on dark mode search rather than the light mode one and we need to pick a layout for the answering page
