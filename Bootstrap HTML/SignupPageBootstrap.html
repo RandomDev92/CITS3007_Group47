@@ -20,6 +20,29 @@
               color: grey;
             }
         </style>
+        <script>
+          //copied from https://codingartistweb.com/2024/11/confirm-password-html-css-javascript/
+          function checkPassword() { 
+            //Cache DOM elements
+            const passwordField = document.getElementById("pwd");
+            const confirmPasswordField = document.getElementById("cnf-pwd");
+            const message = document.getElementById("msg");
+            //Get values
+            const password = passwordField.value
+            const confirmPassword = confirmPasswordField.value;
+            //validation logic
+            if (!password || !confirmPassword) {
+              alert("Both the password fields are required");
+              message.textContent = "";
+              return;
+            }
+            if (password === confirmPassword) {
+              document.getElementById("SignUpForm").submit()
+            } else {
+              message.textContent = "Passwords Don't Match";
+            }
+          }
+        </script>
     </head>
     <body>
         <nav class="navbar navbar-expand-sm bg-dark justify-content-center">
@@ -32,7 +55,7 @@
               </div>
         </nav>
         <div class="container-sm bg-dark text-white w-50 my-4 border border-white rounded">
-            <form action="">
+            <form action="" id="SignUpForm">
                 <div class="mt-3 mb-4">
                   <label for="email" class="form-label">Email:</label>
                   <input type="email" class="form-control bg-dark text-white" id="email" placeholder="Enter email" name="email" required>
@@ -42,9 +65,14 @@
                   <input type="password" class="form-control bg-dark text-white" id="pwd" placeholder="Enter password" name="pswd" required>
                 </div>
                 <div class="mb-5">
-                    <button type="submit" class="btn btn-primary w-100 btn-danger">Submit</button>
+                  <label for="pwd" class="form-label">Confirm Password:</label>
+                  <input type="password" class="form-control bg-dark text-white" id="cnf-pwd" placeholder="Confirm password" name="cnf-pswd" required>
                 </div>
-                <a class="link-light" href="/Signup Site">Don't have an account? Sign up</a><br>
+                <p id="msg" class="text-danger"></p>
+                <div class="mb-5">
+                    <button type="button" class="btn btn-primary w-100 btn-danger" onclick="checkPassword()">Submit</button>
+                </div>
+                <a class="link-light" href="/Signup Site">Already have an account? Login</a><br>
               </form>
         </div>
 
