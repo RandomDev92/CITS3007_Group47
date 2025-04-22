@@ -36,6 +36,27 @@
       .stats-btn {
         min-width: 90px;
       }
+        /* ----------  Stat Cards ---------- */
+      .stat-card {
+        background: #2e2a2b;
+        border: 2px solid #eee;
+        border-radius: 1rem;
+        color: #e8e8e8;
+        min-height: 750px;
+      }
+
+      /* ----------  Rating Stars ---------- */
+      .rating-star {
+        font-size: 2rem;
+        border: 2px solid #eee;
+        cursor: pointer;
+        color: #fff;
+        transition: color 0.15s ease;
+      }
+      .rating-star.hover,
+      .rating-star.selected {
+        color: #ffcc00;
+      }
     </style>
   </head>
   <body>
@@ -81,3 +102,26 @@
           </div>
         </div>
       </nav>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="container py-5">
+        <div class="row g-4 justify-content-center">
+          <div class="col-12 col-lg-5">
+            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4">
+              <h3 class="mb-4">Your score</h3>
+              <p class="mb-2">Time taken</p>
+              <p class="mb-2">Tests ran</p>
+              <p class="mb-2">Code length</p>
+              <p class="mb-0">Rank on the question</p>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5">
+            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4">
+              <h3 class="mb-4">Average score</h3>
+              <p class="mb-2">Average time taken</p>
+              <p class="mb-2">Average tests ran</p>
+              <p class="mb-2">Best code length</p>
+              <p class="mb-0">Amount of people completed</p>
+            </div>
+          </div>
+        </div>
