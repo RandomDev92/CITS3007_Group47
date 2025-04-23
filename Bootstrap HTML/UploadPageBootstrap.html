@@ -36,6 +36,13 @@
         .stats-btn {
             min-width: 90px;
         }
+        .stat-card {
+        background: #2e2a2b;
+        border: 2px solid #eee;
+        border-radius: 1rem;
+        color: #e8e8e8;
+        min-height: 80px;
+        }
     </style>
 </head>
 <body>
@@ -81,5 +88,26 @@
           </div>
         </div>
       </nav>
+
+
+      <!--CONTENT-->
+      <div class="container py-5">
+        <div class="row">
+          <div class="col-12">
+            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center mb-5">
+                <h3>Question Title</h3>
+            </div>
+            <div class="stat-card p-5 mb-5">
+                <h3>Question Description</h3>
+            </div>
+            <div class="stat-card p-5 mb-5">
+                <h3>Code is placed here</h3>
+            </div>
+            <div class="stat-card p-5 mb-5">
+                <h3>Test:</h3>
+                <h4>Input:Output</h4>
+            </div>
+        </div>
+      </div>
 </body>
 </html>
