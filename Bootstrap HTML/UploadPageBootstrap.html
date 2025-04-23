@@ -62,6 +62,7 @@
 
 
     </style>
+
 </head>
 <body>
     <!--TOP NAV-->
@@ -120,8 +121,7 @@
             </div>
             <div class="stat-card p-5 mb-3">
                 <h4>Code is placed here</h4>
-                <textarea class="code-input" rows="10" cols="60"></textarea>
-                
+                <textarea id="codeBlock" class="code-input" rows="10" cols="60"></textarea>
             </div>
             <div class="stat-card p-5 mb-3">
                 <h4>Test:</h4>
@@ -134,5 +134,26 @@
       <div class="container text-center">
         <a form="button" class=" btn btn-primary btn-lg m-5 button" href="QuestionStatBootstrap.html">Submit and Test</a>
     </div>
+    <script>
+      //copied from https://stackoverflow.com/a/10456255 
+      //to have the code window use tabs properly.
+      var myInput = document.getElementById("codeBlock");
+      if(myInput.addEventListener ) {
+          myInput.addEventListener('keydown',this.keyHandler,false);
+      } else if(myInput.attachEvent ) {
+          myInput.attachEvent('onkeydown',this.keyHandler); /* damn IE hack */
+      }
+
+      function keyHandler(e) {
+          var TABKEY = 9;
+          if(e.keyCode == TABKEY) {
+              this.value += "\t";
+              if(e.preventDefault) {
+                  e.preventDefault();
+              }
+              return false;
+          }
+      }
+    </script>
 </body>
 </html>
