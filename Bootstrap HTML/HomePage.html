@@ -15,15 +15,11 @@
         body {
             /* deep‑red gradient */
             background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
-            margin: 0;
             background-attachment: fixed;
-            color: #eee;
-            min-height: 100vh;
           }
           /* ----------  Top Navigation ---------- */
         .navbar-custom {
-            background: #242021;
-            box-shadow: 0 4px 0 #ff0505;
+            box-shadow: 5px 5px 10px #FF0505;
         }
         /* centre logo regardless of avatar / stats widths */
         .navbar-brand-center {
@@ -37,23 +33,16 @@
         p {
             font-size: 30px;
         }
-        .button{
-            color: white;
-            border-color: #f55757d9;
-            background-color: #f55757d9;
-        }
-        .button:hover{
-            background-color: #c84848d9;
-            border-color: #903434d9;
+        img{
+            max-width: 500px;
+            max-height: 500px;
         }
     </style>
 </head>
 
-
-
 <body>
     <!-- ========== TOP NAV ========== -->
-    <nav class="navbar navbar-custom py-3">
+    <nav class="navbar navbar-custom py-3 bg-dark">
         <div class="container-fluid">
           <!-- user avatar & mini‑profile (left) -->
            <div class="d-flex">
@@ -95,27 +84,21 @@
         </div>
       </nav>
 
-
-
-
-      
-  <!------CONTENT------>
-  
-    
-    <div class="align-items-center row">
+  <!------CONTENT------>  
+    <div class="align-items-center row text-white">
         <div class="col-md-6">
             <div class="d-flex justify-content-around">
-                <img style="width: 500px; height: 500px;" class="d-none d-lg-block" src="Speed-clock-icon.png" alt="Speed Clock Logo">
+                <img  class="d-none d-lg-block" src="Speed-clock-icon.png" alt="Speed Clock Logo">
             </div>
         </div>
-        <div class="col-md-12 col-lg-6">
+        <div class="col-md-12 col-lg-6 ">
             <div class="d-flex justify-content-around m-md-5">
                 <p>Smash Interviews At Record Speed</p>
             </div>
         </div>   
     </div>
 
-    <div class="align-items-center row">
+    <div class="align-items-center row text-white">
         <div class="col-md-6">
             <div class="d-flex justify-content-around">
                 <p>Learn To Code Fast With Python</p>
@@ -123,7 +106,7 @@
         </div>
         <div class="col-md-6">
             <div class="d-flex justify-content-around">
-                <img style="width: 500px; height: 500px;" src="pyhton-logo.svg" alt="Pyhton Logo">
+                <img  src="pyhton-logo.svg" alt="Pyhton Logo">
             </div>
         </div>   
     </div>

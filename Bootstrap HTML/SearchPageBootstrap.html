@@ -16,14 +16,12 @@
         background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
         margin: 0;
         background-attachment: fixed;
-        color: #eee;
         min-height: 100vh;
       }
 
       /*Top navigation*/
       .navbar-custom {
-        background: #242021;
-        box-shadow: 0 4px 0 #ff0505;
+        box-shadow: 5px 5px 10px #FF0505;
       }
       .navbar-brand-center {
         position: absolute;
@@ -38,16 +36,7 @@
       .filter-panel {
         max-width: 270px;
       }
-      .filter-panel .form-control,
-      .filter-panel .form-select {
-        background: #f6f0fa;
-        color: #212529;
-        border: none;
-        border-radius: 999rem;
-      }
-      .filter-panel .form-control::placeholder {
-        color: #6c757d;
-      }
+
       .filter-panel .input-group-text {
         background: transparent;
         border: none;
@@ -56,14 +45,7 @@
 
       /*Question cards*/
       .question-card {
-        background: #2e2a2b;
-        border: none;
-        border-radius: 0.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        color: #e8e8e8;
-      }
-      .question-card + .question-card {
-        margin-top: 2rem;
       }
 
       /*Scrollbar tweak for main list*/
@@ -76,7 +58,7 @@
   </head>
   <body>
     <!--TOP NAV-->
-    <nav class="navbar navbar-custom py-3">
+    <nav class="navbar navbar-custom py-3 bg-dark">
       <div class="container-fluid">
         <!--user avatar & mini‑profile-->
          <div class="d-flex">
@@ -176,28 +158,28 @@
         <div class="col-12 col-md-8 col-lg-6">
           <div class="question-scroll pr-md-2">
             <!--Repeatable question card-->
-            <div class="card question-card position-relative p-4">
+            <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
               <a href="question.html?id=1" class="stretched-link" aria-label="Open Question 1"></a>
               <h5 class="mb-2">Question Title 1</h5>
               <small class="text-muted d-block mb-1">Tags list</small>
               <small class="d-block">Very short description (potentially)</small>
             </div>
 
-            <div class="card question-card position-relative p-4">
+            <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
               <a href="question.html?id=2" class="stretched-link" aria-label="Open Question 2"></a>
               <h5 class="mb-2">Question Title 2</h5>
               <small class="text-muted d-block mb-1">Tags list</small>
               <small class="d-block">Very short description (potentially)</small>
             </div>
 
-            <div class="card question-card position-relative p-4">
+            <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
               <a href="question.html?id=3" class="stretched-link" aria-label="Open Question 3"></a>
               <h5 class="mb-2">Question Title 3</h5>
               <small class="text-muted d-block mb-1">Tags list</small>
               <small class="d-block">Very short description (potentially)</small>
             </div>
 
-            <div class="card question-card position-relative p-4 mb-5">
+            <div class="card question-card position-relative p-4 mb-5 bg-dark text-white  mb-3">
               <a href="question.html?id=4" class="stretched-link" aria-label="Open Question 4"></a>
               <h5 class="mb-2">Question Title 4</h5>
               <small class="text-muted d-block mb-1">Tags list</small>
