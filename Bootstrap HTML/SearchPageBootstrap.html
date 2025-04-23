@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Speed‑Code – Search</title>
-    <!-- Bootstrap 4.4 CSS -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
@@ -14,7 +13,6 @@
 
     <style>
       body {
-        /* deep‑red gradient */
         background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
         margin: 0;
         background-attachment: fixed;
@@ -22,12 +20,11 @@
         min-height: 100vh;
       }
 
-      /* ----------  Top Navigation ---------- */
+      /*Top navigation*/
       .navbar-custom {
         background: #242021;
         box-shadow: 0 4px 0 #ff0505;
       }
-      /* centre logo regardless of avatar / stats widths */
       .navbar-brand-center {
         position: absolute;
         left: 50%;
@@ -37,7 +34,7 @@
         min-width: 90px;
       }
 
-      /* ----------  Left Filter Panel ---------- */
+      /*Left filter panel*/
       .filter-panel {
         max-width: 270px;
       }
@@ -57,7 +54,7 @@
         padding-left: 0.75rem;
       }
 
-      /* ----------  Question Cards ---------- */
+      /*Question cards*/
       .question-card {
         background: #2e2a2b;
         border: none;
@@ -69,7 +66,7 @@
         margin-top: 2rem;
       }
 
-      /* ----------  Scrollbar tweak for main list ---------- */
+      /*Scrollbar tweak for main list*/
       .question-scroll {
         max-height: calc(100vh - 180px);
         overflow-y: auto;
@@ -78,10 +75,10 @@
     </style>
   </head>
   <body>
-    <!-- ========== TOP NAV ========== -->
+    <!--TOP NAV-->
     <nav class="navbar navbar-custom py-3">
       <div class="container-fluid">
-        <!-- user avatar & mini‑profile (left) -->
+        <!--user avatar & mini‑profile-->
          <div class="d-flex">
            <a 
            class="d-flex align-items-center text-left flex-shrink-0" 
@@ -101,7 +98,7 @@
           </div>
         </div>
 
-        <!-- Centred, clickable logo -->
+        <!--Centred, clickable logo-->
         <a
           class="navbar-brand navbar-brand-center"
           href="#"
@@ -114,19 +111,19 @@
           />
         </a>
 
-        <!-- Stats button (right) -->
+        <!--Stats button-->
         <div class="ml-auto flex-shrink-0">
           <a href="#" class="btn btn-outline-light stats-btn">Stats</a>
         </div>
       </div>
     </nav>
 
-    <!-- ========== CONTENT ========== -->
+    <!--CONTENT-->
     <div class="container-fluid mt-4">
       <div class="row justify-content-center">
-        <!-- Left filter column -->
+        <!--Left filter column-->
         <div class="filter-panel px-3 mb-4">
-          <!-- Title search -->
+          <!--Title search-->
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-bars"></i></span>
@@ -142,7 +139,7 @@
             </div>
           </div>
 
-          <!-- Difficulty dropdown -->
+          <!--Difficulty dropdown-->
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-bars"></i></span>
@@ -158,7 +155,7 @@
             </div>
           </div>
 
-          <!-- Tags search -->
+          <!--Tags search-->
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-bars"></i></span>
@@ -175,10 +172,10 @@
           </div>
         </div>
 
-        <!-- Questions list column -->
+        <!--Questions list column-->
         <div class="col-12 col-md-8 col-lg-6">
           <div class="question-scroll pr-md-2">
-            <!-- Repeatable question card -->
+            <!--Repeatable question card-->
             <div class="card question-card position-relative p-4">
               <a href="question.html?id=1" class="stretched-link" aria-label="Open Question 1"></a>
               <h5 class="mb-2">Question Title 1</h5>
