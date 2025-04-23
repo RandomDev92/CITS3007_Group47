@@ -3,14 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Home</title>
+    <style>
+        body {
+            /* deep‑red gradient */
+            background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
+            margin: 0;
+            background-attachment: fixed;
+            color: #eee;
+            min-height: 100vh;
+    
+            * ----------  Top Navigation ---------- */
+          .navbar-custom {
+            background: #242021;
+            box-shadow: 0 4px 0 #ff0505;
+          }
+          /* centre logo regardless of avatar / stats widths */
+          .navbar-brand-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+          }
+          .stats-btn {
+            min-width: 90px;
+          }
+          }
+    </style>
 </head>
-<header style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
+
+<!-- <header style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
     <a href = "" style="font-size: 30px; margin: 0; padding-left: 5%;">SpeedCode</a>
     <h1 style="font-size: 40px; margin: 0;">Add Logo</h1>
     <a href="" style="font-size: 30px; padding-right: 5%;">Login/Sign Up</a>
-  </header>
+  </header> -->
 <body>
+    <!-- ========== TOP NAV ========== -->
+    <nav class="navbar navbar-custom py-3">
+        <div class="container-fluid">
+          <!-- user avatar & mini‑profile (left) -->
+           <div class="d-flex">
+             <a 
+             class="d-flex align-items-center text-left flex-shrink-0" 
+             href="#"
+             aria-label="User-home">
+             <img src="https://via.placeholder.com/48" class="rounded-circle mr-2" alt="User avatar" height="48" width="48"/>
+             <div class="d-flex">
+               <div class="font-weight-bold" style="line-height: 1">Title</div>
+               <small>Description</small>
+              </a>
+            </div>
+          </div>
+          <!-- Centred, clickable logo -->
+        <a
+        class="navbar-brand navbar-brand-center"
+        href="#"
+        aria-label="Speed‑Code home"
+      >
+        <img
+          src="logo-Placeholder.jpg"
+          height="64"
+          alt="Speed‑Code logo"
+        />
+      </a>
+      <!-- Stats button (right) -->
+      <div class="ml-auto flex-shrink-0">
+        <a href="#" class="btn btn-outline-light stats-btn">Stats</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ACTUAL CONTENT-->
+  
     <div style="display: flex; align-items: center; gap: 200px; margin-top: 100px;">
         <img style="width: 500px; height: 500px; margin-left: 100px;" src="Speed-clock-icon.png" alt="Speed Clock Logo">
         <p style="font-size: 30px;">Smash Interviews At Record Speed</p>
