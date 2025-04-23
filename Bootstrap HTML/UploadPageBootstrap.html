@@ -23,9 +23,63 @@
         .form-control::placeholder{
             color: grey;
         }
+        /*Top navigation*/
+        .navbar-custom {
+            background: #242021;
+            box-shadow: 0 4px 0 #ff0505;
+        }
+        .navbar-brand-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .stats-btn {
+            min-width: 90px;
+        }
     </style>
 </head>
 <body>
-    
+    <!--TOP NAV-->
+    <nav class="navbar navbar-custom py-3">
+        <div class="container-fluid">
+          <!--user avatar & mini‑profile-->
+           <div class="d-flex">
+             <a 
+             class="d-flex align-items-center text-left flex-shrink-0" 
+             href="#"
+             aria-label="User-home">
+             <img
+             src="https://via.placeholder.com/48"
+             class="rounded-circle mr-2"
+             alt="User avatar"
+             height="48"
+             width="48"
+             />
+             <div class="d-flex">
+               <div class="font-weight-bold" style="line-height: 1">Title</div>
+               <small>Description</small>
+              </a>
+            </div>
+          </div>
+  
+          <!--Centred, clickable logo-->
+          <a
+            class="navbar-brand navbar-brand-center"
+            href="#"
+            aria-label="Speed‑Code home"
+          >
+            <img
+              src="logo-Placeholder.jpg"
+              height="64"
+              alt="Speed‑Code logo"
+            />
+          </a>
+  
+          <!--Stats button-->
+          <div class="ml-auto flex-shrink-0">
+            <a href="#" class="btn btn-outline-light stats-btn">Stats</a>
+          </div>
+        </div>
+      </nav>
 </body>
 </html>
