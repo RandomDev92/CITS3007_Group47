@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      integrity="sha384‑Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+
     <style>
         body {
             /* deep‑red gradient */
@@ -12,30 +19,48 @@
             background-attachment: fixed;
             color: #eee;
             min-height: 100vh;
-    
-            * ----------  Top Navigation ---------- */
-          .navbar-custom {
+          }
+          /* ----------  Top Navigation ---------- */
+        .navbar-custom {
             background: #242021;
             box-shadow: 0 4px 0 #ff0505;
-          }
-          /* centre logo regardless of avatar / stats widths */
-          .navbar-brand-center {
+        }
+        /* centre logo regardless of avatar / stats widths */
+        .navbar-brand-center {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-          }
-          .stats-btn {
+        }
+        .stats-btn {
             min-width: 90px;
-          }
-          }
+        }
+
+        p {
+            font-size: 30px;
+        }
+        .inline-block{
+            display: flex; 
+	        column-gap: 15%;
+            align-items: center;
+        }
+        .centre{
+            text-align: center;
+        }
+        .button{
+            color: white;
+            border-color: #f55757d9;
+            background-color: #f55757d9;
+        }
+        .button:hover{
+            background-color: #c84848d9;
+            border-color: #903434d9;
+        }
+        
     </style>
 </head>
 
-<!-- <header style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
-    <a href = "" style="font-size: 30px; margin: 0; padding-left: 5%;">SpeedCode</a>
-    <h1 style="font-size: 40px; margin: 0;">Add Logo</h1>
-    <a href="" style="font-size: 30px; padding-right: 5%;">Login/Sign Up</a>
-  </header> -->
+
+
 <body>
     <!-- ========== TOP NAV ========== -->
     <nav class="navbar navbar-custom py-3">
@@ -46,41 +71,76 @@
              class="d-flex align-items-center text-left flex-shrink-0" 
              href="#"
              aria-label="User-home">
-             <img src="https://via.placeholder.com/48" class="rounded-circle mr-2" alt="User avatar" height="48" width="48"/>
+             <img
+             src="https://via.placeholder.com/48"
+             class="rounded-circle mr-2"
+             alt="User avatar"
+             height="48"
+             width="48"
+             />
              <div class="d-flex">
                <div class="font-weight-bold" style="line-height: 1">Title</div>
                <small>Description</small>
               </a>
             </div>
           </div>
+  
           <!-- Centred, clickable logo -->
-        <a
-        class="navbar-brand navbar-brand-center"
-        href="#"
-        aria-label="Speed‑Code home"
-      >
-        <img
-          src="logo-Placeholder.jpg"
-          height="64"
-          alt="Speed‑Code logo"
-        />
-      </a>
-      <!-- Stats button (right) -->
-      <div class="ml-auto flex-shrink-0">
-        <a href="#" class="btn btn-outline-light stats-btn">Stats</a>
-      </div>
-    </div>
-  </nav>
+          <a
+            class="navbar-brand navbar-brand-center"
+            href="#"
+            aria-label="Speed‑Code home"
+          >
+            <img
+              src="logo-Placeholder.jpg"
+              height="64"
+              alt="Speed‑Code logo"
+            />
+          </a>
+  
+          <!-- Stats button (right) -->
+          <div class="ml-auto flex-shrink-0">
+            <a href="#" class="btn btn-outline-light stats-btn">Stats</a>
+          </div>
+        </div>
+      </nav>
 
+
+
+
+      
   <!-- ACTUAL CONTENT-->
   
-    <div style="display: flex; align-items: center; gap: 200px; margin-top: 100px;">
-        <img style="width: 500px; height: 500px; margin-left: 100px;" src="Speed-clock-icon.png" alt="Speed Clock Logo">
-        <p style="font-size: 30px;">Smash Interviews At Record Speed</p>
+    
+    <div class="align-items-center row">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-around">
+                <img style="width: 500px; height: 500px;" class="d-none d-lg-block" src="Speed-clock-icon.png" alt="Speed Clock Logo">
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="d-flex justify-content-around m-md-5">
+                <p>Smash Interviews At Record Speed</p>
+            </div>
+        </div>   
     </div>
-    <div style="display: flex; align-items: center; gap: 240px; margin-top: 100px;">
-        <p style="font-size: 30px; margin-left: 140px;">Learn To Code Fast With Python</p>
-        <img style="width: 500px; height: 500px;" src="pyhton-logo.svg" alt="Pyhton Logo">
+
+    <div class="align-items-center row">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-around">
+                <p>Learn To Code Fast With Python</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-around">
+                <img style="width: 500px; height: 500px;" src="pyhton-logo.svg" alt="Pyhton Logo">
+            </div>
+        </div>   
+    </div>
+
+
+    <div class="container text-center">
+        <button type="button" class=" btn btn-primary btn-lg m-5 button" href=#>Explore Challenges</button>
     </div>
    
 
