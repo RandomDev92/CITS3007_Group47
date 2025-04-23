@@ -52,6 +52,15 @@
             background-color: #c84848d9;
             border-color: #903434d9;
         }
+        .code-input{
+            background-color: #2e2a2b;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 200px;
+            min-width: 100%;
+            color: white;
+        }
+
+
     </style>
 </head>
 <body>
@@ -111,13 +120,16 @@
             </div>
             <div class="stat-card p-5 mb-5">
                 <h3>Code is placed here</h3>
+                <textarea class="code-input" rows="10" cols="60"></textarea>
+                
             </div>
             <div class="stat-card p-5 mb-5">
                 <h3>Test:</h3>
-                <h4>Input:Output</h4>
+                <textarea class="code-input" rows="10" cols="60"></textarea>
             </div>
         </div>
       </div>
+
       <!--Submit Button-->
       <div class="container text-center">
         <a form="button" class=" btn btn-primary btn-lg m-5 button" href=#>Submit and Test</a>
