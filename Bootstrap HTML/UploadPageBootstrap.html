@@ -14,11 +14,19 @@
     <style>
         body{
             background-image: linear-gradient(to bottom, #6d1d1d, #612020, #552121, #482322, #3b2323, #332121, #2b2020, #231e1e, #1f1a1a, #1a1616, #161212, #110d0d);                margin: 0;
+            background-repeat: no-repeat;
             background-attachment: fixed;                
+        }
+        nav{
+            box-shadow: 5px 5px 10px #FF0505;
+        }
+        .form-control::placeholder{
+            color: grey;
         }
         /*Top navigation*/
         .navbar-custom {
-          box-shadow: 5px 5px 10px #FF0505;
+            background: #242021;
+            box-shadow: 0 4px 0 #ff0505;
         }
         .navbar-brand-center {
             position: absolute;
@@ -28,8 +36,28 @@
         .stats-btn {
             min-width: 90px;
         }
+        .stat-card {
+        background: #2e2a2b;
+        border: 2px solid #eee;
+        border-radius: 1rem;
+        color: #e8e8e8;
+        min-height: 80px;
+        }
+        .button{
+            color: white;
+            border-color: #f55757d9;
+            background-color: #f55757d9;
+        }
+        .button:hover{
+            background-color: #c84848d9;
+            border-color: #903434d9;
+        }
         .code-input{
+            background-color: #2e2a2b;
             font-family: 'Courier New', Courier, monospace;
+            min-height: 200px;
+            min-width: 100%;
+            color: white;
         }
 
 
@@ -38,7 +66,7 @@
 </head>
 <body>
     <!--TOP NAV-->
-    <nav class="navbar navbar-custom py-3 bg-dark">
+    <nav class="navbar navbar-custom py-3">
         <div class="container-fluid">
           <!--user avatar & mini‑profile-->
            <div class="d-flex">
@@ -79,36 +107,31 @@
           </div>
         </div>
       </nav>
-
+  
       <!--CONTENT-->
       <div class="container py-5">
         <div class="row">
           <div class="col-12">
-            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center mb-3 p-2 bg-dark text-white border border-white rounded">
-                <h3>Question Title</h3>
+            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center mb-3">
+                <h4>Question Title</h4>
             </div>
-            <div class="stat-card p-5 mb-3 bg-dark text-white bg-dark text-white border border-white rounded">
-                <h3>Question Description</h3>
-                <p>description here</p>
+            <div class="stat-card p-5 mb-3">
+                <h4>Question Description</h4>
             </div>
-            <div class="stat-card p-5 mb-3 bg-dark text-white border border-white rounded">
-              <div class="form-group">
-                  <h3>Code is placed here</h3>
-                  <textarea class="code-input bg-dark text-white w-100" rows="10" cols="60"></textarea>
-                </div>
+            <div class="stat-card p-5 mb-3">
+                <h4>Code is placed here</h4>
+                <textarea id="codeBlock" class="code-input" rows="10" cols="60"></textarea>
             </div>
-            <div class="stat-card p-5 mb-3 bg-dark text-white border border-white rounded">
-                <h3>Test:</h3>
-                <div class="form-group">
-                  <textarea class="code-input bg-dark text-white w-100" rows="5" cols="60"></textarea>
-                </div>
+            <div class="stat-card p-5 mb-3">
+                <h4>Test:</h4>
+                <textarea class="code-input" rows="10" cols="60"></textarea>
             </div>
         </div>
       </div>
 
       <!--Submit Button-->
       <div class="container text-center">
-        <a form="button" class="btn btn-primary w-100 btn-danger" href="QuestionStatBootstrap.html">Test and Submit</a>
+        <a form="button" class=" btn btn-primary btn-lg m-5 button" href="QuestionStatBootstrap.html">Submit and Test</a>
     </div>
     <script>
       //copied from https://stackoverflow.com/a/10456255 
