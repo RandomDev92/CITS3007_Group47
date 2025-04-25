@@ -21,14 +21,11 @@
         background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
         margin: 0;
         background-attachment: fixed;
-        color: #eee;
         min-height: 100vh;
       }
-
       /* Top navigation*/
       .navbar-custom {
-        background: #242021;
-        box-shadow: 0 4px 0 #ff0505;
+        box-shadow: 5px 5px 10px #FF0505;
       }
       .navbar-brand-center {
         position: absolute;
@@ -39,10 +36,6 @@
         min-width: 90px;
       }
       .stat-card {
-        background: #2e2a2b;
-        border: 2px solid #eee;
-        border-radius: 1rem;
-        color: #e8e8e8;
         min-height: 750px;
       }
       /*Rating Stars*/
@@ -60,7 +53,7 @@
   </head>
   <body>
     <!-- TOP NAV -->
-    <nav class="navbar navbar-custom py-3">
+    <nav class="navbar navbar-custom py-3 bg-dark">
         <div class="container-fluid">
           <!--user avatar & mini‑profile-->
            <div class="d-flex">
@@ -103,10 +96,10 @@
       </nav>
 
     <!--CONTENT-->
-    <div class="container py-5">
+    <div class="container py-5 text-white">
         <div class="row g-4 justify-content-center">
           <div class="col-12 col-lg-5">
-            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4">
+            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4 bg-dark border border-white rounded">
               <h3 class="mb-4">Your score</h3>
               <p class="mb-2">Time taken</p>
               <p class="mb-2">Tests ran</p>
@@ -115,7 +108,7 @@
             </div>
           </div>
           <div class="col-12 col-lg-5">
-            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4">
+            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4 bg-dark border border-white rounded">
               <h3 class="mb-4">Average score</h3>
               <p class="mb-2">Average time taken</p>
               <p class="mb-2">Average tests ran</p>
