@@ -15,80 +15,83 @@
       />
 
     <style>
-    body{
-      background-image: linear-gradient(to bottom, #6d1d1d, #612020, #552121, #482322, #3b2323, #332121, #2b2020, #231e1e, #1f1a1a, #1a1616, #161212, #110d0d);                margin: 0;
-      background-repeat: no-repeat;
-      background-attachment: fixed;                
-    }
-    nav{
+      body {
+        background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
+        margin: 0;
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+      /*Top navigation*/
+      .navbar-custom {
         box-shadow: 5px 5px 10px #FF0505;
-    }
-    .form-control::placeholder{
-      color: grey;
-    }
-    .stats-btn {
-      min-width: 90px;
-    }
-    .desc-card {
-      border: 1px solid white;
-      color: white;
-      min-height: 550px;
-    }
-    .logo-img {
-        height: 100px;
-    }
-    .btn-back {
-      color: white;
-      border: 1px solid white;
-    }
-    .btn-start {
-      color: white;
-    }
+      }
+      .navbar-brand-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .nav-btn {
+        min-width: 90px;
+      }
+      .desc-card{
+        min-height: 80vh;
+      }
     </style>
   </head>
 
 <body>
-  <!--Nav Bar-->
-  <nav class="navbar navbar-expand-sm bg-dark px-3">
+  <!--TOP NAV-->
+  <nav class="navbar navbar-custom py-3 bg-dark">
     <div class="container-fluid">
-      <!--user avatar & mini‑profile-->
-       <div class="d-flex">
-         <a 
-         class="d-flex align-items-center text-left flex-shrink-0" 
-         href="#"
-         aria-label="User-home">
-         <img
-         src="https://via.placeholder.com/48"
-         class="rounded-circle mr-2"
-         alt="User avatar"
-         height="48"
-         width="48"
-         />
-         <div class="d-flex">
-           <div class="font-weight-bold" style="line-height: 1">Title</div>
-           <small>Description</small>
-          </a>
+    <!--user avatar & mini‑profile-->    
+        <div class="d-flex">
+            <a 
+            class="d-flex align-items-center text-left flex-shrink-0" 
+            href="#"
+            aria-label="User-home">
+            <img
+            src="https://via.placeholder.com/48"
+            class="rounded-circle mr-2"
+            alt="User avatar"
+            height="48"
+            width="48"
+            />
+            <div class="d-flex">
+            <div class="font-weight-bold" style="line-height: 1">Title</div>
+            <small>Description</small>
+            </a>
+            </div>
         </div>
-      </div>
 
-      <!--Centre Logo-->
-      <ul class="navbar-nav mx-auto pl-50">
-        <li class="nav-item">
-          <img style="height: 100px;" src="logo-Placeholder.jpg" alt="logo placeholder">
-        </li>
-      </ul>
+        <!--Centred, clickable logo-->
+        <a
+            class="navbar-brand navbar-brand-center"
+            href="#"
+            aria-label="Speed‑Code home"
+        >
+            <img
+            src="logo-Placeholder.jpg"
+            height="64"
+            alt="Speed‑Code logo"
+            />
+        </a>
 
-          <!--Stats button-->
-          <div class="ml-auto flex-shrink-0">
-            <a href="#" class="btn btn-outline-light stats-btn">Stats</a>
-          </div>
-      </nav>
+      <!--Stats button-->
+      <div class="ml-auto d-flex">
+        <div class="ms-2">
+          <a href="#" class="btn btn-outline-light nav-btn">Search</a>
+        </div>
+        <div class="ms-2">
+          <a href="#" class="btn btn-outline-light nav-btn">Upload</a>
+        </div>
+    </div>
+    </nav>
 
   <!--Question Description-->
   <div class="container py-4">
       <div class="row g-4 justify-content-center">
         <div class="col-12 col-lg-7">
-          <div class="desc-card d-flex bg-dark flex-column align-items-center text-center p-5 rounded">
+          <div class="desc-card d-flex bg-dark flex-column align-items-center text-center p-5 border border-white rounded text-white">
             <h3 class="mb-4">Question Title</h3>
             <p class="mb-4"> Question Description</p>
           </div>
@@ -96,12 +99,12 @@
       <div class="row mt-3">
         <!-- Back button -->
         <div class="col-6 pe-1">
-          <button class="btn bg-dark w-100 btn-back">< Back</button>
+          <button class="btn bg-dark text-white border border-white w-100">Back</button>
         </div>
         
         <!-- Start button -->
         <div class="col-6 ps-1">
-          <button class="btn btn-danger w-100 btn-start">Start</button>
+          <button class="btn btn-danger w-100">Start</button>
         </div>
       </div>
       </div>
