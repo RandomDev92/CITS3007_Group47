@@ -20,29 +20,20 @@
           /* ----------  Top Navigation ---------- */
         .navbar-custom {
             box-shadow: 5px 5px 10px #FF0505;
+            box-shadow: 5px 5px 10px #FF0505;
         }
-        /* centre logo regardless of avatar / stats widths */
-        .navbar-brand-center {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .stats-btn {
-            min-width: 90px;
-        }
-        p {
-            font-size: 30px;
-        }
-        img{
+        .home-img{
             max-width: 500px;
             max-height: 500px;
+            -webkit-filter: drop-shadow(5px 5px 5px #9e9e9e);
+            filter: drop-shadow(5px 5px 5px #9e9e9e);
         }
     </style>
 </head>
 
 <body>
     <!-- ========== TOP NAV ========== -->
-    <nav class="navbar navbar-custom py-3 bg-dark">
+    <nav class="navbar-custom navbar navbar-expand-sm bg-dark justify-content-center">
         <div class="container-fluid">
           <!-- user avatar & mini‑profile (left) -->
            <div class="d-flex">
@@ -80,41 +71,40 @@
           <div class="ml-auto flex-shrink-0">
             <a href="LoginPageBootstrap.html" class="btn btn-outline-light login-btn">Log In</a>
           </div>
-        </div>
-      </nav>
+    </nav>
 
-  <!------CONTENT------>  
-    <div class="align-items-center row text-white">
-        <div class="col-md-6">
-            <div class="d-flex justify-content-around">
-                <img  class="d-none d-lg-block" src="Speed-clock-icon.png" alt="Speed Clock Logo">
+  <!------CONTENT------>
+  <div class="container-fluid">
+      <div class="row row-cols-2 text-white">
+          <div class="col">
+            <div class="text-center">
+                <img class="home-img" src="Speed-clock-icon.png" alt="Speed Clock Logo">
             </div>
         </div>
-        <div class="col-md-12 col-lg-6 ">
-            <div class="d-flex justify-content-around m-md-5">
-                <p>Smash Interviews At Record Speed</p>
+        <div class="col d-flex align-items-center">
+            <div class="word-wrap">
+                <h1><b>SpeedCode:<br></b> Smash Interviews At Record Speed</h1>
+                <h4><i>SpeedCode is a timed code challenge platform where you can try your hand at being the fastest coder there ever was.</i></h4>
+            </div>
+        </div>   
+        
+        <div class="col d-flex align-items-center">
+            <div class="word-wrap ms-5">
+                <h2>Compete with User Submitted Python Challenges.</h2>
+                <h4><i>Submit your own challenges or complete challenges made by others to test your skills in a wide variety of challenges to test all of your skills. Or just search by tags and difficulty to see how fast you can complete challenges you're familiar with.</i></h4>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-center">
+                <img class="home-img" src="pyhton-logo.svg" alt="Pyhton Logo">
             </div>
         </div>   
     </div>
-
-    <div class="align-items-center row text-white">
-        <div class="col-md-6">
-            <div class="d-flex justify-content-around">
-                <p>Learn To Code Fast With Python</p>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="d-flex justify-content-around">
-                <img  src="pyhton-logo.svg" alt="Pyhton Logo">
-            </div>
-        </div>   
-    </div>
-
-
+    
     <div class="container text-center">
         <a form="button" class=" btn btn-primary btn-lg m-5 button" href="SignupPageBootstrap.html">Explore Challenges</a>
     </div>
-   
-
+</div>
+    
 </body>
 </html>
