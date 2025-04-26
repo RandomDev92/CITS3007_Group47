@@ -31,6 +31,9 @@
           .nav-btn {
             min-width: 90px;
           }
+          #EditProfileContent{
+            display: none;
+          }
         </style>
     </head>
     <body>
@@ -118,18 +121,42 @@
                     <h2><b></b></h2>
                 </div>
             </div>
-            <div class="row justify-content-center">
-                <div class="col-4">
+            <div class="text-center">
+                <p>(only visible if logged in user is the user page)</p>
+            </div>
+            <div class="d-flex justify-content-center my-4">
+                <div class="mx-4">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" id="ShareProfile">
                     <label class="form-check-label" for="ShareProfile">
                         Share Profile With Others
                     </label>
-                </div>       
-            </div> 
-            <div class="row justify-content-center">
-                <p>(checkbox will enable others to see profile through link the box is only visible to the logged in user)</p>
+                </div>  
+                </div> 
+                <div class="mx-4">
+                    <button class="btn btn-danger" onclick="toggleEdit()">Edit profile </button>
+                    <script>
+                        function toggleEdit() {
+                            var x = document.getElementById("EditProfileContent");
+                            if (x.style.display === "none") {
+                                x.style.display = "block";
+                                document.documentElement.scrollTop = document.body.scrollTop = 1000;
+                            } else {
+                                x.style.display = "none";
+                            }
+                        }
+                    </script>
+                </div>
             </div>
+        </div>
+        <div id="EditProfileContent" class="container-sm w-50 bg-dark text-white my-4 border border-white rounded">
+            <div class="m-5">
+                <h3 class="text-center">Edit Profile</h3>
+                <label for="formFile" class="form-label mb-0">Change Profile Picture</label>
+                <input class="form-control mb-2" type="file" id="pfpFile">
+                <label for="formFile" class="form-label mb-0">Change Username</label>
+                <input type="text" class="form-control mb-3" id="changedUsername" placeholder="New Username">
+                <button type="submit" class="btn btn-danger d-grid col-6 mx-auto">Subimit Edit</button>
             </div>
         </div>
     </body>
