@@ -35,13 +35,44 @@
     <!-- ========== TOP NAV ========== -->
     <nav class="navbar-custom navbar navbar-expand-sm bg-dark justify-content-center">
         <div class="container-fluid">
-            <ul class="navbar-nav mx-auto">
-              <li class="nav-item">
-                <img style="height: 100px;" src="logo-Placeholder.jpg" alt="logo placeholder">
-              </li>
-            </ul>
+          <!-- user avatar & mini‑profile (left) -->
+           <div class="d-flex">
+            <a 
+            class="d-flex align-items-center text-left flex-shrink-0" 
+            href="UserPage.html"
+            aria-label="User-home">
+            <img
+            src="mstom_400x400.jpg"
+            class="rounded-circle mr-2"
+            alt="User avatar"
+            height="48"
+            width="48"
+            />
+             <div class="d-flex">
+               <div class="font-weight-bold" style="line-height: 1">Title</div>
+              </a>
+            </div>
           </div>
-    </nav>
+  
+          <!-- Centred, clickable logo -->
+          <a
+            class="navbar-brand navbar-brand-center"
+            href="#"
+            aria-label="Speed‑Code home"
+          >
+            <img
+              src="logo-Placeholder.jpg"
+              height="64"
+              alt="Speed‑Code logo"
+            />
+          </a>
+  
+          <!-- log in -->
+          <div class="ml-auto flex-shrink-0">
+            <a href="LoginPageBootstrap.html" class="btn btn-outline-light login-btn">Log In</a>
+          </div>
+        </div>
+      </nav>
 
   <!------CONTENT------>
   <div class="container-fluid">
@@ -72,7 +103,7 @@
     </div>
     
     <div class="container text-center">
-        <a form="button" class=" btn btn-danger btn-lg m-5 button w-50" href=#>Explore Challenges</a>
+        <a form="button" class=" btn btn-primary btn-lg m-5 button" href="SignupPageBootstrap.html">Explore Challenges</a>
     </div>
 </div>
     
