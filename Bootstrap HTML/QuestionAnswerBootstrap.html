@@ -40,7 +40,10 @@
         min-height: 350px;
       }
       .terminal-card{
-        min-height: 80vh;
+        color: white;
+
+        min-height: 300px;
+        width: 100%;  
       }
     </style>
   </head>
@@ -97,14 +100,16 @@
     <div class="container py-5 pb-0 mn text-white">
         <div class="row g-4 justify-content-center">
             <div class="col-12 col-lg-5">
-            <div class="info-card d-flex flex-column justify-content-center align-items-center text-center p-4 bg-dark border border-white rounded">
-            
-            </div>
+                <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
+                    <h3>Question Title</h3>
+                    <p class="mb-2">Question Description</p>
+                </div>
             </div>
             <div class="col-12 col-lg-5">
-            <div class="info-card d-flex flex-column justify-content-center align-items-center text-center p-4 bg-dark border border-white rounded">
-            
-            </div>
+                <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
+                    <h3>Test Case and Results</h3>
+                    <p class="mb-2">test case examples</p>
+                </div>
             </div>
         </div>
     </div>
@@ -113,5 +118,8 @@
     <div class="container py-4">
         <div class="row g-4 justify-content-center">
         <div class="col-12 col-lg-10">
-            <input type="text" id="CodeInput" name="CodeInput" class="form-control bg-dark text-white border-white"> 
+            <textarea id="CodeInput" name="CodeInput" class="terminal-card js-editor bg-dark rounded" placeholder="Enter your code..."></textarea> 
+        </div>
+        </div>
+    </div>
 
