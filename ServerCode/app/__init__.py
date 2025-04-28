@@ -1,16 +1,12 @@
 from flask import Flask
-from flash_migrate import Migrate
-from flash_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from app.config import Config
-
-db = SQLAlchemy()
-migrate = Migrate()
 
 app = Flask(__name__)  
 app.config.from_object(Config)
-
-db.init_app(app)
-migrate.init_app(app, db)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 if __name__=='__main__': 
    app.run(debug=True) 

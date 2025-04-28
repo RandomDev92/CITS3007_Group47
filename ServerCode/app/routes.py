@@ -37,3 +37,9 @@ def QuestionStatPage():
 @app.route('/QuestionAnswer')
 def QuestionAnswer():
     return render_template("QuestionAnswer.html")
+
+@app.route('/testing')
+def testing():
+    #user = User.query.all()
+    #return render_template("dbtest.html", user=user)
+    return 'not working'
