@@ -1,5 +1,6 @@
 from flask import render_template
 from app import app
+from app.models import Users, Questions
 
 @app.route('/')
 @app.route('/HomePage')
@@ -40,6 +41,5 @@ def QuestionAnswer():
 
 @app.route('/testing')
 def testing():
-    #user = User.query.all()
-    #return render_template("dbtest.html", user=user)
-    return 'not working'
+    user = Users.query.all()
+    return render_template("dbtest.html", user=user)
