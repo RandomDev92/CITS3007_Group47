@@ -1,10 +1,21 @@
-from flask import Flask     
+from flask import Flask
+from flash_migrate import Migrate
+from flash_sqlalchemy import SQLAlchemy
+from app.config import Config
+
+db = SQLAlchemy()
+migrate = Migrate()
+
 app = Flask(__name__)  
+app.config.from_object(Config)
+
+db.init_app(app)
+migrate.init_app(app, db)
 
 if __name__=='__main__': 
    app.run(debug=True) 
 
-from app import routes
+from app import routes, models
 '''
 run in a virtual env 
 to install venv see pinned discord
