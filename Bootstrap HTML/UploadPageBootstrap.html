@@ -32,9 +32,17 @@
       }
       .code-input{
             font-family: 'Courier New', Courier, monospace;
-            min-height: 200px;
+            min-height: 300px;
             min-width: 100%;
       }    
+      .test-input{
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100px;
+            min-width: 100%;
+      }    
+      .form-control::placeholder{
+              color: grey;
+            }
     </style>
 </head>
 <body>
@@ -67,7 +75,7 @@
                   aria-label="Speed‑Code home"
               >
                   <img
-                  src="logo-Placeholder.jpg"
+                  src="SCLogo.png"
                   height="64"
                   alt="Speed‑Code logo"
                   />
@@ -88,19 +96,21 @@
       <div class="container py-5">
         <div class="row">
           <div class="col-12">
-            <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center mb-3 bg-dark text-white border border-white rounded ">
-                <h4>Question Title</h4>
+            <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+              <h4>Question Title:</h4>
+              <input type="text" class="form-control bg-dark text-white" id="QuestionTitle" placeholder="Enter Question Title" name="Title" required>
             </div>
-            <div class="stat-card p-5 mb-3 bg-dark text-white border border-white rounded ">
-                <h4>Question Description</h4>
+            <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+              <h4>Question Description:</h4>
+              <textarea type="text" class="form-control bg-dark text-white" rows="3" id="QuestionDesc" placeholder="Enter Question Description" name="QDesc" required></textarea>
             </div>
-            <div class="stat-card p-5 mb-3 bg-dark text-white border border-white rounded ">
+            <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
                 <h4>Code is placed here</h4>
-                <textarea id="codeBlock" class="code-input bg-dark" rows="10" cols="60"></textarea>
+                <textarea id="codeBlock" class="code-input bg-dark" rows="15" cols="60" placeholder="Enter Your Code..."></textarea>
             </div>
-            <div class="stat-card p-5 mb-3 bg-dark text-white border border-white rounded ">
+            <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
                 <h4>Test:</h4>
-                <textarea class="code-input bg-dark" rows="10" cols="60"></textarea>
+                <textarea class="test-input bg-dark text-white" rows="5" cols="60" placeholder="{input:output, input:output, intput:output}"></textarea>
             </div>
         </div>
       </div>

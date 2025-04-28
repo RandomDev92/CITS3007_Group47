@@ -4,7 +4,7 @@ Group 46 Cits3403 Project
 Project Description:
 SpeedCode is a website that allows for users to complete user submitted leetcode style questions while timing themselves to see how they fair.
 
-![SpeedCodeWebsiteLinks](https://github.com/RandomDev92/CITS3403_Group46/blob/planning/SpeedCodeWebsiteLinks.png)
+![SpeedCodeWebsiteLinks](https://github.com/RandomDev92/CITS3403_Group46/blob/main/SpeedCodeWebsiteLinks.png)
 
 
 Members-
