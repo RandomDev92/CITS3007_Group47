@@ -1,4 +1,7 @@
-from flask import Flask     
+from flask import Flask
+from flash_migrate import Migrate
+from flash_sqlalchemy import SQLAlchemy
+
 app = Flask(__name__)  
 
 if __name__=='__main__': 
