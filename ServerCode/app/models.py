@@ -1,7 +1,7 @@
 from datetime import datetime
 import enum
 
-from . import db
+from app import db
 
 class Difficulty(enum.Enum):
     EASY = "easy"

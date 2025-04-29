@@ -1,5 +1,6 @@
 from flask import render_template
 from app import app
+from app.models import Users, Questions
 
 @app.route('/')
 @app.route('/HomePage')
@@ -37,3 +38,8 @@ def QuestionStatPage():
 @app.route('/QuestionAnswer')
 def QuestionAnswer():
     return render_template("QuestionAnswer.html")
+
+@app.route('/testing')
+def testing():
+    user = Users.query.all()
+    return render_template("dbtest.html", user=user)
