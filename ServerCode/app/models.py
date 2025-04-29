@@ -28,10 +28,14 @@ class User(db.Model):
     avatar_url = db.Column(db.String(512))
     share_profile = db.Column(db.Boolean, default=False)
 
-    #relationships
-    questions = db.relationship("Question", backref="author", lazy="dynamic")
-    submissions = db.relationship("Submission", backref="user", lazy="dynamic")
-    ratings = db.relationship("QuestionRating", backref="user", lazy="dynamic")
+    #denormalised performance stats
+    avg_time_sec = db.Column(db.Float, default=0)
+    std_time_sec = db.Column(db.Float, default=0)  # standard deviation
+    best_time_sec = db.Column(db.Float)
+    best_question_id = db.Column(db.Integer, db.ForeignKey("question.title"))
+    completed_questions = db.Column(db.Integer, default=0)
+    completion_rate = db.Column(db.Float, default=0)  # percent (0-100)
+    avg_attempts = db.Column(db.Float, default=0)
 
     # Relationships
     question = db.relationship(
@@ -73,8 +77,6 @@ class Question(db.Model):
     full_desc = db.Column(db.Text)
     difficulty = db.Column(db.Enum(Difficulty), default=Difficulty.EASY, nullable=False)
 
-    author_id = db.Column(db.Integer, db.ForeignKey("users.username"))
-
     #denormalised stats for quick access (updated after each submission)
     avg_time_sec = db.Column(db.Float, default=0)
     avg_tests = db.Column(db.Float, default=0)
@@ -82,25 +84,25 @@ class Question(db.Model):
     completed_count = db.Column(db.Integer, default=0)
 
     #Relationships
-    author_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"))
-    author = db.relationship("User", back_populates="challenges")
+    author_id = db.Column(db.Integer, db.ForeignKey("user.username", ondelete="SET NULL"))
+    author = db.relationship("User", back_populates="questions")
 
     submissions = db.relationship(
         "Submission",
-        back_populates="challenge",
+        back_populates="question",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
     ratings = db.relationship(
         "Rating",
-        back_populates="challenge",
+        back_populates="question",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-    tags = db.relationship("Tag", secondary=challenge_tags, back_populates="challenges")
+    tags = db.relationship("Tag", secondary=question_tags, back_populates="question")
 
     def __repr__(self):
-        return f"<Challenge {self.title}>"
+        return f"<Question {self.title}>"
     
 class Tag(db.Model):
     __tablename__ = "tag"
@@ -108,8 +110,50 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
-    challenges = db.relationship("Challenge", secondary=challenge_tags, back_populates="tags")
+    questions = db.relationship("Question", secondary=question_tags, back_populates="tags")
 
     def __repr__(self):
         return f"<Tag {self.name}>"
 
+class Submission(db.Model):
+    __tablename__ = "submission"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.username", ondelete="CASCADE"), nullable=False)
+    question_id = db.Column(
+        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), nullable=False
+    )
+
+    code = db.Column(db.Text, nullable=False)
+    passed = db.Column(db.Boolean, nullable=False, default=False)
+    runtime_sec = db.Column(db.Float)
+    lines_of_code = db.Column(db.Integer)
+    tests_run = db.Column(db.Integer)
+
+    #Relationships
+    user = db.relationship("User", back_populates="submissions")
+    question = db.relationship("Question", back_populates="submissions")
+
+    __table_args__ = (
+        db.Index("ix_submission_user_question", "user_id", "question_id"),
+    )
+
+    def __repr__(self): 
+        return f"<Submission u{self.user_id} c{self.question_id}>"
+
+class Rating(db.Model):
+    __tablename__ = "rating"
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.username", ondelete="CASCADE"), primary_key=True)
+    question_id = db.Column(
+        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), primary_key=True
+    )
+    score = db.Column(db.Integer, nullable=False)  # 1‑5
+
+    #Relationships
+    user = db.relationship("User", back_populates="ratings")
+    question = db.relationship("Question", back_populates="ratings")
+
+    def __repr__(self):
+        return f"<Rating {self.score} for c{self.question_id} by u{self.user_id}>"
