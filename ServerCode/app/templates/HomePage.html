@@ -20,8 +20,12 @@
           /* ----------  Top Navigation ---------- */
         .navbar-custom {
             box-shadow: 5px 5px 10px #FF0505;
-            box-shadow: 5px 5px 10px #FF0505;
         }
+        .navbar-brand-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+          }
         .home-img{
             max-width: 500px;
             max-height: 500px;
@@ -34,9 +38,10 @@
 <body>
     <!-- ========== TOP NAV ========== -->
     <nav class="navbar-custom navbar navbar-expand-sm bg-dark justify-content-center">
-        <div class="container-fluid">
+      <div class="container-fluid">
+          {% if not current_user.is_anonymous  %}
           <!-- user avatar & mini‑profile (left) -->
-           <div class="d-flex">
+           <div class="d-flex justify-content-right">
             <a 
             class="d-flex align-items-center text-left flex-shrink-0" 
             href="UserPage.html"
@@ -49,10 +54,10 @@
             width="48"
             />
              <div class="d-flex">
-               <div class="font-weight-bold" style="line-height: 1">Title</div>
+               <div class="font-weight-bold" style="line-height: 1">{{current_user.username}}</div>
               </a>
             </div>
-          </div>
+          {% endif %}
   
           <!-- Centred, clickable logo -->
           <a
@@ -68,9 +73,12 @@
           </a>
   
           <!-- log in -->
+          {% if current_user.is_anonymous  %}
           <div class="ml-auto flex-shrink-0">
             <a href="LoginPage" class="btn btn-outline-light login-btn">Log In</a>
           </div>
+          {% endif %}
+
         </div>
       </nav>
 
@@ -101,10 +109,19 @@
             </div>
         </div>   
     </div>
-    
+
+    {% if current_user.is_anonymous  %}
     <div class="container text-center">
         <a form="button" class=" btn btn-danger btn-lg m-5 button" href="SignupPage">Explore Challenges</a>
     </div>
+    {% endif %}
+
+    {% if not current_user.is_anonymous  %}
+    <div class="container text-center">
+      <a form="button" class=" btn btn-danger btn-lg m-5 button" href="SearchPage">Explore Challenges</a>
+    </div>
+    {% endif %}
+
 </div>
     
 </body>
