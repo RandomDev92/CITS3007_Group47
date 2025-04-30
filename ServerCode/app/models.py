@@ -13,14 +13,14 @@ class Difficulty(enum.Enum):
 
 question_tags = db.Table(
     "question_tags",
-    db.Column("question_id", db.Integer, db.ForeignKey("questions.id"), primary_key=True),
-    db.Column("tag_id", db.Integer, db.ForeignKey("tags.id"), primary_key=True),
+    db.Column("question_id", db.Integer, db.ForeignKey("question.id"), primary_key=True),
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
 )
 
 
 #user class
 class User(db.Model):
-    __tablename__ = "users"
+    __tablename__ = "user"
 
     username = db.Column(db.String(64), primary_key=True, nullable=False)    
     _password_hash = db.Column("password_hash", db.String(256), nullable=False)
@@ -68,7 +68,7 @@ class User(db.Model):
         return f"<User {self.username}>"
 
 class Question(db.Model):
-    __tablename__ = "questions"
+    __tablename__ = "question"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), unique=True, nullable=False)
