@@ -22,7 +22,7 @@ question_tags = db.Table(
 class User(db.Model):
     __tablename__ = "users"
 
-    username = db.Column(db.String(64), primary_key=True)    
+    username = db.Column(db.String(64), primary_key=True, nullable=False)    
     _password_hash = db.Column("password_hash", db.String(256), nullable=False)
     avatar_url = db.Column(db.String(512))
     share_profile = db.Column(db.Boolean, default=False)
@@ -37,7 +37,7 @@ class User(db.Model):
     avg_attempts = db.Column(db.Float, default=0)
 
     # Relationships
-    question = db.relationship(
+    questions = db.relationship(
         "Question",
         back_populates="author",
         cascade="all, delete-orphan",
@@ -65,7 +65,7 @@ class User(db.Model):
 
     # Repr
     def __repr__(self):
-        return f"<User {self.display_name} ({self.email})>"
+        return f"<User {self.username}>"
 
 class Question(db.Model):
     __tablename__ = "questions"
@@ -83,7 +83,7 @@ class Question(db.Model):
     completed_count = db.Column(db.Integer, default=0)
 
     #Relationships
-    author_username = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE", nullable = False))
+    author_username = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), nullable = False)
     author = db.relationship("User", back_populates="questions")
 
     submissions = db.relationship(
