@@ -42,6 +42,7 @@ class User(db.Model):
         back_populates="author",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        foreign_keys="Question.author_username",
     )
     submissions = db.relationship(
         "Submission",
@@ -84,7 +85,7 @@ class Question(db.Model):
 
     #Relationships
     author_username = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), nullable = False)
-    author = db.relationship("User", back_populates="questions")
+    author = db.relationship("User", back_populates="questions", foreign_keys=[author_username], )
 
     submissions = db.relationship(
         "Submission",
@@ -98,7 +99,7 @@ class Question(db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-    tags = db.relationship("Tag", secondary=question_tags, back_populates="question")
+    tags = db.relationship("Tag", secondary=question_tags, back_populates="questions")
 
     def __repr__(self):
         return f"<Question {self.title}>"
