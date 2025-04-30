@@ -1,26 +1,15 @@
 from datetime import datetime
 import enum
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_login import UserMixin
 from app import db
+from app import login_manager
 
-class User(db.Model):
-    username = db.Column(db.String(64), primary_key=True, nullable=True)    
-    _password_hash = db.Column("password_hash", db.String(256), nullable=False)
-    #avatar_url = db.Column(db.String(512))
-
-class Question(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), unique=True, nullable=False)
-    short_desc = db.Column(db.String(512))
-    full_desc = db.Column(db.Text)
-    code = db.Column(db.Text)
-    test = db.Column(db.Text)
+@login_manager.user_loader
+def load_user(username):
+    return User.query.get(username)
 
 
-
-
-'''
 class Difficulty(enum.Enum):
     EASY = "easy"
     MEDIUM = "medium"
@@ -35,19 +24,19 @@ question_tags = db.Table(
 
 
 #user class
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "user"
 
     username = db.Column(db.String(64), primary_key=True, nullable=False)    
-    _password_hash = db.Column("password_hash", db.String(256), nullable=False)
-    avatar_url = db.Column(db.String(512))
+    password_hash = db.Column("password_hash", db.String(256), nullable=False)
+    avatar_url = db.Column(db.String(512), default="static\img\mstom_400x400.jpg")
     share_profile = db.Column(db.Boolean, default=False)
 
     #denormalised performance stats
     avg_time_sec = db.Column(db.Float, default=0)
     std_time_sec = db.Column(db.Float, default=0)  # standard deviation
-    best_time_sec = db.Column(db.Float)
-    best_question_id = db.Column(db.Integer, db.ForeignKey("question.title"))
+    best_time_sec = db.Column(db.Float, default=0)
+    best_question_id = db.Column(db.Integer, db.ForeignKey("question.title"), nullable=True)
     completed_questions = db.Column(db.Integer, default=0)
     completion_rate = db.Column(db.Float, default=0)  # percent (0-100)
     avg_attempts = db.Column(db.Float, default=0)
@@ -84,6 +73,9 @@ class User(db.Model):
     # Repr
     def __repr__(self):
         return f"<User {self.username}>"
+    
+    def get_id(self):
+        return self.username
 
 class Question(db.Model):
     __tablename__ = "question"
@@ -176,4 +168,3 @@ class Rating(db.Model):
     def __repr__(self):
         return f"<Rating {self.score} for c{self.question_id} by u{self.user_id}>"
 
-'''

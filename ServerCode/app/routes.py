@@ -1,33 +1,13 @@
-from flask import render_template
-from flask import request
+from flask import render_template,  request, redirect, flash
 from app import app
-from app.models import User, Question
+from app.models import User, Question, db
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 @app.route('/')
 @app.route('/HomePage')
 def HomePage():
     return render_template("HomePage.html")
-
-@app.route('/LoginPage', methods = ['GET', 'POST'])
-def LoginPage():
-    if request.method == 'GET':
-        return render_template("LoginPage.html")
-    if request.method == 'POST':
-        data = request.form
-        print(data["email"])
-        userDB = User.query.filter_by(username=data['email']).first()
-        if userDB is None:
-            return render_template("UploadPage.html")
-        if userDB._password_hash == data["pswd"]:
-            return render_template("SignupPage.html") 
-        else:
-            return render_template("LoginPage.html")
-
-
-
-@app.route('/SignupPage')
-def SignupPage():
-    return render_template("SignupPage.html")
 
 @app.route('/UploadPage', methods = ['GET', 'POST'])
 def UploadPage():
