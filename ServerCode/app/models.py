@@ -2,9 +2,25 @@ from datetime import datetime
 import enum
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
 from app import db
 
+class User(db.Model):
+    username = db.Column(db.String(64), primary_key=True, nullable=True)    
+    _password_hash = db.Column("password_hash", db.String(256), nullable=False)
+    #avatar_url = db.Column(db.String(512))
+
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), unique=True, nullable=False)
+    short_desc = db.Column(db.String(512))
+    full_desc = db.Column(db.Text)
+    code = db.Column(db.Text)
+    test = db.Column(db.Text)
+
+
+
+
+'''
 class Difficulty(enum.Enum):
     EASY = "easy"
     MEDIUM = "medium"
@@ -36,6 +52,7 @@ class User(db.Model):
     completion_rate = db.Column(db.Float, default=0)  # percent (0-100)
     avg_attempts = db.Column(db.Float, default=0)
 
+    
     # Relationships
     questions = db.relationship(
         "Question",
@@ -145,6 +162,7 @@ class Rating(db.Model):
     __tablename__ = "rating"
 
     user_id = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), primary_key=True)
+    user_id = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), primary_key=True)
     question_id = db.Column(
         db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), primary_key=True
     )
@@ -156,3 +174,5 @@ class Rating(db.Model):
 
     def __repr__(self):
         return f"<Rating {self.score} for c{self.question_id} by u{self.user_id}>"
+
+'''
