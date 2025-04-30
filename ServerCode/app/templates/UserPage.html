@@ -54,7 +54,7 @@
                 width="48"
                 />
                 <div class="d-flex">
-                <div class="font-weight-bold" style="line-height: 1">Title</div>
+                <div class="font-weight-bold" style="line-height: 1">{{current_user.username}}</div>
                 </a>
                 </div>
             </div>
@@ -89,31 +89,31 @@
             <div class="row row-cols-2 g-5 mb-5">
                 <div class="col text-center">
                     <h3>Avg Time Taken</h3>
-                    <h2><b>00:00:00</b></h2>
+                    <h2><b>{{current_user.avg_time_sec}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Standard Deviation</h3>
-                    <h2><b>00</b></h2>
+                    <h2><b>{{current_user.std_time_sec}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Best Time</h3>
-                    <h2><b>00:00:00</b></h2>
+                    <h2><b>{{current_user.best_time_sec}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Best Question</h3>
-                    <h4><a class="link-light" href="link">Link to Question</a></h4>
+                    <h4><a class="link-light" href={{current_user.best_question_id}}>Link to Question</a></h4>
                 </div>
                 <div class="col text-center">
                     <h3>Questions Completed</h3>
-                    <h2><b>00</b></h2>
+                    <h2><b>{{current_user.completed_questions}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Completion Rate</h3>
-                    <h2><b>00%</b></h2>
+                    <h2><b>{{current_user.completion_rate}}%</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Avg Attempts</h3>
-                    <h2><b>00</b></h2>
+                    <h2><b>{{current_user.avg_attempts}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>more stats as necessary</h3>

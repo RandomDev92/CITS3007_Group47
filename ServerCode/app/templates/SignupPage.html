@@ -59,7 +59,7 @@
           {% with messages = get_flashed_messages()%}
           {% if messages%}
           {% for message in messages%}
-          <p class="m-4 bg-error text-white border rounded text-center">{{message}}</p>
+          <p class="m-4 bg-danger text-white border rounded text-center">{{message}}</p>
           {%endfor%}
           {%endif%}
           {%endwith%}
