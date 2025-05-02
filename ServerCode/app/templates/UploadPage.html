@@ -101,8 +101,20 @@
               <input id="Title" type="text" class="form-control bg-dark text-white" id="QuestionTitle" placeholder="Enter Question Title" name="Title" required>
             </div>
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
-              <h4>Question Description:</h4>
-              <textarea id="Desc" type="text" class="form-control bg-dark text-white" rows="3" id="QuestionDesc" placeholder="Enter Question Description" name="QDesc" required></textarea>
+              <h4>Short Description:</h4>
+              <textarea id="shortDesc" type="text" class="form-control bg-dark text-white" rows="3" id="QuestionDesc" placeholder="Enter Question Description" name="QDesc" required></textarea>
+            </div>
+            <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+              <h4>Full Description</h4>
+              <textarea id="fullDesc" type="text" class="form-control bg-dark text-white" rows="10" id="QuestionDesc" placeholder="Enter Question Description" name="QDesc" required></textarea>
+            </div>
+            <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+              <h4>Dificulty Level</h4>
+              <div class="btn-group " role="toolbar" aria-label="Basic example"> <!--Found on bootstrap documentation for Button Group-->
+                <button type="button" class="btn btn-danger w-100 " value="Easy">Easy</button>
+                <button type="button" class="btn btn-danger w-100 " value="Medium">Medium</button>
+                <button type="button" class="btn btn-danger w-100" value="Hard">Hard</button>
+              </div>
             </div>
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
                 <h4>Code is placed here</h4>
@@ -142,7 +154,8 @@
       function SubmitQuestion(){
         const fd = new FormData();
         var Title = document.getElementById("Title").value;
-        var Desc = document.getElementById("Desc").value;
+        var shortDesc = document.getElementById("shortDesc").value;
+        var fullDesc = document.getElementById("fullDesc").value;
         var code = document.getElementById("codeBlock").value;
         var code = document.getElementById("testBlock").value;
         fd.append("title", Title)

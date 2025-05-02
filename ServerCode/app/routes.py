@@ -3,7 +3,7 @@ from app import app
 from app.models import User, Question, db
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 @app.route('/')
 @app.route('/HomePage')
