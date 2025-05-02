@@ -1,22 +1,24 @@
-from flask import render_template
+from flask import render_template,  request, redirect, flash
 from app import app
+from app.models import User, Question, db
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import current_user
 
 @app.route('/')
 @app.route('/HomePage')
 def HomePage():
     return render_template("HomePage.html")
 
-@app.route('/LoginPage')
-def LoginPage():
-    return render_template("LoginPage.html")
-
-@app.route('/SignupPage')
-def SignupPage():
-    return render_template("SignupPage.html")
-
-@app.route('/UploadPage')
+@app.route('/UploadPage', methods = ['GET', 'POST'])
 def UploadPage():
-    return render_template("UploadPage.html")
+    if request.method == 'GET':
+        return render_template("UploadPage.html")
+    if request.method == 'POST':
+        uploadedQ = request.form
+        print(uploadedQ)
+        newQ = Question(title=uploadedQ["Title"])
+        return render_template("UploadPage.html")
+    
 
 @app.route('/SearchPage')
 def SearchPage():
@@ -24,7 +26,7 @@ def SearchPage():
 
 @app.route('/UserPage')
 def UserPage():
-    return render_template("UserPage.html")
+    return render_template("UserPage.html", current_user=current_user)
 
 @app.route('/QuestionDescription')
 def QuestionDescriptionPage():
@@ -37,3 +39,4 @@ def QuestionStatPage():
 @app.route('/QuestionAnswer')
 def QuestionAnswer():
     return render_template("QuestionAnswer.html")
+

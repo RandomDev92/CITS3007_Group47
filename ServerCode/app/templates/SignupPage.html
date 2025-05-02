@@ -55,7 +55,15 @@
               </div>
         </nav>
         <div class="container-sm bg-dark text-white w-50 my-4 border border-white rounded">
-            <form action="" id="SignUpForm">
+          <!--Message for user-->
+          {% with messages = get_flashed_messages()%}
+          {% if messages%}
+          {% for message in messages%}
+          <p class="m-4 bg-error text-white border rounded text-center">{{message}}</p>
+          {%endfor%}
+          {%endif%}
+          {%endwith%}
+            <form method="post" action="" id="SignUpForm">
                 <div class="mt-3 mb-4">
                   <label for="email" class="form-label">Email:</label>
                   <input type="email" class="form-control bg-dark text-white" id="email" placeholder="Enter email" name="email" required>

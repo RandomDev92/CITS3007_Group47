@@ -98,43 +98,62 @@
           <div class="col-12">
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
               <h4>Question Title:</h4>
-              <input type="text" class="form-control bg-dark text-white" id="QuestionTitle" placeholder="Enter Question Title" name="Title" required>
+              <input id="Title" type="text" class="form-control bg-dark text-white" id="QuestionTitle" placeholder="Enter Question Title" name="Title" required>
             </div>
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
               <h4>Question Description:</h4>
-              <textarea type="text" class="form-control bg-dark text-white" rows="3" id="QuestionDesc" placeholder="Enter Question Description" name="QDesc" required></textarea>
+              <textarea id="Desc" type="text" class="form-control bg-dark text-white" rows="3" id="QuestionDesc" placeholder="Enter Question Description" name="QDesc" required></textarea>
             </div>
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
                 <h4>Code is placed here</h4>
-                <textarea id="codeBlock" class="code-input bg-dark" rows="15" cols="60" placeholder="Enter Your Code..."></textarea>
+                <textarea id="codeBlock" class="code-input bg-dark text-white" rows="15" cols="60" placeholder="Enter Your Code..."></textarea>
+                <script>
+                    //copied from https://stackoverflow.com/a/10456255 
+                    //to have the code window use tabs properly.
+                    var myInput = document.getElementById("codeBlock");
+                    if(myInput.addEventListener ) {
+                        myInput.addEventListener('keydown',this.keyHandler,false);
+                    } else if(myInput.attachEvent ) {
+                        myInput.attachEvent('onkeydown',this.keyHandler); /* damn IE hack */
+                    }
+
+                    function keyHandler(e) {
+                        var TABKEY = 9;
+                        if(e.keyCode == TABKEY) {
+                            this.value += "\t";
+                            if(e.preventDefault) {
+                                e.preventDefault();
+                            }
+                            return false;
+                        }
+                    }
+                </script>
             </div>
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
                 <h4>Test:</h4>
-                <textarea class="test-input bg-dark text-white" rows="5" cols="60" placeholder="{input:output, input:output, intput:output}"></textarea>
+                <textarea id="testBlock" class="test-input bg-dark text-white" rows="5" cols="60" placeholder="{input:output, input:output, intput:output}"></textarea>
             </div>
         </div>
       </div>
       <!--Submit Button-->
-      <a form="button" class=" btn btn-lg btn-danger w-100" href="QuestionStat">Submit and Test</a>
+      <button form="button" class=" btn btn-lg btn-danger w-100" onclick="SubmitQuestion()">Submit and Test</a>
     <script>
-      //copied from https://stackoverflow.com/a/10456255 
-      //to have the code window use tabs properly.
-      var myInput = document.getElementById("codeBlock");
-      if(myInput.addEventListener ) {
-          myInput.addEventListener('keydown',this.keyHandler,false);
-      } else if(myInput.attachEvent ) {
-          myInput.attachEvent('onkeydown',this.keyHandler); /* damn IE hack */
-      }
 
-      function keyHandler(e) {
-          var TABKEY = 9;
-          if(e.keyCode == TABKEY) {
-              this.value += "\t";
-              if(e.preventDefault) {
-                  e.preventDefault();
-              }
-              return false;
-          }
+      function SubmitQuestion(){
+        const fd = new FormData();
+        var Title = document.getElementById("Title").value;
+        var Desc = document.getElementById("Desc").value;
+        var code = document.getElementById("codeBlock").value;
+        var code = document.getElementById("testBlock").value;
+        fd.append("title", Title)
+        fd.append("full_desc", Desc)
+        fd.append("code", code)
+        fd.append("test", code)
+
+        const response = fetch(window.location.href, {
+          method: "POST",
+          body: fd,
+        });
       }
     </script>
 </body>
