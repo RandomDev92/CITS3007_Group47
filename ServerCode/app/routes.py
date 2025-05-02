@@ -2,7 +2,8 @@ from flask import render_template,  request, redirect, flash
 from app import app
 from app.models import User, Question, db
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import *
+
+from flask_login import current_user
 
 @app.route('/')
 @app.route('/HomePage')
@@ -27,8 +28,7 @@ def SearchPage():
 @app.route('/UserPage')
 @login_required
 def UserPage():
-    print(current_user.avg_time_sec)
-    return render_template("UserPage.html")
+    return render_template("UserPage.html", current_user=current_user)
 
 @app.route('/QuestionDescription')
 def QuestionDescriptionPage():
@@ -42,7 +42,3 @@ def QuestionStatPage():
 def QuestionAnswer():
     return render_template("QuestionAnswer.html")
 
-@app.route('/testing')
-def testing():
-    user = Users.query.all()
-    return render_template("dbtest.html", user=user)
