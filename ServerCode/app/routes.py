@@ -2,6 +2,7 @@ from flask import render_template,  request, redirect, flash
 from app import app
 from app.models import User, Question, db
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from flask_login import current_user
 
 @app.route('/')
@@ -25,6 +26,7 @@ def SearchPage():
     return render_template("SearchPage.html")
 
 @app.route('/UserPage')
+@login_required
 def UserPage():
     return render_template("UserPage.html", current_user=current_user)
 
