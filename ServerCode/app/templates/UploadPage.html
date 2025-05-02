@@ -110,10 +110,22 @@
             </div>
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
               <h4>Dificulty Level</h4>
-              <div class="btn-group " role="toolbar" aria-label="Basic example"> <!--Found on bootstrap documentation for Button Group-->
-                <button type="button" class="btn btn-danger w-100 " value="Easy">Easy</button>
-                <button type="button" class="btn btn-danger w-100 " value="Medium">Medium</button>
-                <button type="button" class="btn btn-danger w-100" value="Hard">Hard</button>
+              <div class="btn-group" role="group" aria-label="Basic radio toggle button group"> <!--Found on bootstrap documentation for Button Group-->
+                <input onclick="HoldValue('Easy')" type="radio" class="btn-check" name="btnradio" id="Easy" autocomplete="off" checked>
+                <label class="btn btn-outline-danger w-100" for="Easy">Easy</label>
+                <input onclick="HoldValue('Medium')" type="radio" class="btn-check" name="btnradio" id="Medium" autocomplete="off" checked>
+                <label class="btn btn-outline-danger w-100" for="Medium">Medium</label>
+                <input onclick="HoldValue('Hard')" type="radio" class="btn-check" name="btnradio" id="Hard" autocomplete="off" checked>
+                <label class="btn btn-outline-danger w-100" for="Hard">Hard</label>
+                <script>
+                  let newValue = Hard;
+                  function HoldValue(value){ //Holds the value for which button is pressed
+                    newValue = value;
+                    //console.log(newValue);
+                    return newValue;
+                  }
+                  
+                </script>
               </div>
             </div>
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
@@ -156,12 +168,15 @@
         var Title = document.getElementById("Title").value;
         var shortDesc = document.getElementById("shortDesc").value;
         var fullDesc = document.getElementById("fullDesc").value;
+        var difficulty = document.getElementById(newValue);
         var code = document.getElementById("codeBlock").value;
-        var code = document.getElementById("testBlock").value;
+        var test = document.getElementById("testBlock").value;
         fd.append("title", Title)
-        fd.append("full_desc", Desc)
+        fd.append("short_desc", shortDesc)
+        fd.append("full_desc", fullDesc)
+        fd.append("difficulty", difficulty)
         fd.append("code", code)
-        fd.append("test", code)
+        fd.append("test", test)
 
         const response = fetch(window.location.href, {
           method: "POST",
