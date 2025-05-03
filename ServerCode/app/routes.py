@@ -4,6 +4,7 @@ from app.models import User, Question, Difficulty, db
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import select
 
+
 from flask_login import current_user, login_required
 
 @app.route('/')
@@ -25,6 +26,7 @@ def UploadPage():
                         author_username=current_user.username)
         db.session.add(question)
         db.session.commit()
+
         return redirect("/SearchPage")
 
 
