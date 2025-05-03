@@ -105,7 +105,7 @@
             <div class="col-12">
               <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
                 <h4>Question Title:</h4>
-                <input id="Title" type="text" class="form-control bg-dark text-white" id="QuestionTitle" placeholder="Enter Question Title" name="Title" required>
+                <input id="title" type="text" class="form-control bg-dark text-white" id="QuestionTitle" placeholder="Enter Question Title" name="title" required>
               </div>
               <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
                 <h4>Short Description:</h4>
@@ -120,9 +120,9 @@
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group"> <!--Found on bootstrap documentation for Button Group-->
                   <input onclick="HoldValue('easy')" type="radio" class="btn-check" name="btnradio" id="easy" autocomplete="off" checked>
                   <label class="btn btn-outline-danger w-100" for="easy">Easy</label>
-                  <input onclick="HoldValue('medium')" type="radio" class="btn-check" name="btnradio" id="medium" autocomplete="off" checked>
+                  <input onclick="HoldValue('medium')" type="radio" class="btn-check" name="btnradio" id="medium" autocomplete="off">
                   <label class="btn btn-outline-danger w-100" for="medium">Medium</label>
-                  <input onclick="HoldValue('hard')" type="radio" class="btn-check" name="btnradio" id="hard" autocomplete="off" checked>
+                  <input onclick="HoldValue('hard')" type="radio" class="btn-check" name="btnradio" id="hard" autocomplete="off">
                   <label class="btn btn-outline-danger w-100" for="hard">Hard</label>
                 </div>
               </div>
@@ -132,7 +132,7 @@
                   <script>
                       //copied from https://stackoverflow.com/a/10456255 
                       //to have the code window use tabs properly.
-                      let newValue = "hard";
+                      let newValue = "easy";
                       var myInput = document.getElementById("codeBlock");
                       if(myInput.addEventListener ) {
                           myInput.addEventListener('keydown',this.keyHandler,false);
@@ -164,19 +164,19 @@
         </div>
       </form>
       <!--Submit Button-->
-      <button form="submit" class=" btn btn-lg btn-danger w-100" onclick="SubmitQuestion()">Submit and Test</a>
+      <button type="button" class=" btn btn-lg btn-danger w-100" onclick="SubmitQuestion()">Submit and Test</a>
       
     <script>
 
       async function SubmitQuestion(){
         const fd = new FormData();
-        var Title = document.getElementById("Title").value;
+        var title = document.getElementById("title").value;
         var shortDesc = document.getElementById("shortDesc").value;
         var fullDesc = document.getElementById("fullDesc").value;
         var difficulty = newValue;
         var code = document.getElementById("codeBlock").value;
         var test = document.getElementById("testBlock").value;
-        fd.append("title", Title)
+        fd.append("title", title)
         fd.append("short_desc", shortDesc)
         fd.append("full_desc", fullDesc)
         fd.append("difficulty", difficulty)
@@ -187,8 +187,12 @@
           method: "POST",
           body: fd,
         });
-        
-      }
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else {
+            alert("There was a problem submitting the question.");
+        }
+          }
     </script>
 </body>
 </html>
