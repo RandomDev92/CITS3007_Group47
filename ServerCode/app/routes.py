@@ -1,7 +1,8 @@
 from flask import render_template,  request, redirect, flash
 from app import app
-from app.models import User, Question, db
+from app.models import User, Question, Difficulty, db
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import select
 
 from flask_login import current_user, login_required
 
@@ -17,9 +18,21 @@ def UploadPage():
     if request.method == 'POST':
         uploadedQ = request.form
         print(uploadedQ)
-        newQ = Question(title=uploadedQ["Title"])
-        return render_template("UploadPage.html")
-    
+        question = Question(title=uploadedQ["title"],
+                        short_desc=uploadedQ["short_desc"],
+                        full_desc=uploadedQ["full_desc"],
+                        difficulty=uploadedQ["difficulty"],
+                        author_username=current_user.username)
+        db.session.add(question)
+        db.session.commit()
+
+        print("hello")
+        #questions = Question.query.all()
+        #print(questions)
+        #print(questions)
+        
+        return render_template("SearchPage.html")
+
 
 @app.route('/SearchPage')
 def SearchPage():

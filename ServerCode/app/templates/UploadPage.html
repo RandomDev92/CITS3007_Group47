@@ -111,14 +111,14 @@
             <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
               <h4>Dificulty Level</h4>
               <div class="btn-group" role="group" aria-label="Basic radio toggle button group"> <!--Found on bootstrap documentation for Button Group-->
-                <input onclick="HoldValue('Easy')" type="radio" class="btn-check" name="btnradio" id="Easy" autocomplete="off" checked>
+                <input onclick="HoldValue('easy')" type="radio" class="btn-check" name="btnradio" id="Easy" autocomplete="off" checked>
                 <label class="btn btn-outline-danger w-100" for="Easy">Easy</label>
-                <input onclick="HoldValue('Medium')" type="radio" class="btn-check" name="btnradio" id="Medium" autocomplete="off" checked>
+                <input onclick="HoldValue('medium')" type="radio" class="btn-check" name="btnradio" id="Medium" autocomplete="off" checked>
                 <label class="btn btn-outline-danger w-100" for="Medium">Medium</label>
-                <input onclick="HoldValue('Hard')" type="radio" class="btn-check" name="btnradio" id="Hard" autocomplete="off" checked>
+                <input onclick="HoldValue('hard')" type="radio" class="btn-check" name="btnradio" id="Hard" autocomplete="off" checked>
                 <label class="btn btn-outline-danger w-100" for="Hard">Hard</label>
                 <script>
-                  let newValue = "Hard";
+                  let newValue = "hard";
                   function HoldValue(value){ //Holds the value for which button is pressed
                     newValue = value;
                     //console.log(newValue);
@@ -181,7 +181,17 @@
         const response = fetch(window.location.href, {
           method: "POST",
           body: fd,
-        });
+        })
+          .then(response => {
+            if (response.ok) {
+              window.location.href = "/SearchPage";
+            } else {
+              throw new Error("Failed to upload the question. Please try again.");
+            }
+          })
+          .catch(error => {
+            alert(error.message);
+          });
       }
     </script>
 </body>
