@@ -1,4 +1,4 @@
-from flask import render_template,  request, redirect, flash
+from flask import render_template,  request, redirect, flash, url_for
 from app import app
 from app.models import User, Question, Difficulty, db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -17,7 +17,7 @@ def UploadPage():
         return render_template("UploadPage.html")
     if request.method == 'POST':
         uploadedQ = request.form
-        print(uploadedQ)
+        #print(uploadedQ)
         question = Question(title=uploadedQ["title"],
                         short_desc=uploadedQ["short_desc"],
                         full_desc=uploadedQ["full_desc"],
@@ -25,13 +25,7 @@ def UploadPage():
                         author_username=current_user.username)
         db.session.add(question)
         db.session.commit()
-
-        print("hello")
-        #questions = Question.query.all()
-        #print(questions)
-        #print(questions)
-        
-        return render_template("SearchPage.html")
+        return redirect("/SearchPage")
 
 
 @app.route('/SearchPage')

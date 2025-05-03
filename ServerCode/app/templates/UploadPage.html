@@ -182,16 +182,6 @@
           method: "POST",
           body: fd,
         })
-          .then(response => {
-            if (response.ok) {
-              window.location.href = "/SearchPage";
-            } else {
-              throw new Error("Failed to upload the question. Please try again.");
-            }
-          })
-          .catch(error => {
-            alert(error.message);
-          });
       }
     </script>
 </body>
