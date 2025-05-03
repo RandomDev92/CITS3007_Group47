@@ -118,7 +118,7 @@
                 <input onclick="HoldValue('Hard')" type="radio" class="btn-check" name="btnradio" id="Hard" autocomplete="off" checked>
                 <label class="btn btn-outline-danger w-100" for="Hard">Hard</label>
                 <script>
-                  let newValue = Hard;
+                  let newValue = "Hard";
                   function HoldValue(value){ //Holds the value for which button is pressed
                     newValue = value;
                     //console.log(newValue);
@@ -168,7 +168,7 @@
         var Title = document.getElementById("Title").value;
         var shortDesc = document.getElementById("shortDesc").value;
         var fullDesc = document.getElementById("fullDesc").value;
-        var difficulty = document.getElementById(newValue);
+        var difficulty = newValue;
         var code = document.getElementById("codeBlock").value;
         var test = document.getElementById("testBlock").value;
         fd.append("title", Title)
