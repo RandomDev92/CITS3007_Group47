@@ -18,7 +18,9 @@ def UploadPage():
         return render_template("UploadPage.html")
     if request.method == 'POST':
         uploadedQ = request.form
-        #print(uploadedQ)
+        if not uploadedQ["short_desc"] or not uploadedQ["title"] or not uploadedQ["full_desc"]:
+            flash("Please Fill Out All Fields")
+            return redirect(url_for('UploadPage'))
         question = Question(title=uploadedQ["title"],
                         short_desc=uploadedQ["short_desc"],
                         full_desc=uploadedQ["full_desc"],
@@ -26,7 +28,6 @@ def UploadPage():
                         author_username=current_user.username)
         db.session.add(question)
         db.session.commit()
-
         return redirect(url_for('LandingUpload'))
 
 
@@ -50,7 +51,6 @@ def QuestionStatPage():
 @app.route('/QuestionAnswer')
 def QuestionAnswer():
     return render_template("QuestionAnswer.html")
-
 
 @app.route('/LandingUpload')
 def LandingUpload():

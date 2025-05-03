@@ -82,8 +82,8 @@ class Question(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), unique=True, nullable=False)
-    short_desc = db.Column(db.String(512))
-    full_desc = db.Column(db.Text)
+    short_desc = db.Column(db.String(512), nullable=False)
+    full_desc = db.Column(db.Text, nullable=False)
     difficulty = db.Column(db.Enum(Difficulty), default=Difficulty.EASY, nullable=False)
 
     #denormalised stats for quick access (updated after each submission)
