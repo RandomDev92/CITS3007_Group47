@@ -27,7 +27,7 @@ def UploadPage():
         db.session.add(question)
         db.session.commit()
 
-        return redirect("/SearchPage")
+        return redirect(url_for('LandingUpload'))
 
 
 @app.route('/SearchPage')
@@ -51,3 +51,7 @@ def QuestionStatPage():
 def QuestionAnswer():
     return render_template("QuestionAnswer.html")
 
+
+@app.route('/LandingUpload')
+def LandingUpload():
+    return render_template("UploadSuccess.html")
