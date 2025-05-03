@@ -1,6 +1,7 @@
 from flask import render_template,  request, redirect, flash, url_for
 from app import app
-from app.models import User, Question, Difficulty, db
+from app.models import User, Question, Difficulty
+from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import select
 
@@ -15,17 +16,20 @@ def HomePage():
 @app.route('/UploadPage', methods = ['GET', 'POST'])
 def UploadPage():
     if request.method == 'GET':
-        return render_template("UploadPage.html")
+        blankform = {"title":"", "short_desc":"", "full_desc":"", "Code":"", "testCode":"",}
+        return render_template("UploadPage.html", form=blankform)
     if request.method == 'POST':
         uploadedQ = request.form
-        if not uploadedQ["short_desc"] or not uploadedQ["title"] or not uploadedQ["full_desc"]:
-            flash("Please Fill Out All Fields")
-            return redirect(url_for('UploadPage'))
+        print(uploadedQ)
+        if None != Question.query.filter_by(title=uploadedQ["title"]).first():
+            flash("Title is already taken", 'error')
+            return render_template("UploadPage.html", form=uploadedQ)
         question = Question(title=uploadedQ["title"],
                         short_desc=uploadedQ["short_desc"],
                         full_desc=uploadedQ["full_desc"],
                         difficulty=uploadedQ["difficulty"],
                         author_username=current_user.username)
+        print("added to db", flush=True)
         db.session.add(question)
         db.session.commit()
         return redirect(url_for('LandingUpload'))
