@@ -1,6 +1,6 @@
 from flask import render_template,  request, redirect, flash, url_for
 from app import app
-from app.models import User, Question, Difficulty
+from app.models import User, Question, Difficulty, Tag
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import select
@@ -17,7 +17,7 @@ def HomePage():
 @app.route('/UploadPage', methods = ['GET', 'POST'])
 def UploadPage():
     if request.method == 'GET':
-        blankform = {"title":"", "short_desc":"", "full_desc":"", "Code":"", "testCode":"",}
+        blankform = {"title":"", "short_desc":"", "full_desc":"", "Code":"", "testCode":"", "tags":""}
         return render_template("UploadPage.html", form=blankform)
     if request.method == 'POST':
         uploadedQ = request.form
@@ -30,7 +30,10 @@ def UploadPage():
                         full_desc=uploadedQ["full_desc"],
                         difficulty=uploadedQ["difficulty"],
                         author_username=current_user.username)
-        print("added to db", flush=True)
+        taglist = uploadedQ["tags"].replace(" ", "").split(',')
+        for tag in taglist:
+            if Tag.query.filter_by(name=tag).first() != None:
+                question.tags.append(Tag.query.filter_by(name=tag).first())
         db.session.add(question)
         db.session.commit()
         return redirect(url_for('LandingUpload'))
@@ -48,7 +51,6 @@ def SearchPage():
         query = query.filter(Question.title.ilike(f"%{title_query}%"))
 
     if difficulty_query:
-        from app.models import Difficulty
         try:
             enum_val = Difficulty[difficulty_query.upper()]
             query = query.filter(Question.difficulty == enum_val)

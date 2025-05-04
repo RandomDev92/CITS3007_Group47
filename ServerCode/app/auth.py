@@ -14,12 +14,12 @@ def LoginPage():
         data = request.form
         print(data)
         userDB = User.query.filter_by(username=data['email']).first()
-        if check_password_hash(userDB.password_hash, data["pswd"]):
-            login_user(userDB, remember=True)
-            return redirect("/UserPage")
-        else:
+        if userDB == None or check_password_hash(userDB.password_hash, data["pswd"]) == False:
             flash("Login Failed. Double Check Your Details And Try Again.", 'error')
             return redirect("/LoginPage")
+        else:
+            login_user(userDB, remember=True)
+            return redirect("/UserPage")
 
 
 @app.route('/SignupPage', methods = ['GET', 'POST'])
