@@ -17,7 +17,7 @@ class Difficulty(enum.Enum):
 
 
 question_tags = db.Table(
-    "question_tags",
+    "tags_associatioon",
     db.Column("question_id", db.Integer, db.ForeignKey("question.id"), primary_key=True),
     db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
 )
@@ -108,8 +108,11 @@ class Question(db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-    tags = db.relationship("Tag", secondary=question_tags, back_populates="questions")
-
+    tags = db.relationship(
+        'Tag',
+        secondary=question_tags,
+        backref=db.backref('question', lazy='dynamic'))
+    
     def __repr__(self):
         return f"<Question {self.title}>"
     
@@ -119,7 +122,7 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
-    questions = db.relationship("Question", secondary=question_tags, back_populates="tags")
+    #questions = db.relationship("Question", secondary=question_tags, back_populates="tags")
 
     def __repr__(self):
         return f"<Tag {self.name}>"
