@@ -89,7 +89,12 @@ def QuestionAnswer():
         db.session.add(submission)
         db.session.commit()
 
-        return redirect(url_for('QuestionStatPage', id=question_id))
-
-    return render_template("QuestionAnswer.html")
+        return redirect(url_for('QuestionStatPage.html', id=question_id))
+    
+    # puts information on the page
+    question_id = request.args.get('id', type=int)
+    if not question_id:
+        return "No question ID provided", 400
+    question = Question.query.get_or_404(question_id)
+    return render_template("QuestionAnswer.html", question=question)
 
