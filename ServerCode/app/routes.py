@@ -1,8 +1,10 @@
-from flask import render_template,  request, redirect, flash, url_for
+from flask import render_template,  request, redirect, flash, url_for, abort
+import imghdr
+import os
 from app import app
 from app.models import User, Question, Difficulty, Tag
 from . import db
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from sqlalchemy import select
 
 
@@ -63,6 +65,14 @@ def SearchPage():
     results = query.distinct().all()
     return render_template("SearchPage.html", questions=results)
 
+def validate_image(stream):
+    header = stream.read(512)
+    stream.seek(0) 
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return '.' + (format if format != 'jpeg' else 'jpg')
+
 @app.route('/UserPage', methods = ['GET', 'POST'])
 @login_required
 def UserPage():
@@ -83,8 +93,21 @@ def UserPage():
             return ('', 204)
         if form["type"] == "Change":
             user = User.query.get_or_404(current_user.username)
-            user.username = form["newUsername"]
-            #more changes if needed e.g. password or so on
+            
+            uploaded_file = request.files['newpfp']
+            filename = uploaded_file.filename
+            if filename != '':
+                file_ext = os.path.splitext(filename)[1]
+                if file_ext not in app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(uploaded_file.stream):
+                    abort(400)
+                filepath = app.config["UPLOAD_FOLDER"]+current_user.username
+                uploaded_file.save(filepath)
+                user.avatar_url = current_user.username
+
+            if form["newUsername"].strip() != "":
+                user.username = form["newUsername"]
+            if form["newPassword"] != "":
+                user.password_hash = generate_password_hash(form["newPassword"])
             db.session.add(user)
             db.session.commit()
             flash("Profile Changed.", "success")
