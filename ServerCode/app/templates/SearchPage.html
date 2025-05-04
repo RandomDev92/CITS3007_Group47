@@ -92,7 +92,7 @@
           />
         </a>
 
-        <!--Stats button-->
+        <!--upload button-->
         <div class="ml-auto d-flex">
           <div class="ms-2">
             <a href="UploadPage" class="btn btn-outline-light nav-btn">Upload</a>
@@ -106,29 +106,22 @@
         <!--Left filter column-->
         <div class="filter-panel px-3 mb-4">
           <!--Title search-->
-          <div class="input-group mb-3">
+          <form action="/SearchPage" method="GET" class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-bars"></i></span>
             </div>
-            <form action="/SearchPage" method="GET" class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-bars"></i></span>
-              </div>
-              <input
-                type="text"
-                class="form-control"
-                name="title"
-                placeholder="Title"
-                aria-label="Search by title"
-              />
-              <div class="input-group-append">
-                <button class="input-group-text" type="submit"><i class="fas fa-search"></i></button>
-              </div>
-            </form>
+            <input
+              type="text"
+              class="form-control"
+              name="title"
+              value="{{ request.args.get('title', '') }}"
+              placeholder="Title"
+              aria-label="Search by title"
+            />
             <div class="input-group-append">
-              <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <button class="input-group-text" type="submit"><i class="fas fa-search"></i></button>
             </div>
-          </div>
+          </form>
 
           <!--Difficulty dropdown-->
           <div class="input-group mb-3">
@@ -162,21 +155,26 @@
             </div>
           </div>
         </div>
+        
         <!--Questions list column-->
         <div class="col-12 col-md-8 col-lg-6">
           <div class="question-scroll pr-md-2">
-            {% for question in questions %}
-              <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
-                <a href="{{ url_for('QuestionDescriptionPage') }}?id={{ question.id }}" class="stretched-link"></a>
-                <h5 class="mb-2">{{ question.title }}</h5>
-                <small class="mb-2">
-                  {% for tag in question.tags %}
-                    <span class="badge bg-danger">{{ tag.name }}</span>
-                  {% endfor %}
-                </small>
-                <small class="d-block">{{ question.short_desc }}</small>
-              </div>
-          {% endfor %}
+            {% if questions %}
+              {% for question in questions %}
+                <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
+                  <a href="{{ url_for('QuestionDescriptionPage') }}?id={{ question.id }}" class="stretched-link"></a>
+                  <h5 class="mb-2">{{ question.title }}</h5>
+                  <small class="mb-2">
+                    {% for tag in question.tags %}
+                      <span class="badge bg-danger">{{ tag.name }}</span>
+                    {% endfor %}
+                  </small>
+                  <small class="d-block">{{ question.short_desc }}</small>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-white">No results found.</div>
+            {% endif %}
           </div>
         </div>
       </div>

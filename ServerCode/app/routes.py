@@ -37,10 +37,10 @@ def UploadPage():
 
 @app.route('/SearchPage', methods=['GET'])
 def SearchPage():
-    query = request.args.get('title', '').strip()
+    title_query = request.args.get('title', '').strip()
 
-    if query:
-        results = Question.query.filter(Question.title.ilike(f"%{query}%")).all()
+    if title_query:
+        results = Question.query.filter(Question.title.ilike(f"%{title_query}%")).all()
     else:
         results = Question.query.all()
 
