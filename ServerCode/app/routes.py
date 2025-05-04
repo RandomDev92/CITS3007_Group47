@@ -38,12 +38,22 @@ def UploadPage():
 @app.route('/SearchPage', methods=['GET'])
 def SearchPage():
     title_query = request.args.get('title', '').strip()
+    difficulty_query = request.args.get('difficulty', '').strip()
+
+    query = Question.query
 
     if title_query:
-        results = Question.query.filter(Question.title.ilike(f"%{title_query}%")).all()
-    else:
-        results = Question.query.all()
+        query = query.filter(Question.title.ilike(f"%{title_query}%"))
 
+    if difficulty_query:
+        from app.models import Difficulty
+        try:
+            enum_val = Difficulty[difficulty_query.upper()]
+            query = query.filter(Question.difficulty == enum_val)
+        except KeyError:
+            pass
+
+    results = query.all()
     return render_template("SearchPage.html", questions=results)
 
 @app.route('/UserPage')
