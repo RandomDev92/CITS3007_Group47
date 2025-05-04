@@ -101,24 +101,28 @@
     <!--CONTENT-->
     <div class="container py-5 text-white">
         <div class="row g-4 justify-content-center">
+          <!-- User Score Card -->
           <div class="col-12 col-lg-5">
             <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4 bg-dark border border-white rounded">
               <h3 class="mb-4">Your score</h3>
-              <p class="mb-2">Time taken</p>
-              <p class="mb-2">Tests ran</p>
-              <p class="mb-2">Code length</p>
-              <p class="mb-0">Rank on the question</p>
+              <p class="mb-2">Time taken: {{ user_score.time_taken }}s</p>
+              <p class="mb-2">Tests ran: {{ user_score.tests_ran }}</p>
+              <p class="mb-2">Code length: {{ user_score.code_length }} lines</p>
+              <p class="mb-0">Passed: {{ 'Yes' if user_score.passed else 'No' }}</p>
             </div>
           </div>
+
+          <!-- Question Stats Card -->
           <div class="col-12 col-lg-5">
             <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4 bg-dark border border-white rounded">
               <h3 class="mb-4">Average score</h3>
-              <p class="mb-2">Average time taken</p>
-              <p class="mb-2">Average tests ran</p>
-              <p class="mb-2">Best code length</p>
-              <p class="mb-0">Amount of people completed</p>
+              <p class="mb-2">Average time taken: {{ question.avg_time }}s</p>
+              <p class="mb-2">Average tests ran: {{ question.avg_tests }}</p>
+              <p class="mb-2">Best code length: {{ question.best_code_length }} chars</p>
+              <p class="mb-0">People completed: {{ question.completed_count }}</p>
             </div>
           </div>
+        </div>
         </div>
       <!--Rating stars-->
       <div class="d-flex justify-content-center mt-5" id="rating">
