@@ -35,9 +35,16 @@ def UploadPage():
         return redirect(url_for('LandingUpload'))
 
 
-@app.route('/SearchPage')
+@app.route('/SearchPage', methods=['GET'])
 def SearchPage():
-    return render_template("SearchPage.html")
+    query = request.args.get('title', '').strip()
+
+    if query:
+        results = Question.query.filter(Question.title.ilike(f"%{query}%")).all()
+    else:
+        results = Question.query.all()
+
+    return render_template("SearchPage.html", questions=results)
 
 @app.route('/UserPage')
 @login_required
