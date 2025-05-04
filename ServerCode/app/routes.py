@@ -177,7 +177,7 @@ def QuestionAnswer():
         lines_of_code = code.count('\n') + 1 if code else 0
 
         submission = Submission(
-            user_id=current_user.id,
+            user_id=current_user.username,
             question_id=question_id,
             code=code,
             passed=passed,
