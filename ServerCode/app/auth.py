@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
 from . import db
 from app import app
-from flask_login import login_user
+from flask_login import login_user, logout_user
 
 
 @app.route('/LoginPage', methods = ['GET', 'POST'])
@@ -28,14 +28,19 @@ def SignupPage():
         return render_template("SignupPage.html")
     if request.method == 'POST':
         data = request.form
-        userDB = User.query.filter_by(username=data['email']).first()
+        userDB = User.query.filter_by(username=data['Username']).first()
         if userDB is not None:
-            flash("Email Already In Use", 'success')
+            flash("Username Already In Use", 'success')
             return redirect('/SignupPage')
         else:
             hashedPswd = generate_password_hash(data["pswd"])
-            newUser = User(username=data["email"], password_hash=hashedPswd)
+            newUser = User(username=data["Username"], password_hash=hashedPswd)
             db.session.add(newUser)
             db.session.commit()
             flash("Account Created", 'success')
             return redirect("/LoginPage")
+
+@app.route('/Logout')
+def Logout():
+    logout_user()
+    return redirect("/HomePage")

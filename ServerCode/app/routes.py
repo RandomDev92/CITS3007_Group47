@@ -21,7 +21,6 @@ def UploadPage():
         return render_template("UploadPage.html", form=blankform)
     if request.method == 'POST':
         uploadedQ = request.form
-        print(uploadedQ)
         if None != Question.query.filter_by(title=uploadedQ["title"]).first():
             flash("Title is already taken", 'error')
             return render_template("UploadPage.html", form=uploadedQ)
@@ -60,10 +59,41 @@ def SearchPage():
     results = query.all()
     return render_template("SearchPage.html", questions=results)
 
-@app.route('/UserPage')
+@app.route('/UserPage', methods = ['GET', 'POST'])
 @login_required
 def UserPage():
-    return render_template("UserPage.html", current_user=current_user)
+    if request.method == 'GET':
+        return render_template("UserPage.html", user=current_user)
+    if request.method == 'POST':
+        form = request.form
+        if form["username"] != current_user.username:
+            return ('', 204)
+        if form["type"] == "shareProfileChange":
+            user = User.query.get_or_404(current_user.username)
+            if form["shareProfile"] == "true":
+                user.share_profile = True
+            elif form["shareProfile"] == "false":
+                user.share_profile = False
+            db.session.add(user)
+            db.session.commit()
+            return ('', 204)
+        if form["type"] == "Change":
+            user = User.query.get_or_404(current_user.username)
+            user.username = form["newUsername"]
+            #more changes if needed e.g. password or so on
+            db.session.add(user)
+            db.session.commit()
+            flash("Profile Changed.", "success")
+            return redirect('/UserPage')
+
+
+@app.route('/UserPage/<userid>')
+def SpecificUserPage(userid):
+    userDB = User.query.filter_by(username=userid).first()
+    if userDB == None or userDB.share_profile == False or userDB == current_user:
+        flash("User Either Doesn't Exist Or Has Share Disabled.", "error")
+        return redirect('/UserPage')
+    return render_template("UserPage.html", user=userDB)
 
 @app.route('/QuestionDescription')
 @login_required

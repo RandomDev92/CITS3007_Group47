@@ -108,26 +108,23 @@
           <!--Title search-->
           <form action="/SearchPage" method="GET" id="search-form">
             <!-- Title input -->
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-bars"></i></span>
-              </div>
+            <div class="mb-3">
               <input
                 type="text"
                 class="form-control"
                 name="title"
                 value="{{ request.args.get('title', '') }}"
                 placeholder="Title"
-                aria-label="Search by title"
               />
             </div>
           
-            <!-- Difficulty select (auto-submits on change) -->
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-bars"></i></span>
-              </div>
-              <select class="form-select" name="difficulty" aria-label="Filter by difficulty" onchange="document.getElementById('search-form').submit();">
+            <!-- Difficulty select -->
+            <div class="mb-3">
+              <select
+                class="form-select"
+                name="difficulty"
+                onchange="document.getElementById('search-form').submit();"
+              >
                 <option value="">Difficulty</option>
                 <option value="easy" {% if request.args.get('difficulty') == 'easy' %}selected{% endif %}>Easy</option>
                 <option value="medium" {% if request.args.get('difficulty') == 'medium' %}selected{% endif %}>Medium</option>
