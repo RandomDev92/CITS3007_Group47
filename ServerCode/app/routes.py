@@ -57,6 +57,15 @@ def UserPage():
             db.session.add(user)
             db.session.commit()
             return ('', 204)
+        if form["type"] == "Change":
+            user = User.query.get_or_404(current_user.username)
+            user.username = form["newUsername"]
+            #more changes if needed e.g. password or so on
+            db.session.add(user)
+            db.session.commit()
+            flash("Profile Changed.", "success")
+            return redirect('/UserPage')
+
 
 @app.route('/UserPage/<userid>')
 def SpecificUserPage(userid):

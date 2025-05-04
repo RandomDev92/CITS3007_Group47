@@ -200,14 +200,16 @@
         </div>
         {% if user.username == current_user.username %}
         <div id="EditProfileContent" class="container-sm w-50 bg-dark text-white my-4 border border-white rounded">
-            <div class="m-5">
+            <form class="m-5" id="ChangeForm" method="POST">
+                <input type="hidden" name="username" value="{{current_user.username}}" />
+                <input type="hidden" name="type" value="Change" />
                 <h3 class="text-center">Edit Profile</h3>
                 <label for="formFile" class="form-label mb-0">Change Profile Picture</label>
-                <input class="form-control mb-2" type="file" id="pfpFile">
+                <input class="form-control mb-2" type="file" id="pfpFile" name="newpfp">
                 <label for="formFile" class="form-label mb-0">Change Username</label>
-                <input type="text" class="form-control mb-3" id="changedUsername" placeholder="New Username">
+                <input type="text" class="form-control mb-3" id="changedUsername" placeholder="New Username" name="newUsername">
                 <button type="submit" class="btn btn-danger d-grid col-6 mx-auto">Subimit Edit</button>
-            </div>
+            </form>
         </div>
         {% endif %}
     </body>

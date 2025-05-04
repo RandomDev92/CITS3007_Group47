@@ -13,7 +13,7 @@ def LoginPage():
     if request.method == 'POST':
         data = request.form
         print(data)
-        userDB = User.query.filter_by(username=data['email']).first()
+        userDB = User.query.filter_by(username=data['Username']).first()
         if check_password_hash(userDB.password_hash, data["pswd"]):
             login_user(userDB, remember=True)
             return redirect("/UserPage")
@@ -28,13 +28,13 @@ def SignupPage():
         return render_template("SignupPage.html")
     if request.method == 'POST':
         data = request.form
-        userDB = User.query.filter_by(username=data['email']).first()
+        userDB = User.query.filter_by(username=data['Username']).first()
         if userDB is not None:
-            flash("Email Already In Use", 'success')
+            flash("Username Already In Use", 'success')
             return redirect('/SignupPage')
         else:
             hashedPswd = generate_password_hash(data["pswd"])
-            newUser = User(username=data["email"], password_hash=hashedPswd)
+            newUser = User(username=data["Username"], password_hash=hashedPswd)
             db.session.add(newUser)
             db.session.commit()
             flash("Account Created", 'success')
