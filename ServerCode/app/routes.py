@@ -10,7 +10,7 @@ Q
 def HomePage():
     return render_template("HomePage.html")
 
-@app.route('/UploadPage', methods = ['GET', 'POST'])
+
 def UploadPage():
         return render_template("UploadPage.html")
     
@@ -35,10 +35,14 @@ def QuestionDescriptionPage():
 @app.route('/QuestionStat')
 def QuestionStatPage():
     question_id = request.args.get('id', type=int)
+    
+    # Fetch the most recent submission for the current user and question
     submission = Submission.query.filter_by(
         user_id=current_user.id,
         question_id=question_id
     ).order_by(Submission.timestamp.desc()).first()
+    
+    # Prepare user score data
     if submission:
         user_score = {
             'time_taken': submission.runtime_sec,
@@ -53,8 +57,33 @@ def QuestionStatPage():
             'code_length': "N/A",
             'passed': "N/A"
         }
+
+    # Fetch the question
     question = Question.query.get_or_404(question_id)
-    return render_template("QuestionResults.html", question=question, user_score=user_score)
+
+    # Get all submission times for this question
+    submission_times = [s.runtime_sec for s in question.submissions]
+    if not submission_times:
+        submission_times = [0]
+
+    # Generate dynamic bins for the histogram
+    min_time = min(submission_times)
+    max_time = max(submission_times)
+    bin_count = 10
+    bin_size = max(1, (max_time - min_time) // bin_count + 1)
+    bins = list(range(min_time, max_time + bin_size, bin_size))
+
+    # Calculate frequency distribution
+    import numpy as np
+    hist, edges = np.histogram(submission_times, bins=bins)
+
+    # Prepare data for the chart (bin labels and frequency values)
+    bin_labels = [f"{edges[i]}–{edges[i+1]}" for i in range(len(edges)-1)]
+    frequencies = hist.tolist()
+
+    # Render the template with all necessary context
+    return render_template("QuestionResults.html", question=question, user_score=user_score, bin_labels=bin_labels, frequencies=frequencies)
+
 
 
 
