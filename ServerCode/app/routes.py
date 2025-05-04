@@ -43,6 +43,7 @@ def UploadPage():
 def SearchPage():
     title_query = request.args.get('title', '').strip()
     difficulty_query = request.args.get('difficulty', '').strip()
+    tag_query = request.args.get('tag', '').strip()
 
     query = Question.query
 
@@ -56,7 +57,10 @@ def SearchPage():
         except KeyError:
             pass
 
-    results = query.all()
+    if tag_query:
+        query = query.join(Question.tags).filter(Tag.name.ilike(f"%{tag_query}%"))
+
+    results = query.distinct().all()
     return render_template("SearchPage.html", questions=results)
 
 @app.route('/UserPage', methods = ['GET', 'POST'])
