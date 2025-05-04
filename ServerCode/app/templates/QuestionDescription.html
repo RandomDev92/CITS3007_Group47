@@ -108,7 +108,7 @@
 
               <!-- Start button -->
               <div class="col-6 ps-1">
-                <a class="btn btn-danger w-100" role="button" href="{{ url_for('QuestionAnswerPage', question_id=question.id) }}">Start</a>              
+                <a class="btn btn-danger w-100" role="button" href="{{ url_for('QuestionAnswerPage') }}?id={{ question.id }}">Start</a>              
               </div>
             </div>
           </div>

@@ -63,7 +63,33 @@ def QuestionStatPage():
     return render_template("QuestionResults.html", question=question, user_score=user_score)
 
 
-@app.route('/QuestionAnswer')
+
+@app.route('/QuestionAnswer', methods=['GET', 'POST'])
+@login_required
 def QuestionAnswer():
+    if request.method == 'POST':
+        question_id = request.form.get('question_id', type=int)
+        code = request.form.get('code')
+        runtime_sec = request.form.get('runtime_sec', type=int)
+
+        # I'll do real evaluations later when I figure out how to get the testing working for now they're just placeholders (except lines of code)
+        passed = True  
+        tests_run = 3
+        lines_of_code = code.count('\n') + 1 if code else 0
+
+        submission = Submission(
+            user_id=current_user.id,
+            question_id=question_id,
+            code=code,
+            passed=passed,
+            runtime_sec=runtime_sec,
+            lines_of_code=lines_of_code,
+            tests_run=tests_run
+        )
+        db.session.add(submission)
+        db.session.commit()
+
+        return redirect(url_for('QuestionStatPage', id=question_id))
+
     return render_template("QuestionAnswer.html")
 
