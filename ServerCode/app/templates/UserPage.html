@@ -34,6 +34,12 @@
           #EditProfileContent{
             display: none;
           }
+          #ShareProfileEnabled{
+            display: none;
+          }
+          #ShareProfileDisabled{
+            display: none;
+          }
         </style>
     </head>
     <body>
@@ -85,51 +91,93 @@
         </nav>
 
         <div class="container-sm w-50 bg-dark text-white my-4 border border-white rounded">
+        {% with messages = get_flashed_messages(category_filter=["success"])%}
+        {% if messages%}
+        {% for message in messages%}
+        <p class="m-4 bg-success text-white border rounded text-center">{{message}}</p>
+        {%endfor%}
+        {%endif%}
+        {%endwith%}
+        {% with messages = get_flashed_messages(category_filter=["error"])%}
+        {% if messages%}
+        {% for message in messages%}
+        <p class="m-4 bg-danger text-white border rounded text-center">{{message}}</p>
+        {%endfor%}
+        {%endif%}
+        {%endwith%}
+        <p id="ShareProfileEnabled" class="m-4 bg-success text-white border rounded text-center">Profile Share Enabled.</p>
+        <p id="ShareProfileDisabled" class="m-4 bg-success text-white border rounded text-center">Profile Share Disabled.</p>
+            {% if user.username == current_user.username %}
             <div class="text-center m-3"><h2>Your Stats</h2></div>
+            {% else %}
+            <div class="text-center m-3"><h2>{{user.username}}'s Stats</h2></div>
+            {% endif %}
             <div class="row row-cols-2 g-5 mb-5">
                 <div class="col text-center">
                     <h3>Avg Time Taken</h3>
-                    <h2><b>{{current_user.avg_time_sec}}</b></h2>
+                    <h2><b>{{user.avg_time_sec}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Standard Deviation</h3>
-                    <h2><b>{{current_user.std_time_sec}}</b></h2>
+                    <h2><b>{{user.std_time_sec}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Best Time</h3>
-                    <h2><b>{{current_user.best_time_sec}}</b></h2>
+                    <h2><b>{{user.best_time_sec}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Best Question</h3>
-                    <h4><a class="link-light" href={{current_user.best_question_id}}>Link to Question</a></h4>
+                    <h4><a class="link-light" href={{user.best_question_id}}>Link to Question</a></h4>
                 </div>
                 <div class="col text-center">
                     <h3>Questions Completed</h3>
-                    <h2><b>{{current_user.completed_questions}}</b></h2>
+                    <h2><b>{{user.completed_questions}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Completion Rate</h3>
-                    <h2><b>{{current_user.completion_rate}}%</b></h2>
+                    <h2><b>{{user.completion_rate}}%</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Avg Attempts</h3>
-                    <h2><b>{{current_user.avg_attempts}}</b></h2>
+                    <h2><b>{{user.avg_attempts}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>more stats as necessary</h3>
                     <h2><b></b></h2>
                 </div>
             </div>
-            <div class="text-center">
-                <p>(only visible if logged in user is the user page)</p>
-            </div>
+            {% if user.username == current_user.username %}
             <div class="d-flex justify-content-center my-4">
                 <div class="mx-4">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="ShareProfile">
+                <div class="form-check form-switch" onchange="ShareProfile()">
+                    <input class="form-check-input" type="checkbox" role="switch" id="ShareProfile"  {{'checked' if current_user.share_profile else '' }}>
                     <label class="form-check-label" for="ShareProfile">
                         Share Profile With Others
                     </label>
+                    <script>
+                        function ShareProfile() {
+                            var En = document.getElementById("ShareProfileEnabled");
+                            var Dis = document.getElementById("ShareProfileDisabled");
+                            var box = document.getElementById("ShareProfile").checked;
+                            var fd = new FormData();
+                            fd.append("username","{{current_user.username}}");
+                            fd.append("type", "shareProfileChange");
+                            if (box){
+                                En.style.display = "block";
+                                Dis.style.display = "none";
+                                fd.append("shareProfile", true);
+                            }
+                            else{
+                                En.style.display = "none";
+                                Dis.style.display = "block";
+                                fd.append("shareProfile", false);
+                            }
+                            const resp = fetch(window.location.href, {
+                                method: "POST",
+                                body: fd,
+                            });
+                        }
+                    </script>
                 </div>  
                 </div> 
                 <div class="mx-4">
@@ -147,7 +195,9 @@
                     </script>
                 </div>
             </div>
+            {% endif %}
         </div>
+        {% if user.username == current_user.username %}
         <div id="EditProfileContent" class="container-sm w-50 bg-dark text-white my-4 border border-white rounded">
             <div class="m-5">
                 <h3 class="text-center">Edit Profile</h3>
@@ -158,5 +208,6 @@
                 <button type="submit" class="btn btn-danger d-grid col-6 mx-auto">Subimit Edit</button>
             </div>
         </div>
+        {% endif %}
     </body>
 </html>
