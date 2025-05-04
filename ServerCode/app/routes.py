@@ -12,12 +12,6 @@ def HomePage():
 
 @app.route('/UploadPage', methods = ['GET', 'POST'])
 def UploadPage():
-    if request.method == 'GET':
-        return render_template("UploadPage.html")
-    if request.method == 'POST':
-        uploadedQ = request.form
-        print(uploadedQ)
-        newQ = Question(title=uploadedQ["Title"])
         return render_template("UploadPage.html")
     
 
