@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
 from . import db
 from app import app
-from flask_login import login_user
+from flask_login import login_user, logout_user
 
 
 @app.route('/LoginPage', methods = ['GET', 'POST'])
@@ -39,3 +39,8 @@ def SignupPage():
             db.session.commit()
             flash("Account Created", 'success')
             return redirect("/LoginPage")
+
+@app.route('/Logout')
+def Logout():
+    logout_user()
+    return redirect("/HomePage")

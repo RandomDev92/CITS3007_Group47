@@ -147,7 +147,7 @@
                 </div>
             </div>
             {% if user.username == current_user.username %}
-            <div class="d-flex justify-content-center my-4">
+            <div class="d-flex align-items-center justify-content-center my-4">
                 <div class="mx-4">
                 <div class="form-check form-switch" onchange="ShareProfile()">
                     <input class="form-check-input" type="checkbox" role="switch" id="ShareProfile"  {{'checked' if current_user.share_profile else '' }}>
@@ -180,8 +180,8 @@
                     </script>
                 </div>  
                 </div> 
-                <div class="mx-4">
-                    <button class="btn btn-danger" onclick="toggleEdit()">Edit profile </button>
+                <div class="d-flex mx-4">
+                    <button class="btn btn-danger mx-3" onclick="toggleEdit()">Edit profile </button>
                     <script>
                         function toggleEdit() {
                             var x = document.getElementById("EditProfileContent");
@@ -193,6 +193,7 @@
                             }
                         }
                     </script>
+                    <a class="btn btn-danger mx-3" href="/Logout">Log Out</a>
                 </div>
             </div>
             {% endif %}
