@@ -4,7 +4,7 @@ from app.models import User, Question, db, Submission
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_login import current_user
-
+Q
 @app.route('/')
 @app.route('/HomePage')
 def HomePage():
@@ -30,10 +30,13 @@ def SearchPage():
 def UserPage():
     return render_template("UserPage.html", current_user=current_user)
 
-@app.route('/QuestionDescription/<int:question_id>')
+@app.route('/QuestionDescription')
 def QuestionDescriptionPage():
     question_id = request.args.get('id', type=int)
-    return render_template("QuestionDescription.html")
+    if question_id is None:
+        abort(400, description="Missing question ID.")
+    question = Question.query.get_or_404(question_id)
+    return render_template("QuestionDescription.html", question=question)
 
 @app.route('/QuestionStat')
 def QuestionStatPage():
