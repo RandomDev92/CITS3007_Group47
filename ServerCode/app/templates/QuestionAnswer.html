@@ -45,8 +45,7 @@
             width: 100%;  
         }
     </style>
-    </head>
-
+    </head>  
     <body>
   <!--TOP NAV-->
   <nav class="navbar navbar-custom py-3 bg-dark">
@@ -97,62 +96,91 @@
         <!--Content-->
         <div class="container py-5 pb-0 mn text-white">
             <div class="row g-4 justify-content-center">
-                <div class="col-12 col-lg-5">
-                    <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
-                        <h3>Question Title</h3>
-                        <p class="mb-2">Question Description</p>
-                    </div>
+              <div class="col-12 col-lg-5">
+                <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
+                  <div class="container text-white text-center py-2">
+                    <h5>Time Elapsed: <span id="timer">00:00</span></h5>
+                  </div>
+                  <h3>{{ question.title }}</h3>
+                  <p class="mb-2">{{ question.description }}</p>
                 </div>
-                <div class="col-12 col-lg-5">
-                    <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
-                        <h3>Test Case and Results</h3>
-                        <p class="mb-2">test case examples</p>
-                    </div>
+              </div>
+              <div class="col-12 col-lg-5">
+                <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
+                  <h3>Test Case and Results</h3>
+                  <p class="mb-2">{{ question.test_cases}}</p>
+                  <p class="mb-2">fill based on failed test cases</p>
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
 
         <!--Question Answer-->
+        
         <div class="container py-4">
             <div class="row g-4 justify-content-center">
             <div class="col-12 col-lg-10">
-                <textarea id="CodeInput" name="CodeInput" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..."></textarea> 
-                <script>
-                    //copied from https://stackoverflow.com/a/10456255 
-                    //to have the code window use tabs properly.
-                    var myInput = document.getElementById("CodeInput");
-                    if(myInput.addEventListener ) {
-                        myInput.addEventListener('keydown',this.keyHandler,false);
-                    } else if(myInput.attachEvent ) {
-                        myInput.attachEvent('onkeydown',this.keyHandler); /* damn IE hack */
-                    }
-              
-                    function keyHandler(e) {
-                        var TABKEY = 9;
-                        if(e.keyCode == TABKEY) {
-                            this.value += "\t";
-                            if(e.preventDefault) {
-                                e.preventDefault();
-                            }
-                            return false;
+                <form method="POST" action="{{ url_for('QuestionAnswer') }}">
+                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..."></textarea>
+                    <script>
+                        //copied from https://stackoverflow.com/a/10456255 
+                        //to have the code window use tabs properly.
+                        var myInput = document.getElementById("CodeInput");
+                        if(myInput.addEventListener ) {
+                            myInput.addEventListener('keydown',this.keyHandler,false);
+                        } else if(myInput.attachEvent ) {
+                            myInput.attachEvent('onkeydown',this.keyHandler); /* damn IE hack */
                         }
-                    }
+                  
+                        function keyHandler(e) {
+                            var TABKEY = 9;
+                            if(e.keyCode == TABKEY) {
+                                this.value += "\t";
+                                if(e.preventDefault) {
+                                    e.preventDefault();
+                                }
+                                return false;
+                            }
+                        }
+                    </script>
+                    <input type="hidden" name="question_id" value="{{ request.args.get('id') }}">
+                    <input type="hidden" id="timerInput" name="runtime_sec" value="">
+                
+                    <div class="row row-cols-2 mt-3">
+                        <div class="col-6 pe-1">
+                            <a class="btn bg-dark text-white border border-white w-100" href="QuestionDescription">Back</a>
+                        </div>
+                        <div class="col-6 ps-1">
+                            <button type="submit" class="btn btn-danger w-100">Test and Submit</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <script>
+                    let startTime = Date.now();
+                    document.querySelector('form').addEventListener('submit', function() {
+                        let runtime = Math.floor((Date.now() - startTime) / 1000);
+                        document.getElementById('timerInput').value = runtime;
+                    });
                 </script>
-
-                <div class="row row-cols-2 mt-3 ">
-                    <!-- Back button -->
-                    <div class="col-6 pe-1">
-                        <a class="btn bg-dark text-white border border-white w-100" href="QuestionDescription">Back</a>
-                    </div>
-                    
-                    <!-- Submit button -->
-                    <div class="col-6 ps-1">
-                        <a class="btn btn-danger w-100" role="button" href="QuestionStat">Test and Submit</a>
-                    </div>
-                </div>
+            </div>
             </div>
         </div>
-        </div>
     </body>
+    <script>
+        let totalSeconds = 0;
+        const timerElement = document.getElementById("timer");
+
+        function updateTimer() {
+            totalSeconds++;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const minStr = minutes.toString().padStart(2, '0');
+            const secStr = seconds.toString().padStart(2, '0');
+            timerElement.textContent = `${minStr}:${secStr}`;
+        }
+
+        setInterval(updateTimer, 1000);
+    </script>  
 </html>
 
