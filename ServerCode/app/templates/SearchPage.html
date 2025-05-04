@@ -118,7 +118,7 @@
               />
             </div>
           
-            <!-- Difficulty select -->
+            <!-- Difficulty select (auto-submit) -->
             <div class="mb-3">
               <select
                 class="form-select"
@@ -131,23 +131,21 @@
                 <option value="hard" {% if request.args.get('difficulty') == 'hard' %}selected{% endif %}>Hard</option>
               </select>
             </div>
+          
+            <!-- Tag input -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="tag"
+                value="{{ request.args.get('tag', '') }}"
+                placeholder="Tags"
+              />
+            </div>
+          
+            <!-- Hidden submit button (so Enter works) -->
+            <button type="submit" hidden></button>
           </form>
-
-          <!--Tags search-->
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fas fa-bars"></i></span>
-            </div>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Tags"
-              aria-label="Search by tag"
-            />
-            <div class="input-group-append">
-              <span class="input-group-text"><i class="fas fa-search"></i></span>
-            </div>
-          </div>
         </div>
         
         <!--Questions list column-->
