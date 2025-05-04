@@ -45,8 +45,7 @@
             width: 100%;  
         }
     </style>
-    </head>
-
+    </head>  
     <body>
   <!--TOP NAV-->
   <nav class="navbar navbar-custom py-3 bg-dark">
@@ -99,6 +98,9 @@
             <div class="row g-4 justify-content-center">
                 <div class="col-12 col-lg-5">
                     <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
+                        <div class="container text-white text-center py-2">
+                            <h5>Time Elapsed: <span id="timer">00:00</span></h5>
+                        </div>
                         <h3>Question Title</h3>
                         <p class="mb-2">Question Description</p>
                     </div>
@@ -154,5 +156,20 @@
         </div>
         </div>
     </body>
+    <script>
+        let totalSeconds = 0;
+        const timerElement = document.getElementById("timer");
+    
+        function updateTimer() {
+            totalSeconds++;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const minStr = minutes.toString().padStart(2, '0');
+            const secStr = seconds.toString().padStart(2, '0');
+            timerElement.textContent = `${minStr}:${secStr}`;
+        }
+    
+        setInterval(updateTimer, 1000);
+    </script>  
 </html>
 
