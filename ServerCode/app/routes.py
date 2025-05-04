@@ -7,6 +7,7 @@ from sqlalchemy import select
 
 
 from flask_login import current_user, login_required
+from flask_login import current_user, login_required
 
 @app.route('/')
 @app.route('/HomePage')
@@ -36,6 +37,7 @@ def UploadPage():
 
 
 @app.route('/SearchPage', methods=['GET'])
+@login_required
 def SearchPage():
     title_query = request.args.get('title', '').strip()
     difficulty_query = request.args.get('difficulty', '').strip()
@@ -62,14 +64,17 @@ def UserPage():
     return render_template("UserPage.html", current_user=current_user)
 
 @app.route('/QuestionDescription')
+@login_required
 def QuestionDescriptionPage():
     return render_template("QuestionDescription.html")
 
 @app.route('/QuestionStat')
+@login_required
 def QuestionStatPage():
     return render_template("QuestionStat.html")
 
 @app.route('/QuestionAnswer')
+@login_required
 def QuestionAnswer():
     return render_template("QuestionAnswer.html")
 
