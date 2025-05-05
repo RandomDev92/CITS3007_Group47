@@ -1,10 +1,10 @@
-from flask import render_template,  request, redirect, flash, url_for
-from flask_login import UserMixin
+import imghdr
+import os
+from flask import render_template,  request, redirect, flash, url_for, abort
 from app import app
 from app.models import User, Question, Difficulty, Tag, Submission
 from . import db
 from werkzeug.security import generate_password_hash
-from sqlalchemy import select
 
 
 from flask_login import current_user, login_required
@@ -14,7 +14,8 @@ from flask_login import current_user, login_required
 def HomePage():
     return render_template("HomePage.html")
 
-
+@app.route('/UploadPage', methods = ['GET', 'POST'])
+@login_required
 def UploadPage():
     if request.method == 'GET':
         blankform = {"title":"", "short_desc":"", "full_desc":"", "Code":"", "testCode":"", "tags":""}
@@ -127,6 +128,7 @@ def QuestionDescriptionPage():
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
+    print(type(question.difficulty))
     return render_template("QuestionDescription.html", question=question)
 
 @app.route('/QuestionStat')
