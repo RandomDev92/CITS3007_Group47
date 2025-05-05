@@ -53,7 +53,7 @@
                 href="UserPage"
                 aria-label="User-home">
                 <img
-                src="{{url_for('static', filename='img/mstom_400x400.jpg')}}"
+                src="{{url_for('static', filename='avatars/' + current_user.avatar_url)}}"
                 class="rounded-circle mr-2"
                 alt="User avatar"
                 height="48"
@@ -159,6 +159,8 @@
                             var En = document.getElementById("ShareProfileEnabled");
                             var Dis = document.getElementById("ShareProfileDisabled");
                             var box = document.getElementById("ShareProfile").checked;
+                            console.log(En.style.display)
+
                             var fd = new FormData();
                             fd.append("username","{{current_user.username}}");
                             fd.append("type", "shareProfileChange");
@@ -185,11 +187,11 @@
                     <script>
                         function toggleEdit() {
                             var x = document.getElementById("EditProfileContent");
-                            if (x.style.display === "none") {
+                            if (x.style.display === "block") {
+                                x.style.display = "none";
+                            } else {
                                 x.style.display = "block";
                                 document.documentElement.scrollTop = document.body.scrollTop = 1000;
-                            } else {
-                                x.style.display = "none";
                             }
                         }
                     </script>
@@ -200,17 +202,41 @@
         </div>
         {% if user.username == current_user.username %}
         <div id="EditProfileContent" class="container-sm w-50 bg-dark text-white my-4 border border-white rounded">
-            <form class="m-5" id="ChangeForm" method="POST">
+            <form class="m-5" id="ChangeForm" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="username" value="{{current_user.username}}" />
                 <input type="hidden" name="type" value="Change" />
                 <h3 class="text-center">Edit Profile</h3>
                 <label for="formFile" class="form-label mb-0">Change Profile Picture</label>
-                <input class="form-control mb-2" type="file" id="pfpFile" name="newpfp">
+                <input class="form-control mb-2" type="file" id="newpfp" name="newpfp" accept="image/*">
                 <label for="formFile" class="form-label mb-0">Change Username</label>
                 <input type="text" class="form-control mb-3" id="changedUsername" placeholder="New Username" name="newUsername">
-                <button type="submit" class="btn btn-danger d-grid col-6 mx-auto">Subimit Edit</button>
+                <p id="msg" class="text-white"></p>
+                <label for="formFile" class="form-label mb-0">Change Password</label>
+                <input type="password" class="form-control mb-3" id="changedPassword" placeholder="New Password" name="newPassword">
+                <label for="formFile" class="form-label mb-0">Confirm Password</label>
+                <input type="password" class="form-control mb-3" id="cnfPassword" placeholder="Confirm Password">
+                <button type="button" class="btn btn-danger d-grid col-6 mx-auto" onclick="checkPassword()">Subimit Edit</button>
             </form>
         </div>
+        <script>
+        //copied from https://codingartistweb.com/2024/11/confirm-password-html-css-javascript/
+          function checkPassword() { 
+            //Cache DOM elements
+            const passwordField = document.getElementById("changedPassword");
+            const confirmPasswordField = document.getElementById("cnfPassword");
+            const message = document.getElementById("msg");
+            //Get values
+            const password = passwordField.value
+            const confirmPassword = confirmPasswordField.value;
+            //validation logic
+            if (password === confirmPassword) {
+              document.getElementById("ChangeForm").submit()
+            } else {
+                message.display = "block";
+                message.textContent = "Passwords Don't Match";
+            }
+          }
+        </script>
         {% endif %}
     </body>
 </html>

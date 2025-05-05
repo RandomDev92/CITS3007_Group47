@@ -29,7 +29,7 @@ class User(UserMixin, db.Model):
 
     username = db.Column(db.String(64), primary_key=True, nullable=False)    
     password_hash = db.Column("password_hash", db.String(256), nullable=False)
-    avatar_url = db.Column(db.String(512), default="static\img\mstom_400x400.jpg")
+    avatar_url = db.Column(db.String(512), default="mstom_400x400.jpg")
     share_profile = db.Column(db.Boolean, default=False)
 
     #denormalised performance stats
