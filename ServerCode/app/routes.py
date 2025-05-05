@@ -60,7 +60,7 @@ def SearchPage():
 
     if tag_query:
         query = query.join(Question.tags).filter(Tag.name.ilike(f"%{tag_query}%"))
-
+    
     results = query.distinct().all()
     return render_template("SearchPage.html", questions=results)
 
@@ -138,12 +138,14 @@ def QuestionStatPage():
 
     # Fetch the question from the database
     question = Question.query.get_or_404(question_id)
-
+    everything = Submission.query.all
+    print(everything)
     # Fetch the most recent submission for the current user and the given question
     submission = Submission.query.filter_by(
         user_id=current_user.username,  # Using username instead of id
         question_id=question_id
-    ).order_by(Submission.runtime_sec.desc()).first()
+    ).order_by(Submission.id.desc()).first()
+    print(submission)
 
     # Prepare user score data
     if submission:
@@ -160,6 +162,7 @@ def QuestionStatPage():
             'code_length': "N/A",
             'passed': "N/A"
         }
+        
     # Fetch all the submission times for the question
     submission_times = [s.runtime_sec for s in question.submissions if s.runtime_sec is not None]
 
@@ -183,7 +186,25 @@ def QuestionStatPage():
     # Prepare the bin labels and frequencies
     bin_labels = [f"{edges[i]}–{edges[i+1]}" for i in range(len(edges)-1)]
     frequencies = hist.tolist()
+    # Query all submissions for this question
+    submissions = Submission.query.filter_by(question_id=question_id).all()
 
+    # Compute metrics only from passing submissions
+    passing_submissions = [s for s in submissions if s.passed]
+
+    if passing_submissions:
+        avg_time = round(sum(s.runtime_sec for s in passing_submissions if s.runtime_sec) / len(passing_submissions), 2)
+        avg_tests = round(sum(s.tests_run for s in passing_submissions if s.tests_run) / len(passing_submissions), 2)
+        best_code_length = min(s.lines_of_code for s in passing_submissions if s.lines_of_code)
+        completed_count = len(set(s.user_id for s in passing_submissions))
+    else:
+        avg_time = avg_tests = best_code_length = completed_count = 0
+
+    # Attach these values to the question object or pass as a separate dict
+    question.avg_time = avg_time
+    question.avg_tests = avg_tests
+    question.best_code_length = best_code_length
+    question.completed_count = completed_count
     # Render the template with necessary context
     return render_template(
         "QuestionStat.html",
