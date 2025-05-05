@@ -120,7 +120,7 @@
         <div class="container py-4">
             <div class="row g-4 justify-content-center">
             <div class="col-12 col-lg-10">
-                <form method="POST" action="{{ url_for('QuestionAnswer') }}">
+                <form method="POST" action="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">
                     <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..."></textarea>
                     <script>
                         //copied from https://stackoverflow.com/a/10456255 
@@ -148,25 +148,39 @@
                 
                     <div class="row row-cols-2 mt-3">
                         <div class="col-6 pe-1">
-                            <a class="btn bg-dark text-white border border-white w-100" href="QuestionDescription">Back</a>
+                            <a class="btn bg-dark text-white border border-white w-100" href="{{ url_for('QuestionDescriptionPage', id=question.id) }}">Back</a>
                         </div>
                         <div class="col-6 ps-1">
                             <button type="submit" class="btn btn-danger w-100">Test and Submit</button>
                         </div>
                     </div>
                 </form>
-                
                 <script>
-                    let startTime = Date.now();
-                    document.querySelector('form').addEventListener('submit', function() {
-                        let runtime = Math.floor((Date.now() - startTime) / 1000);
-                        document.getElementById('timerInput').value = runtime;
+                    document.addEventListener("DOMContentLoaded", () => {
+                        const form = document.querySelector("form");
+                        if (form) {
+                            form.addEventListener("submit", () => {
+                                console.log("Form is being submitted");
+                            });
+                        }
                     });
                 </script>
+
             </div>
             </div>
         </div>
+        <script>
+            console.log("Script loaded");
+          </script>
     </body>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            let runtime = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timerInput').value = runtime;
+        
+            console.log(`Runtime: ${runtime} seconds`);
+        });
+    </script>
     <script>
         let totalSeconds = 0;
         const timerElement = document.getElementById("timer");

@@ -96,7 +96,7 @@
             <div class="desc-card d-flex bg-dark flex-column align-items-center text-center p-5 border border-white rounded text-white">
               <h3 class="mb-2">{{ question.title }}</h3>
               <small class="mb-4"><span class="badge bg-danger">{{ question.difficulty }}</span></small>
-              <p class="mb-4">{{ question.full_desc}}</p>
+              <a href="{{ url_for('UserPage', username=question.author_username) }}" class="mb-4">{{ question.author_username }}</a>
               <p class="mb-4">{{ question.full_desc}}</p>
             </div>
 
