@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Speed‑Code – Search</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      integrity="sha384‑Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      body {
+        background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
+        margin: 0;
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+
+      /*Top navigation*/
+      .navbar-custom {
+        box-shadow: 5px 5px 10px #FF0505;
+      }
+      .navbar-brand-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .nav-btn {
+        min-width: 90px;
+      }
+
+      /*Left filter panel*/
+      .filter-panel {
+        max-width: 270px;
+      }
+
+      .filter-panel .input-group-text {
+        background: transparent;
+        border: none;
+        padding-left: 0.75rem;
+      }
+
+      /*Question cards*/
+      .question-card {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      /*Scrollbar tweak for main list*/
+      .question-scroll {
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        padding-right: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--TOP NAV-->
+    <nav class="navbar navbar-custom py-3 bg-dark">
+      <div class="container-fluid">
+        <!--user avatar & mini‑profile-->
+         <div class="d-flex">
+           <a 
+           class="d-flex align-items-center text-left flex-shrink-0" 
+           href="UserPage"
+           aria-label="User-home">
+           <img
+           src="{{url_for('static', filename='avatars/' + current_user.avatar_url)}}"
+           class="rounded-circle mr-2"
+           alt="User avatar"
+           height="48"
+           width="48"
+           />
+           <div class="d-flex">
+             <div class="font-weight-bold" style="line-height: 1">{{current_user.username}}</div>
+            </a>
+          </div>
+        </div>
+
+        <!--Centred, clickable logo-->
+        <a
+          class="navbar-brand navbar-brand-center"
+          href="#"
+          aria-label="Speed‑Code home"
+        >
+          <img
+          src="{{url_for('static', filename='img/SCLogo.png')}}"
+          height="64"
+            alt="Speed‑Code logo"
+          />
+        </a>
+
+        <!--upload button-->
+        <div class="ml-auto d-flex">
+          <div class="ms-2">
+            <a href="UploadPage" class="btn btn-outline-light nav-btn">Upload</a>
+          </div>
+      </div>
+    </nav>
+
+    <!--CONTENT-->
+    <div class="container-fluid mt-4">
+      <div class="row justify-content-center">
+        <!--Left filter column-->
+        <div class="filter-panel px-3 mb-4">
+          <!--Title search-->
+          <form action="/SearchPage" method="GET" id="search-form">
+            <!-- Title input -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="title"
+                value="{{ request.args.get('title', '') }}"
+                placeholder="Title"
+              />
+            </div>
+          
+            <!-- Difficulty select (auto-submit) -->
+            <div class="mb-3">
+              <select
+                class="form-select"
+                name="difficulty"
+                onchange="document.getElementById('search-form').submit();"
+              >
+                <option value="">Difficulty</option>
+                <option value="easy" {% if request.args.get('difficulty') == 'easy' %}selected{% endif %}>Easy</option>
+                <option value="medium" {% if request.args.get('difficulty') == 'medium' %}selected{% endif %}>Medium</option>
+                <option value="hard" {% if request.args.get('difficulty') == 'hard' %}selected{% endif %}>Hard</option>
+              </select>
+            </div>
+          
+            <!-- Tag input -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="tag"
+                value="{{ request.args.get('tag', '') }}"
+                placeholder="Tags"
+              />
+            </div>
+          
+            <!-- Hidden submit button (so Enter works) -->
+            <button type="submit" hidden></button>
+          </form>
+        </div>
+        
+        <!--Questions list column-->
+        <div class="col-12 col-md-8 col-lg-6">
+          <div class="question-scroll pr-md-2">
+            {% if questions %}
+              {% for question in questions %}
+                <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
+                  <a href="{{ url_for('QuestionDescriptionPage') }}?id={{ question.id }}" class="stretched-link"></a>
+                  <h5 class="mb-2">{{ question.title }}</h5>
+                  <small class="mb-2">
+                    {% for tag in question.tags %}
+                      <span class="badge bg-danger">{{ tag.name }}</span>
+                    {% endfor %}
+                  </small>
+                  <small class="d-block">{{ question.short_desc }}</small>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-white">No results found.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

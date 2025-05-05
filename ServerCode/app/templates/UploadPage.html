@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Template</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      body {
+        background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
+        margin: 0;
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+      /*Top navigation*/
+      .navbar-custom {
+        box-shadow: 5px 5px 10px #FF0505;
+      }
+      .navbar-brand-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .nav-btn {
+        min-width: 90px;
+      }
+      .code-input{
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 300px;
+            min-width: 100%;
+      }    
+      .test-input{
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100px;
+            min-width: 100%;
+      }    
+      .form-control::placeholder{
+              color: grey;
+            }
+    </style>
+</head>
+<body>
+         <!--TOP NAV-->
+         <nav class="navbar navbar-custom py-3 bg-dark">
+          <div class="container-fluid">
+          <!--user avatar & mini‑profile-->    
+              <div class="d-flex">
+                  <a 
+                  class="d-flex align-items-center text-left flex-shrink-0" 
+                  href="UserPage"
+                  aria-label="User-home">
+                  <img
+                  src="{{url_for('static', filename='avatars/' + current_user.avatar_url)}}"
+                  class="rounded-circle mr-2"
+                  alt="User avatar"
+                  height="48"
+                  width="48"
+                  />
+                  <div class="d-flex">
+                  <div class="font-weight-bold" style="line-height: 1">{{current_user.username}}</div>
+                  </a>
+                  </div>
+              </div>
+      
+              <!--Centred, clickable logo-->
+              <a
+                  class="navbar-brand navbar-brand-center"
+                  href="#"
+                  aria-label="Speed‑Code home"
+              >
+                  <img
+                  src="{{url_for('static', filename='img/SCLogo.png')}}"
+                  height="64"
+                  alt="Speed‑Code logo"
+                  />
+              </a>
+    
+            <!--Stats button-->
+            <div class="ml-auto d-flex">
+              <div class="ms-2">
+                <a href="SearchPage" class="btn btn-outline-light nav-btn">Search</a>
+              </div>
+              <div class="ms-2">
+                <a href="UploadPage" class="btn btn-outline-light nav-btn">Upload</a>
+              </div>
+          </div>
+          </nav>
+  
+      <!--CONTENT-->
+      <div class="container py-5">
+        <div class="row">
+          <div class="col-12">
+            <form id="questionForm" method="POST">
+              <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+                {% with messages = get_flashed_messages(category_filter=["error"])%}
+                {% if messages%}
+                {% for message in messages%}
+                <p class="bg-danger text-white border rounded text-center">{{message}}</p>
+                {%endfor%}
+                {%endif%}
+                {%endwith%}
+                <h4>Question Title:</h4>
+                <input id="title" type="text" class="form-control bg-dark text-white" id="QuestionTitle" placeholder="Enter Question Title" name="title" value="{{form.title}}" required>
+              </div>
+              <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+                <h4>Short Description:</h4>
+                <textarea id="shortDesc" type="text" class="form-control bg-dark text-white" rows="3" placeholder="Enter Question Description" name="short_desc"  required>{{form.short_desc}}</textarea>
+              </div>
+              <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+                <h4>Full Description</h4>
+                <textarea id="fullDesc" name="full_desc"  type="text" class="form-control bg-dark text-white" rows="10" placeholder="Enter Question Description" required>{{form.full_desc}}</textarea>
+              </div>
+              <div class="p-5 mb-3 bg-dark text-white border border-white rounded d-flex">
+                <div class="col">
+                  <h4>Dificulty Level</h4>
+                  <div class="btn-group" role="group" aria-label="Basic radio toggle button group"> <!--Found on bootstrap documentation for Button Group-->
+                    <input type="radio" class="btn-check" name="difficulty" id="easy" autocomplete="off" value="EASY" checked>
+                    <label class="btn btn-outline-danger w-100" for="easy">Easy</label>
+                    <input type="radio" class="btn-check" name="difficulty" id="medium" autocomplete="off" value="MEDIUM">
+                    <label class="btn btn-outline-danger w-100" for="medium">Medium</label>
+                    <input type="radio" class="btn-check" name="difficulty" id="hard" autocomplete="off" value="HARD">
+                    <label class="btn btn-outline-danger w-100" for="hard">Hard</label>
+                  </div>
+                </div>
+                <div class="col">
+                  <h4>Tags: </h4>
+                  <input id="title" type="text" class="form-control bg-dark text-white" id="tacks" placeholder="Tag1, Tag2, Tag3..." name="tags" value="{{form.tags}}" required>
+                  <a class="link link-light" data-bs-toggle="popover" title="List of Tags" data-bs-content="Tag1, Tag2, Tag3">List Available Tags.</a>
+                </div>
+              </div>
+              <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+                  <h4>Code is placed here</h4>
+                  <textarea id="codeBlock"  name="Code"  class="code-input bg-dark text-white" rows="15" placeholder="Enter Your Code..." required>{{form.Code}}</textarea>
+                  <script>
+                      //copied from https://stackoverflow.com/a/10456255 
+                      //to have the code window use tabs properly.
+                      let newValue = "easy";
+                      var myInput = document.getElementById("codeBlock");
+                      if(myInput.addEventListener ) {
+                          myInput.addEventListener('keydown',this.keyHandler,false);
+                      } else if(myInput.attachEvent ) {
+                          myInput.attachEvent('onkeydown',this.keyHandler); /* damn IE hack */
+                      }
+
+                      function keyHandler(e) {
+                          var TABKEY = 9;
+                          if(e.keyCode == TABKEY) {
+                              this.value += "\t";
+                              if(e.preventDefault) {
+                                  e.preventDefault();
+                              }
+                              return false;
+                          }
+                      }
+                  </script>
+              </div>
+              <div class="p-5 mb-3 bg-dark text-white border border-white rounded ">
+                  <h4>Test:</h4>
+                  <textarea id="testBlock" name="testCode" class="test-input bg-dark text-white" rows="5" placeholder="{input:output, input:output, intput:output}"required>{{form.testCode}}</textarea>
+              </div>
+          </div>
+        </div>
+        <button type="submit" class=" btn btn-lg btn-danger w-100" >Submit and Test</button>
+      </form>
+      <script>
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+          return new bootstrap.Popover(popoverTriggerEl)
+        });
+      </script>
+</body>
+</html>
