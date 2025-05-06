@@ -134,8 +134,9 @@
                     // Start timer update loop
                     setInterval(updateTimerDisplay, 1000);
                 </script>
+
                 <form method="POST" action="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">
-                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..."></textarea>
+                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required></textarea>
                     <script>
                         //copied from https://stackoverflow.com/a/10456255 
                         //to have the code window use tabs properly.
@@ -158,7 +159,6 @@
                         }
                     </script>
                     <input type="hidden" name="question_id" value="{{ request.args.get('id') }}">
-                    <input type="hidden" id="timerInput" name="runtime_sec" value="">
                 
                     <div class="row row-cols-2 mt-3">
                         <div class="col-6 pe-1">
@@ -183,15 +183,6 @@
             </div>
             </div>
         </div>
-        <script>
-            document.querySelector('form').addEventListener('submit', function(event) {
-                let runtime = Math.floor((Date.now() - startTime) / 1000);
-                
-                document.getElementById('timerInput').value = runtime;
-            
-                console.log(`Runtime: ${runtime} seconds`);
-            });
-        </script>
     </body>
 </html>
 
