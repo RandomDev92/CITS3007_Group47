@@ -5,6 +5,7 @@ from app import app
 from app.models import User, Question, Difficulty, Tag, Submission
 from . import db
 from werkzeug.security import generate_password_hash
+from app.sandbox import testCode
 
 
 from flask_login import current_user, login_required
@@ -22,6 +23,14 @@ def UploadPage():
         return render_template("UploadPage.html", form=blankform)
     if request.method == 'POST':
         uploadedQ = request.form
+        
+        strCode = uploadedQ["Code"]
+        strTest = uploadedQ["testCode"]
+        result = testCode(strCode, strTest)
+        if result != "All tests passed.":
+            flash(result)
+            return render_template("UploadPage.html", form=uploadedQ)
+        
         if None != Question.query.filter_by(title=uploadedQ["title"]).first():
             flash("Title is already taken", 'error')
             return render_template("UploadPage.html", form=uploadedQ)
