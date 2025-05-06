@@ -23,3 +23,11 @@ How To Run-
 How To Run Test-
 
 
+Dependencies:
+    flask 
+    flask_sqlalchemy
+    flask_migrate
+    flask_login
+    numpy 
+    werkzeug
+    RestrictedPython
