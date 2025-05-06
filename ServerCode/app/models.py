@@ -85,6 +85,7 @@ class Question(db.Model):
     short_desc = db.Column(db.String(512))
     full_desc = db.Column(db.Text)
     difficulty = db.Column(db.Enum(Difficulty), default=Difficulty.EASY, nullable=False)
+    test_cases = db.Column(db.String(255), unique=True, nullable=False)
 
     #denormalised stats for quick access (updated after each submission)
     avg_time_sec = db.Column(db.Float, default=0)
