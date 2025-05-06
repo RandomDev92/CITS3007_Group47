@@ -53,14 +53,14 @@
             href="UserPage"
             aria-label="User-home">
             <img
-            src="{{url_for('static', filename='img/mstom_400x400.jpg')}}"
+            src="{{url_for('static', filename='avatars/' + current_user.avatar_url)}}"
             class="rounded-circle mr-2"
             alt="User avatar"
             height="48"
             width="48"
             />
             <div class="d-flex">
-            <div class="font-weight-bold" style="line-height: 1">Title</div>
+            <div class="font-weight-bold" style="line-height: 1">{{current_user.username}}</div>
             </a>
             </div>
         </div>
@@ -89,27 +89,40 @@
     </div>
     </nav>
 
-  <!--Question Description-->
-  <div class="container py-4">
-      <div class="row g-4 justify-content-center">
-        <div class="col-12 col-lg-7">
-          <div class="desc-card d-flex bg-dark flex-column align-items-center text-center p-5 border border-white rounded text-white">
-            <h3 class="mb-2">Question Title</h3>
-            <small class="mb-4"><span class="badge bg-danger">Tag List</span></small>
-            <p class="mb-4"> Question Description</p>
+    <!--Question Description-->
+      <div class="container py-4">
+        <div class="row g-4 justify-content-center">
+          <div class="col-12 col-lg-7">
+            <div class="desc-card d-flex bg-dark flex-column p-5 border border-white rounded text-white">
+              <div class="text-center">
+                <h3 class="m-3">{{ question.title }}</h3>
+                <small class="m-2">Difficulty: <span class="badge bg-danger">{{ question.difficulty.value.upper() }}</span></small>
+                <small class="m-3">Tags: 
+                  {% for tag in question.tags %}
+                  <span class="badge bg-danger">{{ tag.name }}</span>
+                  {% endfor %}
+                </small>
+                <a href="{{ url_for('UserPage', username=question.author_username) }}" class="mb-2 link-light">Author: {{ question.author_username }}</a>
+              </div>
+              <div class="text-left">
+                <h5 class="m-2">Description:</h5>
+                <p class="mx-2 my-4">{{ question.full_desc}}</p>
+              </div>
+            </div>
+              
+            <div class="row mt-3">
+              <!-- Back button -->
+              <div class="col-6 pe-1">
+                <a class="btn bg-dark text-white border border-white w-100" href="{{ url_for('SearchPage') }}">Back</a>
+              </div>
+
+              <!-- Start button -->
+              <div class="col-6 ps-1">
+                <a class="btn btn-danger w-100" role="button" href="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">Start</a>              
+              </div>
+            </div>
           </div>
-
-      <div class="row mt-3">
-        <!-- Back button -->
-        <div class="col-6 pe-1">
-          <a class="btn bg-dark text-white border border-white w-100" href="SearchPage">Back</a>
-        </div>
-
-        <!-- Start button -->
-        <div class="col-6 ps-1">
-          <a class="btn btn-danger w-100" role="button" href="QuestionAnswer">Start</a>
         </div>
       </div>
-    </div>
     </body>
 </html>

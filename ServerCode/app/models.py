@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db
 from app import login_manager
+import numpy as np
 
 @login_manager.user_loader
 def load_user(username):
@@ -17,7 +18,7 @@ class Difficulty(enum.Enum):
 
 
 question_tags = db.Table(
-    "question_tags",
+    "tags_associatioon",
     db.Column("question_id", db.Integer, db.ForeignKey("question.id"), primary_key=True),
     db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
 )
@@ -29,7 +30,7 @@ class User(UserMixin, db.Model):
 
     username = db.Column(db.String(64), primary_key=True, nullable=False)    
     password_hash = db.Column("password_hash", db.String(256), nullable=False)
-    avatar_url = db.Column(db.String(512), default="static\img\mstom_400x400.jpg")
+    avatar_url = db.Column(db.String(512), default="mstom_400x400.jpg")
     share_profile = db.Column(db.Boolean, default=False)
 
     #denormalised performance stats
@@ -82,8 +83,8 @@ class Question(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), unique=True, nullable=False)
-    short_desc = db.Column(db.String(512))
-    full_desc = db.Column(db.Text)
+    short_desc = db.Column(db.String(512), nullable=False)
+    full_desc = db.Column(db.Text, nullable=False)
     difficulty = db.Column(db.Enum(Difficulty), default=Difficulty.EASY, nullable=False)
     test_cases = db.Column(db.String(255),  nullable=False)
 
@@ -109,8 +110,11 @@ class Question(db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-    tags = db.relationship("Tag", secondary=question_tags, back_populates="questions")
-
+    tags = db.relationship(
+        'Tag',
+        secondary=question_tags,
+        backref=db.backref('question', lazy='dynamic'))
+    
     def __repr__(self):
         return f"<Question {self.title}>"
     
@@ -120,7 +124,7 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
-    questions = db.relationship("Question", secondary=question_tags, back_populates="tags")
+    #questions = db.relationship("Question", secondary=question_tags, back_populates="tags")
 
     def __repr__(self):
         return f"<Tag {self.name}>"

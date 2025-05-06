@@ -67,14 +67,14 @@
            href="UserPage"
            aria-label="User-home">
            <img
-           src="{{url_for('static', filename='img/mstom_400x400.jpg')}}"
+           src="{{url_for('static', filename='avatars/' + current_user.avatar_url)}}"
            class="rounded-circle mr-2"
            alt="User avatar"
            height="48"
            width="48"
            />
            <div class="d-flex">
-             <div class="font-weight-bold" style="line-height: 1">Title</div>
+             <div class="font-weight-bold" style="line-height: 1">{{current_user.username}}</div>
             </a>
           </div>
         </div>
@@ -92,7 +92,7 @@
           />
         </a>
 
-        <!--Stats button-->
+        <!--upload button-->
         <div class="ml-auto d-flex">
           <div class="ms-2">
             <a href="UploadPage" class="btn btn-outline-light nav-btn">Upload</a>
@@ -106,84 +106,67 @@
         <!--Left filter column-->
         <div class="filter-panel px-3 mb-4">
           <!--Title search-->
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fas fa-bars"></i></span>
+          <form action="/SearchPage" method="GET" id="search-form">
+            <!-- Title input -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="title"
+                value="{{ request.args.get('title', '') }}"
+                placeholder="Title"
+              />
             </div>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Title"
-              aria-label="Search by title"
-            />
-            <div class="input-group-append">
-              <span class="input-group-text"><i class="fas fa-search"></i></span>
+          
+            <!-- Difficulty select (auto-submit) -->
+            <div class="mb-3">
+              <select
+                class="form-select"
+                name="difficulty"
+                onchange="document.getElementById('search-form').submit();"
+              >
+                <option value="">Difficulty</option>
+                <option value="easy" {% if request.args.get('difficulty') == 'easy' %}selected{% endif %}>Easy</option>
+                <option value="medium" {% if request.args.get('difficulty') == 'medium' %}selected{% endif %}>Medium</option>
+                <option value="hard" {% if request.args.get('difficulty') == 'hard' %}selected{% endif %}>Hard</option>
+              </select>
             </div>
-          </div>
-
-          <!--Difficulty dropdown-->
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fas fa-bars"></i></span>
+          
+            <!-- Tag input -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="tag"
+                value="{{ request.args.get('tag', '') }}"
+                placeholder="Tags"
+              />
             </div>
-            <select class="form-select" aria-label="Filter by difficulty">
-              <option selected disabled>Difficulty</option>
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-            <div class="input-group-append">
-              <span class="input-group-text"><i class="fas fa-chevron-right"></i></span>
-            </div>
-          </div>
-
-          <!--Tags search-->
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fas fa-bars"></i></span>
-            </div>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Tags"
-              aria-label="Search by tag"
-            />
-            <div class="input-group-append">
-              <span class="input-group-text"><i class="fas fa-search"></i></span>
-            </div>
-          </div>
+          
+            <!-- Hidden submit button (so Enter works) -->
+            <button type="submit" hidden></button>
+          </form>
         </div>
+        
         <!--Questions list column-->
         <div class="col-12 col-md-8 col-lg-6">
           <div class="question-scroll pr-md-2">
-            <!--Repeatable question card-->
-            <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
-              <a href="QuestionDescription" class="stretched-link" aria-label="Open Question 1"></a>
-              <h5 class="mb-2">Question Title 1</h5>
-              <small class="mb-2"><span class="badge bg-danger">Tag List</span></small>
-              <small class="d-block">Very short description (potentially)</small>
-            </div>
-
-            <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
-              <a href="question?id=2" class="stretched-link" aria-label="Open Question 2"></a>
-              <h5 class="mb-2">Question Title 2</h5>
-              <small class="mb-2"><span class="badge bg-danger">Tag List</span></small>
-              <small class="d-block">Very short description (potentially)</small>
-            </div>
-
-            <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
-              <a href="question?id=3" class="stretched-link" aria-label="Open Question 3"></a>
-              <h5 class="mb-2">Question Title 3</h5>
-              <small class="mb-2"><span class="badge bg-danger">Tag List</span></small>
-              <small class="d-block">Very short description (potentially)</small>
-            </div>
-
-            <div class="card question-card position-relative p-4 mb-5 bg-dark text-white  mb-3">
-              <a href="question?id=4" class="stretched-link" aria-label="Open Question 4"></a>
-              <h5 class="mb-2">Question Title 4</h5>
-              <small class="mb-2"><span class="badge bg-danger">Tag List</span></small>
-              <small class="d-block">Very short description (potentially)</small>
-            </div>
+            {% if questions %}
+              {% for question in questions %}
+                <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
+                  <a href="{{ url_for('QuestionDescriptionPage') }}?id={{ question.id }}" class="stretched-link"></a>
+                  <h5 class="mb-2">{{ question.title }}</h5>
+                  <small class="mb-2">
+                    {% for tag in question.tags %}
+                      <span class="badge bg-danger">{{ tag.name }}</span>
+                    {% endfor %}
+                  </small>
+                  <small class="d-block">{{ question.short_desc }}</small>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-white">No results found.</div>
+            {% endif %}
           </div>
         </div>
       </div>
