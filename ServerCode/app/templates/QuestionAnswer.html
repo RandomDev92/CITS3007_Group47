@@ -108,8 +108,7 @@
               <div class="col-12 col-lg-5">
                 <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
                   <h3>Test Case and Results</h3>
-                  <p class="mb-2">{{ question.test_cases}}</p>
-                  <p class="mb-2">fill based on failed test cases</p>
+                  <p class="mb-2">{{ test.result}}</p>
                 </div>
               </div>
             </div>
@@ -136,7 +135,7 @@
                 </script>
 
                 <form method="POST" action="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">
-                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required></textarea>
+                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required>{{submitedcode}}</textarea>
                     <script>
                         //copied from https://stackoverflow.com/a/10456255 
                         //to have the code window use tabs properly.

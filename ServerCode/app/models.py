@@ -39,6 +39,7 @@ class User(UserMixin, db.Model):
     std_time_sec = db.Column(db.Float, default=0)  # standard deviation
     best_time_sec = db.Column(db.Float, default=0)
     best_question_id = db.Column(db.Integer, db.ForeignKey("question.title"), nullable=True)
+    attempted_questions = db.Column(db.Integer, default=0)
     completed_questions = db.Column(db.Integer, default=0)
     completion_rate = db.Column(db.Float, default=0)  # percent (0-100)
     avg_attempts = db.Column(db.Float, default=0)
@@ -140,7 +141,10 @@ class Submission(db.Model):
         db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), nullable=False
     )
 
-    code = db.Column(db.Text, nullable=False)
+    start_time = db.Column(db.Float)
+    end_time = db.Column(db.Float)
+    attempts = db.Column(db.Integer)
+    code = db.Column(db.Text)
     passed = db.Column(db.Boolean, nullable=False, default=False)
     runtime_sec = db.Column(db.Float)
     lines_of_code = db.Column(db.Integer)

@@ -7,6 +7,7 @@ from app.models import User, Question, Difficulty, Tag, Submission
 from . import db
 from werkzeug.security import generate_password_hash
 from app.sandbox import testCode
+import time
 
 
 from flask_login import current_user, login_required
@@ -235,54 +236,48 @@ def QuestionAnswer():
 
     # Retrieve the question from the database
     question = Question.query.get_or_404(question_id)
+    if request.method == 'GET':
+        print("start get")
+        submission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).first()
+        if(submission):
+            submission.attempts +=1
+        else:
+            submission = Submission(
+                user_id=current_user.id, 
+                question_id=question_id, 
+                start_time = time.time(),
+                attempts = 0,
+                )
+            db.session.add(submission)
+        
+        userdb = User.query.filter_by(id=current_user.id).first()
+        userdb.attempted_questions += 1
+        userdb.completion_rate = userdb.completed_questions / userdb.attempted_questions 
+        db.session.add(userdb)
+        db.session.commit()
+        return render_template('QuestionAnswer.html', question=question)
+    
     if request.method == 'POST':
         print("Form submitting")
         code = request.form.get('code')
+        submission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).first()
+        submission.attempts +=1
         
-        #get the elapsed time
-        start_time_str = str(session.get('start_time'))
-        if not start_time_str:
-            abort(400, "Start time not found. Please reload the question.")
-            
-        try:
-            start_time = datetime.fromisoformat(start_time_str)
-            elapsed_time = (datetime.now(timezone.utc) - start_time).total_seconds()
-        except ValueError:
-            abort(400, "Invalid start time format.")
+        result = testCode(code, question.test_case)
+        if result != "All tests passed.":
+            return render_template("QuestionAnswer.html", submitedcode=code, question=question, testResult=result)
         
-        # Placeholder values for now, change later when you implement proper evaluation
-        passed = True
-        tests_run = 3
-        
-            
-        # Use current_user.username instead of current_user.id
-        submission = Submission(
-            user_id=current_user.username,  # Updated to use username
-            question_id=question_id,
-            code=code,
-            passed=passed,
-            runtime_sec=elapsed_time,
-            lines_of_code=len(code.split("\n")),
-            tests_run=tests_run
-        )
-        try:
-            print(submission)
-            db.session.add(submission)
-            db.session.commit()
-            print("Data successfully saved to the database!")
-        except Exception as e:
-            print("Error saving to the database:", e)
-            db.session.rollback()  # Rollback in case of error
+        submission.end_time = time.time() 
+        submission.runtime_sec = submission.end_time - submission.start_time
+        submission.lines_of_code = len(code.split("\n"))
+        submission.tests_run = len(question.test_case.split(":")) #this is not needed
+        submission.passed = True
+
+        db.session.commit()
 
         return redirect(url_for('QuestionStatPage', id=question_id))
     
-    # handle GET
-    if request.method == 'GET':
-        print("start get")
-        session['start_time'] = datetime.utcnow()
-        question_id = request.args.get('id')
-        question = Question.query.get_or_404(question_id)
-        return render_template('QuestionAnswer.html', question=question)
+
 
 
 @app.route('/LandingUpload')
