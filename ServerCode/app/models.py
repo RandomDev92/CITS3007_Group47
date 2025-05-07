@@ -39,6 +39,7 @@ class User(UserMixin, db.Model):
     std_time_sec = db.Column(db.Float, default=0)  # standard deviation
     best_time_sec = db.Column(db.Float, default=0)
     best_question_id = db.Column(db.Integer, db.ForeignKey("question.title", name="fk_User_Question"), nullable=True)
+    attempted_questions = db.Column(db.Integer, default=0)
     completed_questions = db.Column(db.Integer, default=0)
     completion_rate = db.Column(db.Float, default=0)  # percent (0-100)
     avg_attempts = db.Column(db.Float, default=0)
@@ -140,7 +141,10 @@ class Submission(db.Model):
         db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Submission_Question"), nullable=False
     )
 
-    code = db.Column(db.Text, nullable=False)
+    start_time = db.Column(db.Float)
+    end_time = db.Column(db.Float)
+    attempts = db.Column(db.Integer)
+    code = db.Column(db.Text)
     passed = db.Column(db.Boolean, nullable=False, default=False)
     runtime_sec = db.Column(db.Float)
     lines_of_code = db.Column(db.Integer)
@@ -154,8 +158,13 @@ class Submission(db.Model):
         db.Index("ix_submission_user_question", "user_id", "question_id"),
     )
 
-    def __repr__(self): 
-        return f"<Submission u{self.user_id} c{self.question_id}>"
+    # def __repr__(self): 
+    #     return f"<Submission u{self.user_id} c{self.question_id}>"
+    def __repr__(self):
+        output = ''
+        for c in self.__table__.columns:
+            output += '{}: {}\n'.format(c.name, getattr(self, c.name))
+        return output
 
 class Rating(db.Model):
     __tablename__ = "rating"
