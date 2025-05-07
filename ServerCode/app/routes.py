@@ -1,6 +1,7 @@
 import imghdr
 import os
-from flask import render_template,  request, redirect, flash, url_for, abort
+from datetime import datetime, timezone
+from flask import render_template,  request, redirect, flash, url_for, abort, session
 from app import app
 from app.models import User, Question, Difficulty, Tag, Submission
 from . import db
@@ -69,7 +70,7 @@ def SearchPage():
 
     if tag_query:
         query = query.join(Question.tags).filter(Tag.name.ilike(f"%{tag_query}%"))
-
+    
     results = query.distinct().all()
     return render_template("SearchPage.html", questions=results)
 
@@ -147,12 +148,14 @@ def QuestionStatPage():
 
     # Fetch the question from the database
     question = Question.query.get_or_404(question_id)
-
+    everything = Submission.query.all
+    print(everything)
     # Fetch the most recent submission for the current user and the given question
     submission = Submission.query.filter_by(
         user_id=current_user.username,  # Using username instead of id
         question_id=question_id
-    ).order_by(Submission.runtime_sec.desc()).first()
+    ).order_by(Submission.id.desc()).first()
+    print(submission)
 
     # Prepare user score data
     if submission:
@@ -169,6 +172,7 @@ def QuestionStatPage():
             'code_length': "N/A",
             'passed': "N/A"
         }
+        
     # Fetch all the submission times for the question
     submission_times = [s.runtime_sec for s in question.submissions if s.runtime_sec is not None]
 
@@ -176,6 +180,7 @@ def QuestionStatPage():
     if not submission_times:
         submission_times = [0]
 
+    #Code below makes dynamic bins for the range of times submitted by other users to make a histogram of times recorded
     # Ensure min_time, max_time, and bin_size are integers
     min_time = int(min(submission_times))  # Convert min_time to an integer
     max_time = int(max(submission_times))  # Convert max_time to an integer
@@ -192,7 +197,25 @@ def QuestionStatPage():
     # Prepare the bin labels and frequencies
     bin_labels = [f"{edges[i]}–{edges[i+1]}" for i in range(len(edges)-1)]
     frequencies = hist.tolist()
+    # Query all submissions for this question
+    submissions = Submission.query.filter_by(question_id=question_id).all()
 
+    # Compute metrics only from passing submissions
+    passing_submissions = [s for s in submissions if s.passed]
+
+    if passing_submissions:
+        avg_time = round(sum(s.runtime_sec for s in passing_submissions if s.runtime_sec) / len(passing_submissions), 2)
+        avg_tests = round(sum(s.tests_run for s in passing_submissions if s.tests_run) / len(passing_submissions), 2)
+        best_code_length = min(s.lines_of_code for s in passing_submissions if s.lines_of_code)
+        completed_count = len(set(s.user_id for s in passing_submissions))
+    else:
+        avg_time = avg_tests = best_code_length = completed_count = 0
+
+    # Attach these values to the question object or pass as a separate dict
+    question.avg_time = avg_time
+    question.avg_tests = avg_tests
+    question.best_code_length = best_code_length
+    question.completed_count = completed_count
     # Render the template with necessary context
     return render_template(
         "QuestionStat.html",
@@ -215,19 +238,30 @@ def QuestionAnswer():
     if request.method == 'POST':
         print("Form submitting")
         code = request.form.get('code')
-        runtime_sec = request.form.get('runtime_sec', type=int)
-
+        
+        #get the elapsed time
+        start_time_str = str(session.get('start_time'))
+        if not start_time_str:
+            abort(400, "Start time not found. Please reload the question.")
+            
+        try:
+            start_time = datetime.fromisoformat(start_time_str)
+            elapsed_time = (datetime.now(timezone.utc) - start_time).total_seconds()
+        except ValueError:
+            abort(400, "Invalid start time format.")
+        
         # Placeholder values for now, change later when you implement proper evaluation
         passed = True
         tests_run = 3
-
+        
+            
         # Use current_user.username instead of current_user.id
         submission = Submission(
             user_id=current_user.username,  # Updated to use username
             question_id=question_id,
             code=code,
             passed=passed,
-            runtime_sec=runtime_sec,
+            runtime_sec=elapsed_time,
             lines_of_code=len(code.split("\n")),
             tests_run=tests_run
         )
@@ -241,12 +275,13 @@ def QuestionAnswer():
             db.session.rollback()  # Rollback in case of error
 
         return redirect(url_for('QuestionStatPage', id=question_id))
-
-    else:
-        # handle GET
+    
+    # handle GET
+    if request.method == 'GET':
         print("start get")
+        session['start_time'] = datetime.utcnow()
         question_id = request.args.get('id')
-        question = Question.query.get(question_id)
+        question = Question.query.get_or_404(question_id)
         return render_template('QuestionAnswer.html', question=question)
 
 
