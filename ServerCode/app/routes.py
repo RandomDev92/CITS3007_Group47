@@ -38,7 +38,8 @@ def UploadPage():
                         short_desc=uploadedQ["short_desc"],
                         full_desc=uploadedQ["full_desc"],
                         difficulty=uploadedQ["difficulty"],
-                        author_username=current_user.username)
+                        test_cases=uploadedQ["testCode"],
+                        author_id=current_user.username)
         taglist = uploadedQ["tags"].replace(" ", "").split(',')
         for tag in taglist:
             if Tag.query.filter_by(name=tag).first() != None:
@@ -150,6 +151,7 @@ def QuestionStatPage():
     everything = Submission.query.all
     print(everything)
     # Fetch the most recent submission for the current user and the given question
+
     submission = Submission.query.filter_by(
         user_id=current_user.username,  # Using username instead of id
         question_id=question_id
@@ -229,17 +231,24 @@ def QuestionStatPage():
 @app.route('/QuestionAnswer', methods=['GET', 'POST'])
 @login_required
 def QuestionAnswer():
-    print("Entered QuestionAnswer route")
     question_id = request.args.get('id', type=int)
 
     # Retrieve the question from the database
     question = Question.query.get_or_404(question_id)
     if request.method == 'POST':
-        print("Form submitting")
         code = request.form.get('code')
+        test_cases = question.test_cases
+
+        #Testin code input
+        result = testCode(code, test_cases)
+        
+        if result != "All tests passed.":
+            flash(result.replace('\n', '<br>'), category='error')
+            return render_template("QuestionAnswer.html", question=question, code=code)
         
         #get the elapsed time
         start_time_str = str(session.get('start_time'))
+
         if not start_time_str:
             abort(400, "Start time not found. Please reload the question.")
             
@@ -248,21 +257,14 @@ def QuestionAnswer():
             elapsed_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         except ValueError:
             abort(400, "Invalid start time format.")
-        
-        # Placeholder values for now, change later when you implement proper evaluation
-        passed = True
-        tests_run = 3
-        
-            
+  
         # Use current_user.username instead of current_user.id
         submission = Submission(
             user_id=current_user.username,  # Updated to use username
             question_id=question_id,
             code=code,
-            passed=passed,
             runtime_sec=elapsed_time,
-            lines_of_code=len(code.split("\n")),
-            tests_run=tests_run
+            lines_of_code=len(code.split("\n"))
         )
         try:
             print(submission)
@@ -277,7 +279,6 @@ def QuestionAnswer():
     
     # handle GET
     if request.method == 'GET':
-        print("start get")
         session['start_time'] = datetime.utcnow()
         question_id = request.args.get('id')
         question = Question.query.get_or_404(question_id)

@@ -107,9 +107,19 @@
               </div>
               <div class="col-12 col-lg-5">
                 <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
-                  <h3>Test Case and Results</h3>
-                  <p class="mb-2">{{ question.test_cases}}</p>
-                  <p class="mb-2">fill based on failed test cases</p>
+                    <h3>Test Case and Results</h3>
+                    {% with messages = get_flashed_messages(category_filter=["error"])%}
+                    {% if messages%}
+                    {% for message in messages%}
+                    <p class="bg-danger text-white border rounded text-center mt-5 p-3">{{message | safe}}</p>
+                    {%endfor%}
+                    {%endif%}
+                    {%endwith%}
+                    <!--<p class="mb-2">{{ question.test_cases}}</p>
+                    <p class="mb-2">fill based on failed test cases</p>-->
+                    {% if error %}
+                    <p>Test failed: {{ question.test_cases}}</p>
+                    {% endif %}
                 </div>
               </div>
             </div>
@@ -122,7 +132,6 @@
             <div class="col-12 col-lg-10">
                 <script>
                     let startTime = Date.now(); // Initialise timer
-                
                     // Update timer display
                     function updateTimerDisplay() {
                         const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -136,7 +145,7 @@
                 </script>
 
                 <form method="POST" action="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">
-                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required></textarea>
+                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required>{{code or ''}}</textarea>
                     <script>
                         //copied from https://stackoverflow.com/a/10456255 
                         //to have the code window use tabs properly.

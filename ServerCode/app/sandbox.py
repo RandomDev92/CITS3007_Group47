@@ -100,14 +100,17 @@ def testCode(stringCode, stringTest):
         testingDict = ast.literal_eval(stringTest)
     except Exception as e:
         return f"Unable to Create Testing. {e}"
-    
+    print(testingDict)
     if type(testingDict) != type(dict()):
         return "Unable to Create Testing."
-    
-    funcName = re.search(r'def (.*?)\(', stringCode).group(1)
+    try:
+        funcName = re.search(r'def (.*?)\(', stringCode).group(1)
+    except Exception as e:
+        return "Needs to be in a function"
     if funcName == None:
         return "Unable to Resolve Function Name."
     
+    tests_passed = 0
     for test in testingDict:
         try:
             if type(test) != type(list()):
@@ -118,7 +121,7 @@ def testCode(stringCode, stringTest):
             return f"An Error has Occured in the Code Block. {e}"
 
         if result != testingDict[test]:
-            return f"Test input {test} failed, to match output {testingDict[test]}"
+            return f"{tests_passed} / {len(testingDict)} passed \n Failed at input {test}  \n Expected output = {testingDict[test]} \n Acual Output= {result}"
+        tests_passed += 1
         
     return "All tests passed."
-    
