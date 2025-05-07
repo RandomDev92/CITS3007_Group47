@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db
 from app import login_manager
+import numpy as np
 
 @login_manager.user_loader
 def load_user(username):
@@ -85,6 +86,7 @@ class Question(db.Model):
     short_desc = db.Column(db.String(512), nullable=False)
     full_desc = db.Column(db.Text, nullable=False)
     difficulty = db.Column(db.Enum(Difficulty), default=Difficulty.EASY, nullable=False)
+    test_cases = db.Column(db.String(255),  nullable=False)
 
     #denormalised stats for quick access (updated after each submission)
     avg_time_sec = db.Column(db.Float, default=0)
