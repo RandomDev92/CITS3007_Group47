@@ -38,8 +38,7 @@ class User(UserMixin, db.Model):
     avg_time_sec = db.Column(db.Float, default=0)
     std_time_sec = db.Column(db.Float, default=0)  # standard deviation
     best_time_sec = db.Column(db.Float, default=0)
-    best_question_id = db.Column(db.Integer, db.ForeignKey("question.title"), nullable=True)
-    attempted_questions = db.Column(db.Integer, default=0)
+    best_question_id = db.Column(db.Integer, db.ForeignKey("question.title", name="fk_User_Question"), nullable=True)
     completed_questions = db.Column(db.Integer, default=0)
     completion_rate = db.Column(db.Float, default=0)  # percent (0-100)
     avg_attempts = db.Column(db.Float, default=0)
@@ -97,7 +96,7 @@ class Question(db.Model):
     completed_count = db.Column(db.Integer, default=0)
 
     #Relationships
-    author_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Question_User"), nullable=False)
     author = db.relationship("User", back_populates="questions", foreign_keys=[author_id], )
 
     submissions = db.relationship(
@@ -136,9 +135,9 @@ class Submission(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Submission_User"), nullable=False)
     question_id = db.Column(
-        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), nullable=False
+        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Submission_Question"), nullable=False
     )
 
     start_time = db.Column(db.Float)
@@ -164,9 +163,9 @@ class Submission(db.Model):
 class Rating(db.Model):
     __tablename__ = "rating"
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Rating_User"), nullable=False)
     question_id = db.Column(
-        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), primary_key=True
+        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Rating_Question"), primary_key=True
     )
     score = db.Column(db.Integer, nullable=False)  # 1‑5
 
@@ -181,8 +180,8 @@ class ProfileShare(db.Model):
     __tablename__ = "profile_share"
 
     id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    shared_with_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_ProfileShare_User_1"), nullable=False)
+    shared_with_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_ProfileShare_User_2"), nullable=False)
 
     owner = db.relationship("User", foreign_keys=[owner_id], backref="shared_profiles")
     shared_with = db.relationship("User", foreign_keys=[shared_with_id], backref="received_profiles")
