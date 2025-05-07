@@ -39,7 +39,7 @@ def UploadPage():
                         full_desc=uploadedQ["full_desc"],
                         difficulty=uploadedQ["difficulty"],
                         test_cases=strTest,
-                        author_username=current_user.username)
+                        author_id=current_user.username)
         taglist = uploadedQ["tags"].replace(" ", "").split(',')
         for tag in taglist:
             if Tag.query.filter_by(name=tag).first() != None:
