@@ -7,8 +7,8 @@ from app import login_manager
 import numpy as np
 
 @login_manager.user_loader
-def load_user(username):
-    return User.query.get(username)
+def load_user(id):
+    return User.query.get(id)
 
 
 class Difficulty(enum.Enum):
@@ -28,7 +28,8 @@ question_tags = db.Table(
 class User(UserMixin, db.Model):
     __tablename__ = "user"
 
-    username = db.Column(db.String(64), primary_key=True, nullable=False)    
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)    
     password_hash = db.Column("password_hash", db.String(256), nullable=False)
     avatar_url = db.Column(db.String(512), default="mstom_400x400.jpg")
     share_profile = db.Column(db.Boolean, default=False)
@@ -49,7 +50,7 @@ class User(UserMixin, db.Model):
         back_populates="author",
         cascade="all, delete-orphan",
         passive_deletes=True,
-        foreign_keys="Question.author_username",
+        foreign_keys="Question.author_id",
     )
     submissions = db.relationship(
         "Submission",
@@ -73,10 +74,10 @@ class User(UserMixin, db.Model):
 
     # Repr
     def __repr__(self):
-        return f"<User {self.username}>"
+        return f"<User {self.id}>"
     
     def get_id(self):
-        return self.username
+        return self.id
 
 class Question(db.Model):
     __tablename__ = "question"
@@ -95,8 +96,8 @@ class Question(db.Model):
     completed_count = db.Column(db.Integer, default=0)
 
     #Relationships
-    author_username = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), nullable = False)
-    author = db.relationship("User", back_populates="questions", foreign_keys=[author_username], )
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    author = db.relationship("User", back_populates="questions", foreign_keys=[author_id], )
 
     submissions = db.relationship(
         "Submission",
@@ -134,7 +135,7 @@ class Submission(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     question_id = db.Column(
         db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), nullable=False
     )
@@ -159,8 +160,7 @@ class Submission(db.Model):
 class Rating(db.Model):
     __tablename__ = "rating"
 
-    user_id = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), primary_key=True)
-    user_id = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     question_id = db.Column(
         db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), primary_key=True
     )
@@ -173,3 +173,12 @@ class Rating(db.Model):
     def __repr__(self):
         return f"<Rating {self.score} for c{self.question_id} by u{self.user_id}>"
 
+class ProfileShare(db.Model):
+    __tablename__ = "profile_share"
+
+    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    shared_with_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+
+    owner = db.relationship("User", foreign_keys=[owner_id], backref="shared_profiles")
+    shared_with = db.relationship("User", foreign_keys=[shared_with_id], backref="received_profiles")
