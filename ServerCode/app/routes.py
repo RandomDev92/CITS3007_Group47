@@ -281,13 +281,15 @@ def QuestionAnswer():
     ).first()
             
         # Use current_user.username instead of current_user.id
-        #Update the submission field with the new entry, so it loads on get
-        submission.code = strCode
-        submission.passed = passed
-        submission.runtime_sec = elapsed_time
-        submission.lines_of_code = len(strCode.split("\n"))
-        submission.tests_run = tests_run
-        print("Updated existing submission.")
+        submission = Submission(
+            user_id=current_user.username,  # Updated to use username
+            question_id=question_id,
+            code=code,
+            passed=passed,
+            runtime_sec=elapsed_time,
+            lines_of_code=len(code.split("\n")),
+            tests_run=tests_run
+        )
         try:
             print(submission)
             db.session.commit()
