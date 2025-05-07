@@ -155,7 +155,6 @@ def QuestionStatPage():
         user_id=current_user.username,  # Using username instead of id
         question_id=question_id
     ).order_by(Submission.id.desc()).first()
-    print(submission)
 
     # Prepare user score data
     if submission:
@@ -235,10 +234,27 @@ def QuestionAnswer():
 
     # Retrieve the question from the database
     question = Question.query.get_or_404(question_id)
+    
+    
     if request.method == 'POST':
         print("Form submitting")
-        code = request.form.get('code')
         
+        submission = Submission.query.filter_by(
+        user_id=current_user.username,
+        question_id=question_id
+    ).first()
+        
+        strCode = request.form.get('code')
+        strTest = question.test_cases
+
+        result = testCode(strCode, strTest)
+        
+        if result != "All tests passed.":
+            flash(result, 'error')
+            submission.code = strCode
+            user_code = submission.code
+            return render_template('QuestionAnswer.html', question=question, user_code=user_code)
+
         #get the elapsed time
         start_time = session.get('start_time')
         if not start_time:
@@ -261,10 +277,10 @@ def QuestionAnswer():
             
         # Use current_user.username instead of current_user.id
         #Update the submission field with the new entry, so it loads on get
-        submission.code = code
+        submission.code = strCode
         submission.passed = passed
         submission.runtime_sec = elapsed_time
-        submission.lines_of_code = len(code.split("\n"))
+        submission.lines_of_code = len(strCode.split("\n"))
         submission.tests_run = tests_run
         print("Updated existing submission.")
         try:

@@ -108,8 +108,14 @@
               <div class="col-12 col-lg-5">
                 <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
                   <h3>Test Case and Results</h3>
-                  <p class="mb-2">{{ question.test_cases}}</p>
-                  <p class="mb-2">fill based on failed test cases</p>
+                  <p class="mb-2">Test Cases: {{ question.test_cases}}</p>
+                  {% with messages = get_flashed_messages(category_filter=["error"])%}
+                  {% if messages%}
+                  {% for message in messages%}
+                  <p class="bg-danger text-white border rounded text-center">{{message}}</p>
+                  {%endfor%}
+                  {%endif%}
+                  {%endwith%}
                 </div>
               </div>
             </div>
