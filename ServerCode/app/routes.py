@@ -87,7 +87,12 @@ def validate_image(stream):
 @login_required
 def UserPage():
     if request.method == 'GET':
-        return render_template("UserPage.html", user=current_user)
+        submissions = Submission.query.filter_by(user_id=current_user.username).filter(Submission.passed == True).order_by(Submission.id).all()
+        submission_data = [
+            {"question": s.question.title, "time": s.runtime_sec}
+            for s in submissions if s.runtime_sec is not None
+        ]
+        return render_template("UserPage.html", user=current_user, submission_data=submission_data)
     if request.method == 'POST':
         form = request.form
         if form["username"] != current_user.username:

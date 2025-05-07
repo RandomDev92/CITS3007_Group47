@@ -97,14 +97,15 @@ def execute_user_code(user_code, user_func, *args, **kwargs):
 
 def testCode(stringCode, stringTest):
     try:
-        stringTest = stringTest.replace("[", "(").replace("]", ")")
+        stringTest = stringTest.replace("[", "(").replace("]", ",),")
         testingDict = ast.literal_eval(stringTest)
     except Exception as e:
         return f"Unable to Create Testing. {e}"
     
     if type(testingDict) != type(dict()):
         return "Unable to Create Testing."
-    try:
+
+    try: 
         funcName = re.search(r'def (.*?)\(', stringCode).group(1)
     except:
         return "Unable to Resolve Function Name."
@@ -114,10 +115,7 @@ def testCode(stringCode, stringTest):
     
     for test in testingDict:
         try:
-            if type(test) != type(list()):
-                result = execute_user_code(stringCode, funcName, test)
-            else:
-                result = execute_user_code(stringCode, funcName, *test)
+            result = execute_user_code(stringCode, funcName, *test)
         except Exception as e:
             return f"An Error has Occured in the Code Block. {e}"
 
