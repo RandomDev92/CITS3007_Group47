@@ -7,8 +7,8 @@ from app import login_manager
 import numpy as np
 
 @login_manager.user_loader
-def load_user(username):
-    return User.query.get(username)
+def load_user(id):
+    return User.query.get(id)
 
 
 class Difficulty(enum.Enum):
@@ -50,7 +50,7 @@ class User(UserMixin, db.Model):
         back_populates="author",
         cascade="all, delete-orphan",
         passive_deletes=True,
-        foreign_keys="Question.author_username",
+        foreign_keys="Question.author_id",
     )
     submissions = db.relationship(
         "Submission",
@@ -74,10 +74,10 @@ class User(UserMixin, db.Model):
 
     # Repr
     def __repr__(self):
-        return f"<User {self.username}>"
+        return f"<User {self.id}>"
     
     def get_id(self):
-        return self.username
+        return self.id
 
 class Question(db.Model):
     __tablename__ = "question"
