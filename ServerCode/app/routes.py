@@ -149,15 +149,12 @@ def QuestionStatPage():
 
     # Fetch the question from the database
     question = Question.query.get_or_404(question_id)
-    everything = Submission.query.all
-    print(everything)
     # Fetch the most recent submission for the current user and the given question
     submission = Submission.query.filter_by(
-        user_id=current_user.username,  # Using username instead of id
+        user_id=current_user.id, 
         question_id=question_id
     ).order_by(Submission.id.desc()).first()
-    print(submission)
-
+    print(str(submission))   
     # Prepare user score data
     if submission:
         user_score = {
@@ -226,8 +223,6 @@ def QuestionStatPage():
         frequencies=frequencies
     )
 
-
-
 @app.route('/QuestionAnswer', methods=['GET', 'POST'])
 @login_required
 def QuestionAnswer():
@@ -237,10 +232,15 @@ def QuestionAnswer():
     # Retrieve the question from the database
     question = Question.query.get_or_404(question_id)
     if request.method == 'GET':
-        print("start get")
-        submission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).first()
-        if(submission):
-            submission.attempts +=1
+        oldsubmission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).order_by(Submission.id.desc()).first()
+        print(oldsubmission)
+        if(oldsubmission and oldsubmission.passed == False):
+            submission = Submission(
+                user_id=current_user.id, 
+                question_id=question_id, 
+                start_time = time.time(),
+                attempts = oldsubmission.attempts + 1,
+                )
         else:
             submission = Submission(
                 user_id=current_user.id, 
@@ -260,18 +260,24 @@ def QuestionAnswer():
     if request.method == 'POST':
         print("Form submitting")
         code = request.form.get('code')
-        submission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).first()
+        submission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).order_by(Submission.id.desc()).first()
         submission.attempts +=1
         
-        result = testCode(code, question.test_case)
+        result = testCode(code, question.test_cases)
         if result != "All tests passed.":
             return render_template("QuestionAnswer.html", submitedcode=code, question=question, testResult=result)
         
         submission.end_time = time.time() 
         submission.runtime_sec = submission.end_time - submission.start_time
         submission.lines_of_code = len(code.split("\n"))
-        submission.tests_run = len(question.test_case.split(":")) #this is not needed
+        submission.tests_run = len(question.test_cases.split(":")) #this is not needed
         submission.passed = True
+        db.session.add(submission)
+
+        userdb = User.query.filter_by(id=current_user.id).first()
+        userdb.completed_questions += 1
+        userdb.completion_rate = userdb.completed_questions / userdb.attempted_questions 
+        db.session.add(userdb)
 
         db.session.commit()
 

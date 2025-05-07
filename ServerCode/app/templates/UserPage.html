@@ -135,11 +135,11 @@
                 </div>
                 <div class="col text-center">
                     <h3>Completion Rate</h3>
-                    <h2><b>{{user.completion_rate}}%</b></h2>
+                    <h2><b>{{user.completion_rate  | round(2)}}%</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Avg Attempts</h3>
-                    <h2><b>{{user.avg_attempts}}</b></h2>
+                    <h2><b>{{user.avg_attempts  | round(2)}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>more stats as necessary</h3>
