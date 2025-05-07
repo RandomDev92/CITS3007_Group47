@@ -120,8 +120,23 @@
         <div class="container py-4">
             <div class="row g-4 justify-content-center">
             <div class="col-12 col-lg-10">
+                <script>
+                    let startTime = Date.now(); // Initialise timer
+                
+                    // Update timer display
+                    function updateTimerDisplay() {
+                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                        const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                        const seconds = String(elapsed % 60).padStart(2, '0');
+                        document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+                    }
+                
+                    // Start timer update loop
+                    setInterval(updateTimerDisplay, 1000);
+                </script>
+
                 <form method="POST" action="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">
-                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..."></textarea>
+                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required></textarea>
                     <script>
                         //copied from https://stackoverflow.com/a/10456255 
                         //to have the code window use tabs properly.
@@ -144,7 +159,6 @@
                         }
                     </script>
                     <input type="hidden" name="question_id" value="{{ request.args.get('id') }}">
-                    <input type="hidden" id="timerInput" name="runtime_sec" value="">
                 
                     <div class="row row-cols-2 mt-3">
                         <div class="col-6 pe-1">
@@ -169,32 +183,6 @@
             </div>
             </div>
         </div>
-        <script>
-            console.log("Script loaded");
-          </script>
     </body>
-    <script>
-        document.querySelector('form').addEventListener('submit', function(event) {
-            let runtime = Math.floor((Date.now() - startTime) / 1000);
-            document.getElementById('timerInput').value = runtime;
-        
-            console.log(`Runtime: ${runtime} seconds`);
-        });
-    </script>
-    <script>
-        let totalSeconds = 0;
-        const timerElement = document.getElementById("timer");
-
-        function updateTimer() {
-            totalSeconds++;
-            const minutes = Math.floor(totalSeconds / 60);
-            const seconds = totalSeconds % 60;
-            const minStr = minutes.toString().padStart(2, '0');
-            const secStr = seconds.toString().padStart(2, '0');
-            timerElement.textContent = `${minStr}:${secStr}`;
-        }
-
-        setInterval(updateTimer, 1000);
-    </script>  
 </html>
 
