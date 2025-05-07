@@ -104,8 +104,10 @@ def testCode(stringCode, stringTest):
     
     if type(testingDict) != type(dict()):
         return "Unable to Create Testing."
-    
-    funcName = re.search(r'def (.*?)\(', stringCode).group(1)
+    try: 
+        funcName = re.search(r'def (.*?)\(', stringCode).group(1)
+    except:
+        return "Unable to Resolve Function Name."
     if funcName == None:
         return "Unable to Resolve Function Name."
     
