@@ -136,8 +136,7 @@
                 </script>
 
                 <form method="POST" action="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">
-                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required></textarea>
-                    <script>
+                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required>{{ user_code }}</textarea>                    <script>
                         //copied from https://stackoverflow.com/a/10456255 
                         //to have the code window use tabs properly.
                         var myInput = document.getElementById("CodeInput");

@@ -1,6 +1,6 @@
 import imghdr
 import os
-from datetime import datetime, timezone
+import time
 from flask import render_template,  request, redirect, flash, url_for, abort, session
 from app import app
 from app.models import User, Question, Difficulty, Tag, Submission
@@ -240,34 +240,35 @@ def QuestionAnswer():
         code = request.form.get('code')
         
         #get the elapsed time
-        start_time_str = str(session.get('start_time'))
-        if not start_time_str:
+        start_time = session.get('start_time')
+        if not start_time:
             abort(400, "Start time not found. Please reload the question.")
             
         try:
-            start_time = datetime.fromisoformat(start_time_str)
-            elapsed_time = (datetime.now(timezone.utc) - start_time).total_seconds()
+            # Convert start_time to float (Unix time)
+            start_time = float(start_time)
+            elapsed_time = time.time() - start_time  # Calculate the difference in seconds
         except ValueError:
             abort(400, "Invalid start time format.")
         
         # Placeholder values for now, change later when you implement proper evaluation
         passed = True
         tests_run = 3
-        
+        submission = Submission.query.filter_by(
+        user_id=current_user.username,
+        question_id=question_id
+    ).first()
             
         # Use current_user.username instead of current_user.id
-        submission = Submission(
-            user_id=current_user.username,  # Updated to use username
-            question_id=question_id,
-            code=code,
-            passed=passed,
-            runtime_sec=elapsed_time,
-            lines_of_code=len(code.split("\n")),
-            tests_run=tests_run
-        )
+        #Update the submission field with the new entry, so it loads on get
+        submission.code = code
+        submission.passed = passed
+        submission.runtime_sec = elapsed_time
+        submission.lines_of_code = len(code.split("\n"))
+        submission.tests_run = tests_run
+        print("Updated existing submission.")
         try:
             print(submission)
-            db.session.add(submission)
             db.session.commit()
             print("Data successfully saved to the database!")
         except Exception as e:
@@ -279,10 +280,36 @@ def QuestionAnswer():
     # handle GET
     if request.method == 'GET':
         print("start get")
-        session['start_time'] = datetime.utcnow()
+        session['start_time'] = time.time()
+        #Try to find if user already has submission
+        
+        submission = Submission.query.filter_by(
+        user_id=current_user.username,
+        question_id=question_id
+    ).first()
+        
+        if not submission:
+            print("No submission found — creating new empty submission.")
+            submission = Submission(
+                user_id=current_user.username,
+                question_id=question_id,
+                code="",  # empty initial code
+                passed=False,
+                runtime_sec=0.0,
+                lines_of_code=0,
+                tests_run=0)
+            db.session.add(submission)
+            try:
+                db.session.commit()
+                print("Blank submission created.")
+            except Exception as e:
+                print("Error creating initial submission:", e)
+                db.session.rollback()
+
         question_id = request.args.get('id')
+        user_code = submission.code
         question = Question.query.get_or_404(question_id)
-        return render_template('QuestionAnswer.html', question=question)
+        return render_template('QuestionAnswer.html', question=question, user_code=user_code)
 
 
 @app.route('/LandingUpload')
