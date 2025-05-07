@@ -37,6 +37,7 @@ def UploadPage():
                         short_desc=uploadedQ["short_desc"],
                         full_desc=uploadedQ["full_desc"],
                         difficulty=uploadedQ["difficulty"],
+                        test_cases=strTest,
                         author_username=current_user.username)
         taglist = uploadedQ["tags"].replace(" ", "").split(',')
         for tag in taglist:

@@ -92,25 +92,33 @@ def execute_user_code(user_code, user_func, *args, **kwargs):
 
         # User code has modified result inside restricted_locals. Return it.
         return restricted_locals["result"]
-
-    except SyntaxError as e:
-        raise
     except Exception as e:
-        raise
+        raise e
 
 def testCode(stringCode, stringTest):
-    testingDict = ast.literal_eval(stringTest)
+    try:
+        testingDict = ast.literal_eval(stringTest)
+    except Exception as e:
+        return f"Unable to Create Testing. {e}"
+    
     if type(testingDict) != type(dict()):
         return "Unable to Create Testing."
+    
     funcName = re.search(r'def (.*?)\(', stringCode).group(1)
     if funcName == None:
         return "Unable to Resolve Function Name."
+    
     for test in testingDict:
         try:
-            result = execute_user_code(stringCode, funcName, *test)
-        except:
-            return "An Error has Occured in the Code Block."
+            if type(test) != type(list()):
+                result = execute_user_code(stringCode, funcName, test)
+            else:
+                result = execute_user_code(stringCode, funcName, *test)
+        except Exception as e:
+            return f"An Error has Occured in the Code Block. {e}"
+
         if result != testingDict[test]:
             return f"Test input {test} failed, to match output {testingDict[test]}"
+        
     return "All tests passed."
     
