@@ -106,8 +106,7 @@
           <div class="col-12 col-lg-5">
             <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4 bg-dark border border-white rounded">
               <h3 class="mb-4">Your score</h3>
-              <p>{{ user_score }}</p>
-              <p class="mb-2">Time taken: {{ user_score.time_taken }}s</p>
+              <p class="mb-2">Time taken: {{ user_score.time_taken | round(3) }}s</p>
               <p class="mb-2">Tests ran: {{ user_score.tests_ran }}</p>
               <p class="mb-2">Code length: {{ user_score.code_length }} lines</p>
               <p class="mb-0">Passed: {{ 'Yes' if user_score.passed else 'No' }}</p>
@@ -119,7 +118,7 @@
             <div class="stat-card d-flex flex-column justify-content-center align-items-center text-center p-4 bg-dark border border-white rounded">
               <h3 class="mb-4">Average score</h3>
               <p class="mb-2">Average time taken: {{ question.avg_time }}s</p>
-              <p class="mb-2">Time Graph:</p>
+              <p class="mb-2">Times taken by other users:</p>
               <canvas id="histogramChart" width="400" height="250"></canvas>
               <p class="mb-2">Average tests ran: {{ question.avg_tests }}</p>
               <p class="mb-2">Best code length: {{ question.best_code_length }} chars</p>
