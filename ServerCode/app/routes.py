@@ -89,10 +89,11 @@ def UserPage():
         return render_template("UserPage.html", user=current_user)
     if request.method == 'POST':
         form = request.form
-        if form["username"] != current_user.username:
+        #this is a security risk
+        if form["userid"] != current_user.id:
             return ('', 204)
         if form["type"] == "shareProfileChange":
-            user = User.query.get_or_404(current_user.username)
+            user = User.query.get_or_404(current_user.id)
             if form["shareProfile"] == "true":
                 user.share_profile = True
             elif form["shareProfile"] == "false":
@@ -101,7 +102,7 @@ def UserPage():
             db.session.commit()
             return ('', 204)
         if form["type"] == "Change":
-            user = User.query.get_or_404(current_user.username)
+            user = User.query.get_or_404(current_user.id)
             
             uploaded_file = request.files['newpfp']
             filename = uploaded_file.filename
@@ -283,7 +284,6 @@ def QuestionAnswer():
         question_id = request.args.get('id')
         question = Question.query.get_or_404(question_id)
         return render_template('QuestionAnswer.html', question=question)
-
 
 @app.route('/LandingUpload')
 def LandingUpload():

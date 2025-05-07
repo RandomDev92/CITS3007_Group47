@@ -113,11 +113,15 @@ def testCode(stringCode, stringTest):
     
     for test in testingDict:
         try:
+<<<<<<< Updated upstream
             if hasattr(test, '__iter__'):
                 result = execute_user_code(stringCode, funcName, *test)
             else:
                 result = execute_user_code(stringCode, funcName, test)
 
+=======
+            result = execute_user_code(stringCode, funcName, test)
+>>>>>>> Stashed changes
         except Exception as e:
             return f"An Error has Occured in the Code Block. {e}"
 
