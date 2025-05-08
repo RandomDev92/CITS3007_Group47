@@ -6,7 +6,7 @@ from app.config import *
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
-login_manager.login_view = 'LoginPage'
+login_manager.login_view = 'auth.LoginPage'
 
 def create_app(isTest=False):
    app = Flask(__name__)  
