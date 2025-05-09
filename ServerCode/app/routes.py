@@ -150,71 +150,73 @@ def QuestionDescriptionPage():
 @app.route('/QuestionStat', methods=['GET', 'POST'])
 @login_required
 def QuestionStatPage():
+    question_id = request.args.get('id', type=int)
+
+    # Fetch the question from the database
+    question = Question.query.get_or_404(question_id)
+
+
+    # Fetch the most recent submission for the current user and the given question
+    submission = Submission.query.filter_by(
+        user_id=current_user.id, 
+        question_id=question_id
+    ).order_by(Submission.id.desc()).first()
+    print(str(submission))   
+    # Prepare user score data
+    if submission:
+        user_score = {
+            'time_taken': submission.runtime_sec,
+            'tests_ran': submission.tests_run,
+            'code_length': submission.lines_of_code,
+            'passed': submission.passed
+        }
+    else:
+        user_score = {
+            'time_taken': "N/A",
+            'tests_ran': "N/A",
+            'code_length': "N/A",
+            'passed': "N/A"
+        }
+        
+    # Fetch all the submission times for the question
+    submission_times = [s.runtime_sec for s in question.submissions if s.runtime_sec is not None]
+
+    # If there are no valid submission times, set default values to prevent errors
+    if not submission_times:
+        submission_times = [0]
+
+    #Code below makes dynamic bins for the range of times submitted by other users to make a histogram of times recorded
+    # Ensure min_time, max_time, and bin_size are integers
+    min_time = int(min(submission_times))  # Convert min_time to an integer
+    max_time = int(max(submission_times))  # Convert max_time to an integer
+    bin_count = 10  # Set the number of bins
+    bin_size = int(max(1, (max_time - min_time) // bin_count + 1))  # Convert bin_size to an integer
+
+    # Generate the bins
+    bins = list(range(min_time, max_time + bin_size, bin_size))  # Ensure min_time, max_time, and bin_size are integers
+
+    # Calculate the frequency distribution for the histogram
+    import numpy as np
+    hist, edges = np.histogram(submission_times, bins=bins)
+
+    # Prepare the bin labels and frequencies
+    bin_labels = [f"{edges[i]}–{edges[i+1]}" for i in range(len(edges)-1)]
+    frequencies = hist.tolist()
+    # Query all submissions for this question
+    submissions = Submission.query.filter_by(question_id=question_id).all()
+
+    # Compute metrics only from passing submissions
+    passing_submissions = [s for s in submissions if s.passed]
+
+    if passing_submissions:
+        avg_time = round(sum(s.runtime_sec for s in passing_submissions if s.runtime_sec) / len(passing_submissions), 2)
+        avg_tests = round(sum(s.tests_run for s in passing_submissions if s.tests_run) / len(passing_submissions), 2)
+        best_code_length = min(s.lines_of_code for s in passing_submissions if s.lines_of_code)
+        completed_count = len(set(s.user_id for s in passing_submissions))
+    else:
+        avg_time = avg_tests = best_code_length = completed_count = 0
+
     if request.method == "GET":
-        question_id = request.args.get('id', type=int)
-
-        # Fetch the question from the database
-        question = Question.query.get_or_404(question_id)
-        # Fetch the most recent submission for the current user and the given question
-        submission = Submission.query.filter_by(
-            user_id=current_user.id, 
-            question_id=question_id
-        ).order_by(Submission.id.desc()).first()
-        print(str(submission))   
-        # Prepare user score data
-        if submission:
-            user_score = {
-                'time_taken': submission.runtime_sec,
-                'tests_ran': submission.tests_run,
-                'code_length': submission.lines_of_code,
-                'passed': submission.passed
-            }
-        else:
-            user_score = {
-                'time_taken': "N/A",
-                'tests_ran': "N/A",
-                'code_length': "N/A",
-                'passed': "N/A"
-            }
-            
-        # Fetch all the submission times for the question
-        submission_times = [s.runtime_sec for s in question.submissions if s.runtime_sec is not None]
-
-        # If there are no valid submission times, set default values to prevent errors
-        if not submission_times:
-            submission_times = [0]
-
-        #Code below makes dynamic bins for the range of times submitted by other users to make a histogram of times recorded
-        # Ensure min_time, max_time, and bin_size are integers
-        min_time = int(min(submission_times))  # Convert min_time to an integer
-        max_time = int(max(submission_times))  # Convert max_time to an integer
-        bin_count = 10  # Set the number of bins
-        bin_size = int(max(1, (max_time - min_time) // bin_count + 1))  # Convert bin_size to an integer
-
-        # Generate the bins
-        bins = list(range(min_time, max_time + bin_size, bin_size))  # Ensure min_time, max_time, and bin_size are integers
-
-        # Calculate the frequency distribution for the histogram
-        import numpy as np
-        hist, edges = np.histogram(submission_times, bins=bins)
-
-        # Prepare the bin labels and frequencies
-        bin_labels = [f"{edges[i]}–{edges[i+1]}" for i in range(len(edges)-1)]
-        frequencies = hist.tolist()
-        # Query all submissions for this question
-        submissions = Submission.query.filter_by(question_id=question_id).all()
-
-        # Compute metrics only from passing submissions
-        passing_submissions = [s for s in submissions if s.passed]
-
-        if passing_submissions:
-            avg_time = round(sum(s.runtime_sec for s in passing_submissions if s.runtime_sec) / len(passing_submissions), 2)
-            avg_tests = round(sum(s.tests_run for s in passing_submissions if s.tests_run) / len(passing_submissions), 2)
-            best_code_length = min(s.lines_of_code for s in passing_submissions if s.lines_of_code)
-            completed_count = len(set(s.user_id for s in passing_submissions))
-        else:
-            avg_time = avg_tests = best_code_length = completed_count = 0
-
         # Attach these values to the question object or pass as a separate dict
         question.avg_time = avg_time
         question.avg_tests = avg_tests
@@ -228,14 +230,18 @@ def QuestionStatPage():
             bin_labels=bin_labels,
             frequencies=frequencies
         )
+    
+
     if request.method == "POST":
         review = request.form.get('ratingInput')
 
         rating = Rating(
-            score=review
+            score=review,
+            user_id=current_user.id, 
+            question_id=question_id
         )
         db.session.add(rating)
-        db.commit()
+        db.session.commit()
 
         return render_template(
             "QuestionStat.html",
