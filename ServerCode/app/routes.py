@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timezone
 from flask import render_template,  request, redirect, flash, url_for, abort, session
 from app import app
-from app.models import User, Question, Difficulty, Tag, Submission
+from app.models import User, Question, Difficulty, Tag, Submission, Rating
 from . import db
 from werkzeug.security import generate_password_hash
 from app.sandbox import testCode
@@ -147,13 +147,15 @@ def QuestionDescriptionPage():
     print(type(question.difficulty))
     return render_template("QuestionDescription.html", question=question)
 
-@app.route('/QuestionStat')
+@app.route('/QuestionStat', methods=['GET', 'POST'])
 @login_required
 def QuestionStatPage():
     question_id = request.args.get('id', type=int)
 
     # Fetch the question from the database
     question = Question.query.get_or_404(question_id)
+
+
     # Fetch the most recent submission for the current user and the given question
     submission = Submission.query.filter_by(
         user_id=current_user.id, 
@@ -214,19 +216,46 @@ def QuestionStatPage():
     else:
         avg_time = avg_tests = best_code_length = completed_count = 0
 
-    # Attach these values to the question object or pass as a separate dict
-    question.avg_time = avg_time
-    question.avg_tests = avg_tests
-    question.best_code_length = best_code_length
-    question.completed_count = completed_count
-    # Render the template with necessary context
-    return render_template(
-        "QuestionStat.html",
-        question=question,
-        user_score=user_score,  # Pass user_score to the template
-        bin_labels=bin_labels,
-        frequencies=frequencies
-    )
+    if request.method == "GET":
+        # Attach these values to the question object or pass as a separate dict
+        question.avg_time = avg_time
+        question.avg_tests = avg_tests
+        question.best_code_length = best_code_length
+        question.completed_count = completed_count
+        # Render the template with necessary context
+        return render_template(
+            "QuestionStat.html",
+            question=question,
+            user_score=user_score,  # Pass user_score to the template
+            bin_labels=bin_labels,
+            frequencies=frequencies
+        )
+    
+
+    if request.method == "POST":
+        review = request.form.get('ratingInput', type=int)
+        existing = Rating.query.filter_by(user_id=current_user.id, question_id=question_id).first()
+        if existing:
+            flash("You Have Already Submitted A Review")
+        else:
+            if review != None:
+                rating = Rating(
+                    score=review,
+                    user_id=current_user.id, 
+                    question_id=question_id
+                )
+                db.session.add(rating)
+                db.session.commit()
+                flash("Submitted! Thank You For Your Input", "success")
+            else:
+                flash("Have To Select A Star First Before Submitting Review", "error")
+        return render_template(
+            "QuestionStat.html",
+            question=question,
+            user_score=user_score,
+            bin_labels=bin_labels,
+            frequencies=frequencies
+        )
 
 @app.route('/QuestionAnswer', methods=['GET', 'POST'])
 @login_required

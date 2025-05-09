@@ -100,6 +100,19 @@
       </nav>
 
     <!--CONTENT-->
+    <div class="container justify-content-center">
+    {% with messages = get_flashed_messages() %}
+    {% if messages%}
+    {% for message in messages%}
+    <p class="bg-danger text-white border rounded text-center mt-5 p-3">{{message}}</p>
+    {%endfor%}
+    {%endif%}
+    {%endwith%}
+    {% if error %}
+    <p>Failed To Submit. Try Again Later.</p>
+    {% endif %}
+    </div>
+
     <div class="container py-5 text-white">
         <div class="row g-4 justify-content-center">
           <!-- User Score Card -->
@@ -129,19 +142,36 @@
           </div>
         </div>
       <!--Rating stars-->
-      <div class="d-flex justify-content-center mt-5" id="rating">
-        <i class="bi bi-star rating-star" data-value="1"></i>
-        <i class="bi bi-star rating-star ms-3" data-value="2"></i>
-        <i class="bi bi-star rating-star ms-3" data-value="3"></i>
-        <i class="bi bi-star rating-star ms-3" data-value="4"></i>
-        <i class="bi bi-star rating-star ms-3" data-value="5"></i>
-      </div>
+      <form method="POST" action="{{ url_for('QuestionStatPage') }}?id={{ question.id }}">
+        <div class="d-flex justify-content-center mt-5" id="rating">
+          <i class="bi bi-star rating-star" data-value="1"></i>
+          <i class="bi bi-star rating-star ms-3" data-value="2"></i>
+          <i class="bi bi-star rating-star ms-3" data-value="3"></i>
+          <i class="bi bi-star rating-star ms-3" data-value="4"></i>
+          <i class="bi bi-star rating-star ms-3" data-value="5"></i>
+        </div>
 
+        <!--Holding Rating Value Script-->
+        <script>
+          document.querySelectorAll('.rating-star').forEach(star => {
+            star.addEventListener('click', () => {
+              let rating = star.getAttribute('data-value');
+              document.getElementById("ratingInput").value=rating;
+            });
+          });
+        </script>
+        
+        <input type="hidden" name="ratingInput" id="ratingInput">
+        <div class="d-flex justify-content-center mt-4">
+          <button type="Submit" class='btn btn-danger px-5'>Submit Review</button>
+        </div>
+        
+      </form>
       <!--Finish button-->
       <div class="d-flex justify-content-center mt-4">
         <a class="btn btn-danger px-5" id="finishBtn" href="UserPage">Finish</a>
       </div>
-     </div>
+      </div>
      <!--hover highlighting script-->
      <script>
       (function () {
@@ -162,7 +192,8 @@
         }
       })();
     </script>
-    <!--Chart script-->
+    
+     <!--Chart script-->
     <script>
       const labels = {{ bin_labels|tojson }};
       const data = {
