@@ -100,6 +100,17 @@
       </nav>
 
     <!--CONTENT-->
+    {% with messages = get_flashed_messages() %}
+    {% if messages%}
+    {% for message in messages%}
+    <p class="bg-danger text-white border rounded text-center mt-5 p-3">{{message}}</p>
+    {%endfor%}
+    {%endif%}
+    {%endwith%}
+    {% if error %}
+    <p>Failed To Submit. Try Again Later.</p>
+    {% endif %}
+
     <div class="container py-5 text-white">
         <div class="row g-4 justify-content-center">
           <!-- User Score Card -->

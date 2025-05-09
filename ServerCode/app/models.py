@@ -169,9 +169,11 @@ class Submission(db.Model):
 class Rating(db.Model):
     __tablename__ = "rating"
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Rating_User"), nullable=False)
-    question_id = db.Column(db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Rating_Question"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Rating_User"), primary_key=True)
+    question_id = db.Column(
+        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Rating_Question"),
+        primary_key=True
+        )
     score = db.Column(db.Integer, nullable=False)  # 1‑5
 
     #Relationships
