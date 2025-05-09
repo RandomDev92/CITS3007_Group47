@@ -144,7 +144,7 @@ class Submission(db.Model):
     passed = db.Column(db.Boolean, nullable=False, default=False)
     runtime_sec = db.Column(db.Float)
     lines_of_code = db.Column(db.Integer)
-    tests_run = db.Column(db.Integer)
+    total_attempts = db.Column(db.Integer)
 
     #Relationships
     user = db.relationship("User", back_populates="submissions")

@@ -1,7 +1,7 @@
 import imghdr
 import os
 from datetime import datetime, timezone
-from flask import render_template,  request, redirect, flash, url_for, abort, session
+from flask import render_template,  request, redirect, flash, url_for, abort, session, g 
 from app import app
 from app.models import User, Question, Difficulty, Tag, Submission
 from . import db
@@ -162,16 +162,16 @@ def QuestionStatPage():
     if submission:
         user_score = {
             'time_taken': submission.runtime_sec,
-            'tests_ran': submission.tests_run,
             'code_length': submission.lines_of_code,
-            'passed': submission.passed
+            'passed': submission.passed,
+            'total_attemps': submission.total_attempts
         }
     else:
         user_score = {
             'time_taken': "N/A",
-            'tests_ran': "N/A",
             'code_length': "N/A",
-            'passed': "N/A"
+            'passed': "N/A",
+            'total_attemps': "N/A"
         }
         
     # Fetch all the submission times for the question
@@ -232,18 +232,17 @@ def QuestionStatPage():
 @login_required
 def QuestionAnswer():
     question_id = request.args.get('id', type=int)
-
     # Retrieve the question from the database
     question = Question.query.get_or_404(question_id)
     if request.method == 'POST':
         code = request.form.get('code')
         test_cases = question.test_cases
-
         #Testin code input
         result = testCode(code, test_cases)
         
         if result != "All tests passed.":
             flash(result.replace('\n', '<br>'), category='error')
+            session["total_attempts"] += 1
             return render_template("QuestionAnswer.html", question=question, code=code)
         
         #get the elapsed time
@@ -264,7 +263,8 @@ def QuestionAnswer():
             question_id=question_id,
             code=code,
             runtime_sec=elapsed_time,
-            lines_of_code=len(code.split("\n"))
+            lines_of_code=len(code.split("\n")),
+            total_attempts=session["total_attempts"]
         )
         try:
             print(submission)
@@ -281,6 +281,7 @@ def QuestionAnswer():
     if request.method == 'GET':
         session['start_time'] = datetime.utcnow()
         question_id = request.args.get('id')
+        session["total_attempts"] = 1
         question = Question.query.get_or_404(question_id)
         return render_template('QuestionAnswer.html', question=question)
 
