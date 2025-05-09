@@ -87,7 +87,7 @@ def validate_image(stream):
 @login_required
 def UserPage():
     if request.method == 'GET':
-        submissions = Submission.query.filter_by(user_id=current_user.username).filter(Submission.passed == True).order_by(Submission.id).all()
+        submissions = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
         submission_data = [
             {"question": s.question.title, "time": s.runtime_sec}
             for s in submissions if s.runtime_sec is not None
