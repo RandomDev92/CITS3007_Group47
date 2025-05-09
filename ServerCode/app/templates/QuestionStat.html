@@ -100,6 +100,7 @@
       </nav>
 
     <!--CONTENT-->
+    <div class="container justify-content-center">
     {% with messages = get_flashed_messages() %}
     {% if messages%}
     {% for message in messages%}
@@ -110,6 +111,7 @@
     {% if error %}
     <p>Failed To Submit. Try Again Later.</p>
     {% endif %}
+    </div>
 
     <div class="container py-5 text-white">
         <div class="row g-4 justify-content-center">
