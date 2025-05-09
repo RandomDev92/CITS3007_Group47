@@ -234,14 +234,14 @@ def QuestionStatPage():
 
     if request.method == "POST":
         review = request.form.get('ratingInput')
-
-        rating = Rating(
-            score=review,
-            user_id=current_user.id, 
-            question_id=question_id
-        )
-        db.session.add(rating)
-        db.session.commit()
+        if review != '':
+            rating = Rating(
+                score=review,
+                user_id=current_user.id, 
+                question_id=question_id
+            )
+            db.session.add(rating)
+            db.session.commit()
 
         return render_template(
             "QuestionStat.html",
