@@ -97,7 +97,7 @@ def execute_user_code(user_code, user_func, *args, **kwargs):
 
 def testCode(stringCode, stringTest):
     try:
-        stringTest = stringTest.replace("[", "(").replace("]", ",),")
+        stringTest = stringTest.replace("))", "),)").replace("[", "(").replace("]", ",),").replace(",,", ",")
         testingDict = ast.literal_eval(stringTest)
     except Exception as e:
         return f"Unable to Create Testing. {e}"
@@ -115,7 +115,7 @@ def testCode(stringCode, stringTest):
     
     for test in testingDict:
         try:
-            if hasattr(test, '__iter__'):
+            if hasattr(test, '__iter__') and type(test) != type(str()):
                 result = execute_user_code(stringCode, funcName, *test)
             else:
                 result = execute_user_code(stringCode, funcName, test)
