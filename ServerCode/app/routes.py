@@ -150,10 +150,11 @@ def QuestionDescriptionPage():
 @app.route('/QuestionStat', methods=['GET', 'POST'])
 @login_required
 def QuestionStatPage():
-    question_id = request.args.get('id', type=int)
-    # Fetch the question from the database
-    question = Question.query.get_or_404(question_id)
     if request.method == "GET":
+        question_id = request.args.get('id', type=int)
+
+        # Fetch the question from the database
+        question = Question.query.get_or_404(question_id)
         # Fetch the most recent submission for the current user and the given question
         submission = Submission.query.filter_by(
             user_id=current_user.id, 
@@ -228,17 +229,13 @@ def QuestionStatPage():
             frequencies=frequencies
         )
     if request.method == "POST":
-        review = request.form.get('ratingInput', type=int)
-        print(review)
-        question_id = request.args.get('id', type=int)
+        review = request.form.get('ratingInput')
 
         rating = Rating(
-            score=review,
-            user_id=current_user.id,
-            question_id=question_id
+            score=review
         )
         db.session.add(rating)
-        db.session.commit()
+        db.commit()
 
         return render_template(
             "QuestionStat.html",

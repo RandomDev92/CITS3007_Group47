@@ -137,18 +137,7 @@
           <i class="bi bi-star rating-star ms-3" data-value="4"></i>
           <i class="bi bi-star rating-star ms-3" data-value="5"></i>
         </div>
-        <!--Holding Rating Value Script-->
-        <script>
-          document.querySelectorAll('.rating-star').forEach(star => {
-            star.addEventListener('click', () => {
-              let rating = star.getAttribute('data-value');
-              document.getElementById("ratingInput").value = rating;
-              console.log(rating);
-              console.log(document.getElementById("ratingInput").value);
-            });
-          });
-        </script>
-        <input type="hidden" name="ratingInput" id="ratingInput">
+        <input type="hidden" name="rating" id="ratingInput">
         <div class="d-flex justify-content-center mt-4">
           <button type="Submit" class='btn btn-danger px-5'>Submit Review</button>
         </div>
@@ -178,6 +167,17 @@
           });
         }
       })();
+    </script>
+   
+    
+    <!--Holding Rating Value Script-->
+    <script>
+      document.querySelectorAll('.rating-star').forEach(star => {
+        star.addEventListener('click', () => {
+          let rating = star.getAttribute('data-value');
+          getElementById("ratingInput").value=rating
+        })
+      })
     </script>
     
      <!--Chart script-->
