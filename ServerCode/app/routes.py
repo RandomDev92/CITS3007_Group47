@@ -52,6 +52,7 @@ def UploadPage():
 @app.route('/SearchPage', methods=['GET'])
 @login_required
 def SearchPage():
+    session['completed_test'] = False
     title_query = request.args.get('title', '').strip()
     difficulty_query = request.args.get('difficulty', '').strip()
     tag_query = request.args.get('tag', '').strip()
@@ -234,9 +235,14 @@ def QuestionAnswer():
     question_id = request.args.get('id', type=int)
     # Retrieve the question from the database
     question = Question.query.get_or_404(question_id)
+
+    #If user is going back to resubmit the same code for quicker time redirect to searchpage.html
+    if session.get("completed_test"):
+            return redirect(url_for("SearchPage"))
     if request.method == 'POST':
         code = request.form.get('code')
         test_cases = question.test_cases
+        
         #Testin code input
         result = testCode(code, test_cases)
         
@@ -270,6 +276,7 @@ def QuestionAnswer():
             print(submission)
             db.session.add(submission)
             db.session.commit()
+            session["completed_test"] = True
             print("Data successfully saved to the database!")
         except Exception as e:
             print("Error saving to the database:", e)
@@ -284,6 +291,7 @@ def QuestionAnswer():
         session["total_attempts"] = 1
         question = Question.query.get_or_404(question_id)
         return render_template('QuestionAnswer.html', question=question)
+
 
 
 @app.route('/LandingUpload')
