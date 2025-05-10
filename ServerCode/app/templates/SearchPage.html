@@ -154,7 +154,7 @@
             {% if questions %}
               {% for question in questions %}
                 <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
-                  <a href="{{ url_for('QuestionDescriptionPage') }}?id={{ question.id }}" class="stretched-link"></a>
+                  <a href="{{ url_for('main.QuestionDescriptionPage') }}?id={{ question.id }}" class="stretched-link"></a>
                   <h5 class="mb-2">{{ question.title }}</h5>
                   <small class="mb-2">
                     {% for tag in question.tags %}
