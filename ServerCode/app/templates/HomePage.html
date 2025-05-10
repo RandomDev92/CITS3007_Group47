@@ -25,7 +25,7 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-          }
+        }
         .home-img{
             max-width: 500px;
             max-height: 500px;
@@ -37,7 +37,7 @@
 
 <body>
     <!-- ========== TOP NAV ========== -->
-    <nav class="navbar-custom navbar navbar-expand-sm bg-dark justify-content-center">
+    <nav class="navbar navbar-custom py-3 bg-dark">
       <div class="container-fluid">
           {% if not current_user.is_anonymous  %}
           <!-- user avatar & mini‑profile (left) -->
@@ -57,33 +57,33 @@
                <div class="font-weight-bold" style="line-height: 1">{{current_user.username}}</div>
               </a>
             </div>
-          {% endif %}
+            {% endif %}
+      </div>
   
-          <!-- Centred, clickable logo -->
-          <a
+        <!--Centred, clickable logo-->
+        <a
             class="navbar-brand navbar-brand-center"
-            href="#"
+            href="HomePage"
             aria-label="Speed‑Code home"
-          >
+        >
             <img
-              src="{{url_for('static', filename='img/SCLogo.png')}}"
-              height="64"
-              alt="Speed‑Code logo"
+            src="{{url_for('static', filename='img/SCLogo.png')}}"
+            height="64"
+            alt="Speed‑Code logo"
             />
-          </a>
+        </a>
   
           <!-- log in -->
           {% if current_user.is_anonymous  %}
           <div class="ml-auto flex-shrink-0">
-            <a href="LoginPage" class="btn btn-outline-light login-btn">Log In</a>
+            <a href="LoginPage" class="btn btn-outline-light login-btn mx-3">Log In</a>
           </div>
           {% endif %}
 
-        </div>
       </nav>
 
   <!------CONTENT------>
-  <div class="row align-items-center  mt-5 mb-2">
+  <div class="row align-items-center  mt-5 mb-2 container-fluid">
     {% if current_user.is_anonymous  %}
     <div class="col-lg-6 mb-4 mb-lg-0 text-center">
         <a form="button" class=" btn btn-danger btn-lg mt-5 mb-2 button" href="SignupPage">Explore Challenges</a>
@@ -100,7 +100,7 @@
     </div>
 
   </div>
-  <div class="container-fluid text-white">
+  <div class="container-fluid text-white w-100">
       <div class="row align-items-center mb-5">
         <div class="col-lg-6 mb-4 mb-lg-0 text-center">
           <img class="home-img" src="{{url_for('static', filename='img/Speed-clock-icon.png')}}" alt="Speed Clock Logo">
