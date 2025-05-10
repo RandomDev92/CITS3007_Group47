@@ -1,23 +1,31 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from app.config import Config
 from flask_login import LoginManager
-
-
-
-app = Flask(__name__)  
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db, )
+from app.config import *
+db = SQLAlchemy()
+migrate = Migrate()
 login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'LoginPage'
+login_manager.login_view = 'auth.LoginPage'
 
-if __name__=='__main__': 
-   app.run(debug=True) 
+def create_app(isTest=False):
+   app = Flask(__name__)  
+   if isTest:
+      app.config.from_object(TestConfig)
+   else:
+      app.config.from_object(DeploymentConfig)
+   db.init_app(app)
+   migrate.init_app(app, db)
+   login_manager.init_app(app)
 
-from app import routes, models, auth
+   from app.routes import main as main_bp
+   app.register_blueprint(main_bp)
+
+   from app.auth import auth as auth_bp
+   app.register_blueprint(auth_bp)
+   
+   return app
+
 
 '''
 run in a virtual env 
