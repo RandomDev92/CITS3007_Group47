@@ -7,8 +7,8 @@ from app import login_manager
 import numpy as np
 
 @login_manager.user_loader
-def load_user(username):
-    return User.query.get(username)
+def load_user(id):
+    return User.query.get(id)
 
 
 class Difficulty(enum.Enum):
@@ -28,7 +28,8 @@ question_tags = db.Table(
 class User(UserMixin, db.Model):
     __tablename__ = "user"
 
-    username = db.Column(db.String(64), primary_key=True, nullable=False)    
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)    
     password_hash = db.Column("password_hash", db.String(256), nullable=False)
     avatar_url = db.Column(db.String(512), default="mstom_400x400.jpg")
     share_profile = db.Column(db.Boolean, default=False)
@@ -37,7 +38,8 @@ class User(UserMixin, db.Model):
     avg_time_sec = db.Column(db.Float, default=0)
     std_time_sec = db.Column(db.Float, default=0)  # standard deviation
     best_time_sec = db.Column(db.Float, default=0)
-    best_question_id = db.Column(db.Integer, db.ForeignKey("question.title"), nullable=True)
+    best_question_id = db.Column(db.Integer, db.ForeignKey("question.title", name="fk_User_Question"), nullable=True)
+    attempted_questions = db.Column(db.Integer, default=0)
     completed_questions = db.Column(db.Integer, default=0)
     completion_rate = db.Column(db.Float, default=0)  # percent (0-100)
     avg_attempts = db.Column(db.Float, default=0)
@@ -49,7 +51,7 @@ class User(UserMixin, db.Model):
         back_populates="author",
         cascade="all, delete-orphan",
         passive_deletes=True,
-        foreign_keys="Question.author_username",
+        foreign_keys="Question.author_id",
     )
     submissions = db.relationship(
         "Submission",
@@ -73,10 +75,10 @@ class User(UserMixin, db.Model):
 
     # Repr
     def __repr__(self):
-        return f"<User {self.username}>"
+        return f"<User {self.id}>"
     
     def get_id(self):
-        return self.username
+        return self.id
 
 class Question(db.Model):
     __tablename__ = "question"
@@ -86,6 +88,7 @@ class Question(db.Model):
     short_desc = db.Column(db.String(512), nullable=False)
     full_desc = db.Column(db.Text, nullable=False)
     difficulty = db.Column(db.Enum(Difficulty), default=Difficulty.EASY, nullable=False)
+    test_cases = db.Column(db.String(255))
 
     #denormalised stats for quick access (updated after each submission)
     avg_time_sec = db.Column(db.Float, default=0)
@@ -94,8 +97,8 @@ class Question(db.Model):
     completed_count = db.Column(db.Integer, default=0)
 
     #Relationships
-    author_username = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), nullable = False)
-    author = db.relationship("User", back_populates="questions", foreign_keys=[author_username], )
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Question_User"), nullable=False)
+    author = db.relationship("User", back_populates="questions", foreign_keys=[author_id], )
 
     submissions = db.relationship(
         "Submission",
@@ -133,12 +136,15 @@ class Submission(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Submission_User"), nullable=False)
     question_id = db.Column(
-        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), nullable=False
+        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Submission_Question"), nullable=False
     )
 
-    code = db.Column(db.Text, nullable=False)
+    start_time = db.Column(db.Float)
+    end_time = db.Column(db.Float)
+    attempts = db.Column(db.Integer)
+    code = db.Column(db.Text)
     passed = db.Column(db.Boolean, nullable=False, default=False)
     runtime_sec = db.Column(db.Float)
     lines_of_code = db.Column(db.Integer)
@@ -152,16 +158,20 @@ class Submission(db.Model):
         db.Index("ix_submission_user_question", "user_id", "question_id"),
     )
 
-    def __repr__(self): 
-        return f"<Submission u{self.user_id} c{self.question_id}>"
+    # def __repr__(self): 
+    #     return f"<Submission u{self.user_id} c{self.question_id}>"
+    def __repr__(self):
+        output = ''
+        for c in self.__table__.columns:
+            output += '{}: {}\n'.format(c.name, getattr(self, c.name))
+        return output
 
 class Rating(db.Model):
     __tablename__ = "rating"
 
-    user_id = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), primary_key=True)
-    user_id = db.Column(db.String(64), db.ForeignKey("user.username", ondelete="CASCADE"), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Rating_User"), nullable=False)
     question_id = db.Column(
-        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE"), primary_key=True
+        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Rating_Question"), primary_key=True
     )
     score = db.Column(db.Integer, nullable=False)  # 1‑5
 
@@ -172,3 +182,12 @@ class Rating(db.Model):
     def __repr__(self):
         return f"<Rating {self.score} for c{self.question_id} by u{self.user_id}>"
 
+class ProfileShare(db.Model):
+    __tablename__ = "profile_share"
+
+    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_ProfileShare_User_1"), nullable=False)
+    shared_with_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_ProfileShare_User_2"), nullable=False)
+
+    owner = db.relationship("User", foreign_keys=[owner_id], backref="shared_profiles")
+    shared_with = db.relationship("User", foreign_keys=[shared_with_id], backref="received_profiles")

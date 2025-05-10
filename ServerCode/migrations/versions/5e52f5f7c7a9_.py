@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: eef393f93b0b
+Revision ID: 5e52f5f7c7a9
 Revises: 
-Create Date: 2025-04-30 21:20:45.362570
+Create Date: 2025-05-07 23:18:48.487778
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'eef393f93b0b'
+revision = '5e52f5f7c7a9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,15 +21,16 @@ def upgrade():
     op.create_table('question',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=255), nullable=False),
-    sa.Column('short_desc', sa.String(length=512), nullable=True),
-    sa.Column('full_desc', sa.Text(), nullable=True),
+    sa.Column('short_desc', sa.String(length=512), nullable=False),
+    sa.Column('full_desc', sa.Text(), nullable=False),
     sa.Column('difficulty', sa.Enum('EASY', 'MEDIUM', 'HARD', name='difficulty'), nullable=False),
+    sa.Column('test_cases', sa.String(length=255), nullable=True),
     sa.Column('avg_time_sec', sa.Float(), nullable=True),
     sa.Column('avg_tests', sa.Float(), nullable=True),
     sa.Column('best_code_length', sa.Integer(), nullable=True),
     sa.Column('completed_count', sa.Integer(), nullable=True),
-    sa.Column('author_username', sa.String(length=64), nullable=False),
-    sa.ForeignKeyConstraint(['author_username'], ['user.username'], ondelete='CASCADE'),
+    sa.Column('author_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['author_id'], ['user.id'], name='fk_Question_User', ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('title')
     )
@@ -40,6 +41,7 @@ def upgrade():
     sa.UniqueConstraint('name')
     )
     op.create_table('user',
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=64), nullable=False),
     sa.Column('password_hash', sa.String(length=256), nullable=False),
     sa.Column('avatar_url', sa.String(length=512), nullable=True),
@@ -51,51 +53,52 @@ def upgrade():
     sa.Column('completed_questions', sa.Integer(), nullable=True),
     sa.Column('completion_rate', sa.Float(), nullable=True),
     sa.Column('avg_attempts', sa.Float(), nullable=True),
-    sa.ForeignKeyConstraint(['best_question_id'], ['question.title'], ),
-    sa.PrimaryKeyConstraint('username')
-    )
-    op.create_table('question_tags',
-    sa.Column('question_id', sa.Integer(), nullable=False),
-    sa.Column('tag_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['question_id'], ['question.id'], ),
-    sa.ForeignKeyConstraint(['tag_id'], ['tag.id'], ),
-    sa.PrimaryKeyConstraint('question_id', 'tag_id')
+    sa.ForeignKeyConstraint(['best_question_id'], ['question.title'], name='fk_User_Question'),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('username')
     )
     op.create_table('rating',
-    sa.Column('user_id', sa.String(length=64), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('question_id', sa.Integer(), nullable=False),
     sa.Column('score', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['question_id'], ['question.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['user_id'], ['user.username'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('user_id', 'question_id')
+    sa.ForeignKeyConstraint(['question_id'], ['question.id'], name='fk_Rating_Question', ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], name='fk_Rating_User', ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('question_id')
     )
     op.create_table('submission',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.String(length=64), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('question_id', sa.Integer(), nullable=False),
     sa.Column('code', sa.Text(), nullable=False),
     sa.Column('passed', sa.Boolean(), nullable=False),
     sa.Column('runtime_sec', sa.Float(), nullable=True),
     sa.Column('lines_of_code', sa.Integer(), nullable=True),
     sa.Column('tests_run', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['question_id'], ['question.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['user_id'], ['user.username'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['question_id'], ['question.id'], name='fk_Submission_Question', ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], name='fk_Submission_User', ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('submission', schema=None) as batch_op:
         batch_op.create_index('ix_submission_user_question', ['user_id', 'question_id'], unique=False)
 
+    op.create_table('tags_associatioon',
+    sa.Column('question_id', sa.Integer(), nullable=False),
+    sa.Column('tag_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['question_id'], ['question.id'], ),
+    sa.ForeignKeyConstraint(['tag_id'], ['tag.id'], ),
+    sa.PrimaryKeyConstraint('question_id', 'tag_id')
+    )
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('tags_associatioon')
     with op.batch_alter_table('submission', schema=None) as batch_op:
         batch_op.drop_index('ix_submission_user_question')
 
     op.drop_table('submission')
     op.drop_table('rating')
-    op.drop_table('question_tags')
     op.drop_table('user')
     op.drop_table('tag')
     op.drop_table('question')

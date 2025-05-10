@@ -10,7 +10,7 @@
           integrity="sha384‑Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous"
         />
-    
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style>
           body {
             background: linear-gradient(to bottom,#6d1d1d,#612020,#552121,#482322,#3b2323,#332121,#2b2020,#231e1e,#1f1a1a,#1a1616,#161212,#110d0d);
@@ -135,17 +135,24 @@
                 </div>
                 <div class="col text-center">
                     <h3>Completion Rate</h3>
-                    <h2><b>{{user.completion_rate}}%</b></h2>
+                    <h2><b>{{user.completion_rate  | round(2)}}%</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Avg Attempts</h3>
-                    <h2><b>{{user.avg_attempts}}</b></h2>
+                    <h2><b>{{user.avg_attempts  | round(2)}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>more stats as necessary</h3>
                     <h2><b></b></h2>
                 </div>
             </div>
+            
+            <!-- Completion Time Graph -->
+            <div class="container-sm bg-dark text-white my-4 border border-white rounded p-4">
+                <h3 class="text-center">Completion Time Trend</h3>
+                <canvas id="completionChart"></canvas>
+            </div>
+            
             {% if user.username == current_user.username %}
             <div class="d-flex align-items-center justify-content-center my-4">
                 <div class="mx-4">
@@ -203,7 +210,7 @@
         {% if user.username == current_user.username %}
         <div id="EditProfileContent" class="container-sm w-50 bg-dark text-white my-4 border border-white rounded">
             <form class="m-5" id="ChangeForm" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="username" value="{{current_user.username}}" />
+                <input type="hidden" name="userid" value="{{current_user.id}}" />
                 <input type="hidden" name="type" value="Change" />
                 <h3 class="text-center">Edit Profile</h3>
                 <label for="formFile" class="form-label mb-0">Change Profile Picture</label>
@@ -238,5 +245,46 @@
           }
         </script>
         {% endif %}
+        <script>
+            const submissionData = {{submission_data|tojson}};
+            const labels = submissionData.map((entry, index) => `${index + 1}. ${entry.question}`);
+            const data = submissionData.map(entry => entry.time);
+
+            const ctx = document.getElementById('completionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Time Taken (sec)',
+                        data: data,
+                        fill: false,
+                        tension: 0.1,
+                        borderColor: 'rgba(255, 99, 132, 0.7)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Seconds'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Completed Questions'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
     </body>
 </html>
