@@ -25,7 +25,7 @@ def UploadPage():
         return render_template("UploadPage.html", form=blankform)
     if request.method == 'POST':
         uploadedQ = request.form
-
+        print(uploadedQ)
         strCode = uploadedQ["Code"]
         strTest = uploadedQ["testCode"]
         result = testCode(strCode, strTest)
