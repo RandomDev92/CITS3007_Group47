@@ -133,32 +133,8 @@
                     // Start timer update loop
                     setInterval(updateTimerDisplay, 1000);
                 </script>
-
-                <form method="POST" action="{{ url_for('main.QuestionAnswer') }}?id={{ question.id }}">
-                    <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required>{{submitedcode}}</textarea>
-                    <script>
-                        //copied from https://stackoverflow.com/a/10456255 
-                        //to have the code window use tabs properly.
-                        var myInput = document.getElementById("CodeInput");
-                        if(myInput.addEventListener ) {
-                            myInput.addEventListener('keydown',this.keyHandler,false);
-                        } else if(myInput.attachEvent ) {
-                            myInput.attachEvent('onkeydown',this.keyHandler); /* damn IE hack */
-                        }
-                  
-                        function keyHandler(e) {
-                            var TABKEY = 9;
-                            if(e.keyCode == TABKEY) {
-                                this.value += "\t";
-                                if(e.preventDefault) {
-                                    e.preventDefault();
-                                }
-                                return false;
-                            }
-                        }
-                    </script>
-                <form method="POST" action="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">
-                  <div id="codeBlock"   class="code-input border border-white" rows="15" placeholder="def func(param1, param2...):&#10; return output" style="min-height: 400px; background-color: #282828;"></div>
+                <form method="POST" id="questionForm" action="{{ url_for('main.QuestionAnswer') }}?id={{ question.id }}">
+                  <div id="codeBlock"   class="code-input border border-white rounded" rows="15" placeholder="def func(param1, param2...):&#10; return output" style="min-height: 400px; background-color: #282828;"></div>
 <!-- import from https://discuss.codemirror.net/t/esm-compatible-codemirror-build-directly-importable-in-browser/5933/13-->
 <script type="importmap">
   {
