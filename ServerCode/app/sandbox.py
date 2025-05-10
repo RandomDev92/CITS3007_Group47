@@ -115,7 +115,11 @@ def testCode(stringCode, stringTest):
     
     for test in testingDict:
         try:
-            result = execute_user_code(stringCode, funcName, *test)
+            if hasattr(test, '__iter__'):
+                result = execute_user_code(stringCode, funcName, *test)
+            else:
+                result = execute_user_code(stringCode, funcName, test)
+
         except Exception as e:
             return f"An Error has Occured in the Code Block. {e}"
 
