@@ -25,7 +25,7 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-          }
+        }
         .home-img{
             max-width: 500px;
             max-height: 500px;
@@ -37,7 +37,7 @@
 
 <body>
     <!-- ========== TOP NAV ========== -->
-    <nav class="navbar-custom navbar navbar-expand-sm bg-dark justify-content-center">
+    <nav class="navbar navbar-custom py-3 bg-dark">
       <div class="container-fluid">
         {% if not current_user.is_anonymous %}
         <!-- user avatar & mini-profile (left) -->
@@ -48,69 +48,77 @@
             aria-label="User-home"
           >
             <img
-              src="{{ url_for('static', filename='avatars/' + current_user.avatar_url) }}"
-              class="rounded-circle me-2"
-              alt="User avatar"
-              height="48"
-              width="48"
-            >
-          </a>
-          <div class="font-weight-bold text-white ms-2" style="line-height: 1">
-            {{ current_user.username }}
-          </div>
-        </div>
-        {% endif %}
-  
-          <!-- Centred, clickable logo -->
-          <a
-            class="navbar-brand navbar-brand-center"
-            href="#"
-            aria-label="Speed‑Code home"
-          >
-            <img
-              src="{{url_for('static', filename='img/SCLogo.png')}}"
-              height="64"
-              alt="Speed‑Code logo"
+            src="{{url_for('static', filename='avatars/' + current_user.avatar_url)}}"
+            class="rounded-circle mr-2"
+            alt="User avatar"
+            height="48"
+            width="48"
             />
-          </a>
+             <div class="d-flex">
+               <div class="font-weight-bold" style="line-height: 1">{{current_user.username}}</div>
+              </a>
+            </div>
+            {% endif %}
+      </div>
+  
+        <!--Centred, clickable logo-->
+        <a
+            class="navbar-brand navbar-brand-center"
+            href="HomePage"
+            aria-label="Speed‑Code home"
+        >
+            <img
+            src="{{url_for('static', filename='img/SCLogo.png')}}"
+            height="64"
+            alt="Speed‑Code logo"
+            />
+        </a>
   
           <!-- log in -->
           {% if current_user.is_anonymous  %}
           <div class="ml-auto flex-shrink-0">
-            <a href="LoginPage" class="btn btn-outline-light login-btn">Log In</a>
+            <a href="LoginPage" class="btn btn-outline-light login-btn mx-3">Log In</a>
           </div>
           {% endif %}
 
-        </div>
       </nav>
-
-  <!--CONTENT-->
-  <div class="container-fluid">
-      <div class="row row-cols-2 text-white">
-          <div class="col">
-            <div class="text-center">
-                <img class="home-img" src="{{url_for('static', filename='img/Speed-clock-icon.png')}}" alt="Speed Clock Logo">
-            </div>
-        </div>
-        <div class="col d-flex align-items-center">
-            <div class="word-wrap">
-                <h1><b>SpeedCode:<br></b> Smash Interviews At Record Speed</h1>
-                <h4><i>SpeedCode is a timed code challenge platform where you can try your hand at being the fastest coder there ever was.</i></h4>
-            </div>
-        </div>   
-        
-        <div class="col d-flex align-items-center">
-            <div class="word-wrap ms-5">
-                <h2>Compete with User Submitted Python Challenges.</h2>
-                <h4><i>Submit your own challenges or complete challenges made by others to test your skills in a wide variety of challenges to test all of your skills. Or just search by tags and difficulty to see how fast you can complete challenges you're familiar with.</i></h4>
-            </div>
-        </div>
-        <div class="col">
-            <div class="text-center">
-                <img class="home-img" src="{{url_for('static', filename='img/pyhton-logo.svg')}}" alt="Pyhton Logo">
-            </div>
-        </div>   
+  <!------CONTENT------>
+  <div class="row align-items-center  mt-5 mb-2 container-fluid">
+    {% if current_user.is_anonymous  %}
+    <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+        <a form="button" class=" btn btn-danger btn-lg mt-5 mb-2 button" href="SignupPage">Explore Challenges</a>
     </div>
+    {% endif %}
+  
+    {% if not current_user.is_anonymous  %}
+    <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+      <a form="button" class=" btn btn-danger btn-lg mt-5 mb-2 button" href="SearchPage">Explore Challenges</a>
+    </div>
+    {% endif %}
+    <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+      <a form="button" class=" btn btn-danger btn-lg mt-5 mb-2 button" href="UserPage">View Your Stats</a>
+    </div>
+
+  </div>
+  <div class="container-fluid text-white w-100">
+      <div class="row align-items-center mb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+          <img class="home-img" src="{{url_for('static', filename='img/Speed-clock-icon.png')}}" alt="Speed Clock Logo">
+        </div>
+        <div class="col-lg-6 text-center">
+          <h1><b>SpeedCode:<br></b> Smash Interviews At Record Speed</h1>
+          <h4><i>SpeedCode is a timed code challenge platform where you can try your hand at being the fastest coder there ever was.</i></h4>
+        </div> 
+      </div>
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+          <h2>Compete with User Submitted Python Challenges.</h2>
+          <h4><i>Submit your own challenges or complete challenges made by others to test your skills in a wide variety of challenges to test all of your skills. Or just search by tags and difficulty to see how fast you can complete challenges you're familiar with.</i></h4>
+        </div>
+        <div class="col-lg-6 text-center">
+          <img class="home-img" src="{{url_for('static', filename='img/pyhton-logo.svg')}}" alt="Pyhton Logo">
+        </div>
+      </div>
 
     {% if current_user.is_anonymous  %}
     <div class="container text-center">
