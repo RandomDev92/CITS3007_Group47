@@ -83,22 +83,39 @@
       </nav>
 
   <!------CONTENT------>
+  <div class="row align-items-center  mt-5 mb-2">
+    {% if current_user.is_anonymous  %}
+    <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+        <a form="button" class=" btn btn-danger btn-lg mt-5 mb-2 button" href="SignupPage">Explore Challenges</a>
+    </div>
+    {% endif %}
+  
+    {% if not current_user.is_anonymous  %}
+    <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+      <a form="button" class=" btn btn-danger btn-lg mt-5 mb-2 button" href="SearchPage">Explore Challenges</a>
+    </div>
+    {% endif %}
+    <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+      <a form="button" class=" btn btn-danger btn-lg mt-5 mb-2 button" href="UserPage">View Your Stats</a>
+    </div>
+
+  </div>
   <div class="container-fluid text-white">
       <div class="row align-items-center mb-5">
-        <div class="col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
+        <div class="col-lg-6 mb-4 mb-lg-0 text-center">
           <img class="home-img" src="{{url_for('static', filename='img/Speed-clock-icon.png')}}" alt="Speed Clock Logo">
         </div>
-        <div class="col-lg-6 text-center text-lg-start">
+        <div class="col-lg-6 text-center">
           <h1><b>SpeedCode:<br></b> Smash Interviews At Record Speed</h1>
           <h4><i>SpeedCode is a timed code challenge platform where you can try your hand at being the fastest coder there ever was.</i></h4>
         </div> 
       </div>
       <div class="row align-items-center">
-        <div class="col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
+        <div class="col-lg-6 mb-4 mb-lg-0 text-center">
           <h2>Compete with User Submitted Python Challenges.</h2>
           <h4><i>Submit your own challenges or complete challenges made by others to test your skills in a wide variety of challenges to test all of your skills. Or just search by tags and difficulty to see how fast you can complete challenges you're familiar with.</i></h4>
         </div>
-        <div class="col-lg-6 text-center text-lg-start">
+        <div class="col-lg-6 text-center">
           <img class="home-img" src="{{url_for('static', filename='img/pyhton-logo.svg')}}" alt="Pyhton Logo">
         </div>
       </div>
