@@ -1,23 +1,21 @@
 import imghdr
 import os
-from datetime import datetime, timezone
-from flask import render_template,  request, redirect, flash, url_for, abort, session
-from app import app
-from app.models import User, Question, Difficulty, Tag, Submission
-from . import db
-from werkzeug.security import generate_password_hash
-from app.sandbox import testCode
 import time
-
-
+from flask import render_template,  request, redirect, flash, url_for, abort, Blueprint, current_app
 from flask_login import current_user, login_required
+from werkzeug.security import generate_password_hash
+from . import db
+from app.models import User, Question, Difficulty, Tag, Submission
+from app.sandbox import testCode
 
-@app.route('/')
-@app.route('/HomePage')
+main = Blueprint('main', __name__,)
+
+@main.route('/')
+@main.route('/HomePage')
 def HomePage():
     return render_template("HomePage.html")
 
-@app.route('/UploadPage', methods = ['GET', 'POST'])
+@main.route('/UploadPage', methods = ['GET', 'POST'])
 @login_required
 def UploadPage():
     if request.method == 'GET':
@@ -47,10 +45,15 @@ def UploadPage():
                 question.tags.append(Tag.query.filter_by(name=tag).first())
         db.session.add(question)
         db.session.commit()
-        return redirect(url_for('LandingUpload'))
+        return redirect(url_for('main.LandingUpload'))
 
 
-@app.route('/SearchPage', methods=['GET'])
+@main.route('/LandingUpload')
+def LandingUpload():
+    return render_template("UploadSuccess.html")
+
+
+@main.route('/SearchPage', methods=['GET'])
 @login_required
 def SearchPage():
     title_query = request.args.get('title', '').strip()
@@ -75,6 +78,7 @@ def SearchPage():
     results = query.distinct().all()
     return render_template("SearchPage.html", questions=results)
 
+
 def validate_image(stream):
     header = stream.read(512)
     stream.seek(0) 
@@ -83,7 +87,7 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
-@app.route('/UserPage', methods = ['GET', 'POST'])
+@main.route('/UserPage', methods = ['GET', 'POST'])
 @login_required
 def UserPage():
     if request.method == 'GET':
@@ -98,6 +102,7 @@ def UserPage():
         #this is a security risk
         if form["userid"] != current_user.id:
             return ('', 204)
+        
         if form["type"] == "shareProfileChange":
             user = User.query.get_or_404(current_user.id)
             if form["shareProfile"] == "true":
@@ -107,19 +112,18 @@ def UserPage():
             db.session.add(user)
             db.session.commit()
             return ('', 204)
+        
         if form["type"] == "Change":
             user = User.query.get_or_404(current_user.id)
-            
             uploaded_file = request.files['newpfp']
             filename = uploaded_file.filename
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
-                if file_ext not in app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(uploaded_file.stream):
+                if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(uploaded_file.stream):
                     abort(400)
-                filepath = app.config["UPLOAD_FOLDER"]+current_user.username
+                filepath = current_app.config["UPLOAD_FOLDER"]+current_user.username
                 uploaded_file.save(filepath)
                 user.avatar_url = current_user.username
-
             if form["newUsername"].strip() != "":
                 user.username = form["newUsername"]
             if form["newPassword"] != "":
@@ -130,31 +134,32 @@ def UserPage():
             return redirect('/UserPage')
 
 
-@app.route('/UserPage/<userid>')
+@main.route('/UserPage/<userid>')
 def SpecificUserPage(userid):
     userDB = User.query.filter_by(username=userid).first()
     if userDB == None or userDB.share_profile == False or userDB == current_user:
         flash("User Either Doesn't Exist Or Has Share Disabled.", "error")
-        return redirect('/UserPage')
+        return redirect('/main.UserPage')
     return render_template("UserPage.html", user=userDB)
 
-@app.route('/QuestionDescription')
+@main.route('/QuestionDescription')
 @login_required
 def QuestionDescriptionPage():
     question_id = request.args.get('id', type=int)
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
-    print(type(question.difficulty))
     return render_template("QuestionDescription.html", question=question)
 
-@app.route('/QuestionStat')
+@main.route('/QuestionStat')
 @login_required
 def QuestionStatPage():
     question_id = request.args.get('id', type=int)
 
     # Fetch the question from the database
     question = Question.query.get_or_404(question_id)
+
+
     # Fetch the most recent submission for the current user and the given question
     submission = Submission.query.filter_by(
         user_id=current_user.id, 
@@ -215,21 +220,48 @@ def QuestionStatPage():
     else:
         avg_time = avg_tests = best_code_length = completed_count = 0
 
-    # Attach these values to the question object or pass as a separate dict
-    question.avg_time = avg_time
-    question.avg_tests = avg_tests
-    question.best_code_length = best_code_length
-    question.completed_count = completed_count
-    # Render the template with necessary context
-    return render_template(
-        "QuestionStat.html",
-        question=question,
-        user_score=user_score,  # Pass user_score to the template
-        bin_labels=bin_labels,
-        frequencies=frequencies
-    )
+    if request.method == "GET":
+        # Attach these values to the question object or pass as a separate dict
+        question.avg_time = avg_time
+        question.avg_tests = avg_tests
+        question.best_code_length = best_code_length
+        question.completed_count = completed_count
+        # Render the template with necessary context
+        return render_template(
+            "QuestionStat.html",
+            question=question,
+            user_score=user_score,  # Pass user_score to the template
+            bin_labels=bin_labels,
+            frequencies=frequencies
+        )
+    
 
-@app.route('/QuestionAnswer', methods=['GET', 'POST'])
+    if request.method == "POST":
+        review = request.form.get('ratingInput', type=int)
+        existing = Rating.query.filter_by(user_id=current_user.id, question_id=question_id).first()
+        if existing:
+            flash("You Have Already Submitted A Review")
+        else:
+            if review != None:
+                rating = Rating(
+                    score=review,
+                    user_id=current_user.id, 
+                    question_id=question_id
+                )
+                db.session.add(rating)
+                db.session.commit()
+                flash("Submitted! Thank You For Your Input", "success")
+            else:
+                flash("Have To Select A Star First Before Submitting Review", "error")
+        return render_template(
+            "QuestionStat.html",
+            question=question,
+            user_score=user_score,
+            bin_labels=bin_labels,
+            frequencies=frequencies
+        )
+
+@main.route('/QuestionAnswer', methods=['GET', 'POST'])
 @login_required
 def QuestionAnswer():
     print("Entered QuestionAnswer route")
@@ -289,7 +321,6 @@ def QuestionAnswer():
 
         return redirect(url_for('QuestionStatPage', id=question_id))
     
-
 
 @app.route('/LandingUpload')
 def LandingUpload():

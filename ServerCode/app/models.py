@@ -1,10 +1,11 @@
-from datetime import datetime
 import enum
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db
 from app import login_manager
 import numpy as np
+
+
 
 @login_manager.user_loader
 def load_user(id):
@@ -169,10 +170,11 @@ class Submission(db.Model):
 class Rating(db.Model):
     __tablename__ = "rating"
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Rating_User"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE", name="fk_Rating_User"), primary_key=True)
     question_id = db.Column(
-        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Rating_Question"), primary_key=True
-    )
+        db.Integer, db.ForeignKey("question.id", ondelete="CASCADE", name="fk_Rating_Question"),
+        primary_key=True
+        )
     score = db.Column(db.Integer, nullable=False)  # 1‑5
 
     #Relationships

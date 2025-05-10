@@ -1,12 +1,12 @@
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
 from . import db
-from app import app
 from flask_login import login_user, logout_user
 
+auth = Blueprint("auth", __name__)
 
-@app.route('/LoginPage', methods = ['GET', 'POST'])
+@auth.route('/LoginPage', methods = ['GET', 'POST'])
 def LoginPage():
     if request.method == 'GET':
         return render_template("LoginPage.html")
@@ -22,7 +22,7 @@ def LoginPage():
             return redirect("/UserPage")
 
 
-@app.route('/SignupPage', methods = ['GET', 'POST'])
+@auth.route('/SignupPage', methods = ['GET', 'POST'])
 def SignupPage():
     if request.method == 'GET':
         return render_template("SignupPage.html")
@@ -40,7 +40,7 @@ def SignupPage():
             flash("Account Created", 'success')
             return redirect("/LoginPage")
 
-@app.route('/Logout')
+@auth.route('/Logout')
 def Logout():
     logout_user()
     return redirect("/HomePage")
