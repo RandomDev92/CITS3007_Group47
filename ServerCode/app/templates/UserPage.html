@@ -115,11 +115,11 @@
             <div class="row row-cols-2 g-5 mb-5">
                 <div class="col text-center">
                     <h3>Avg Time Taken</h3>
-                    <h2><b>{{user.avg_time_sec}}</b></h2>
+                    <h2><b>{{user.average_time}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Standard Deviation</h3>
-                    <h2><b>{{user.std_time_sec}}</b></h2>
+                    <h2><b>{{user.stdev_time}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Best Time</h3>
@@ -127,23 +127,23 @@
                 </div>
                 <div class="col text-center">
                     <h3>Best Question</h3>
-                    <h4><a class="link-light" href={{user.best_question_id}}>Link to Question</a></h4>
+                    <h4><a class="link-light" href="/UserPage/{{user.best_question}}">Link to Question</a></h4>
                 </div>
                 <div class="col text-center">
                     <h3>Questions Completed</h3>
-                    <h2><b>{{user.completed_questions}}</b></h2>
+                    <h2><b>{{user.completed_total}}</b></h2>
+                </div>
+                <div class="col text-center">
+                    <h3>Started Questions</h3>
+                    <h2><b>{{user.completed_total}}</b></h2>
                 </div>
                 <div class="col text-center">
                     <h3>Completion Rate</h3>
                     <h2><b>{{user.completion_rate  | round(2)}}%</b></h2>
                 </div>
                 <div class="col text-center">
-                    <h3>Avg Attempts</h3>
-                    <h2><b>{{user.avg_attempts  | round(2)}}</b></h2>
-                </div>
-                <div class="col text-center">
-                    <h3>more stats as necessary</h3>
-                    <h2><b></b></h2>
+                    <h3>Avg Attempts per Question</h3>
+                    <h2><b>{{user.average_attempts  | round(2)}}</b></h2>
                 </div>
             </div>
             

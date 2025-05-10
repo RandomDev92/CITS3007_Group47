@@ -1,6 +1,7 @@
 import imghdr
 import os
 import time
+import statistics
 from flask import render_template,  request, redirect, flash, url_for, abort, Blueprint, current_app
 from flask_login import current_user, login_required
 from werkzeug.security import generate_password_hash
@@ -91,12 +92,38 @@ def validate_image(stream):
 @login_required
 def UserPage():
     if request.method == 'GET':
-        submissions = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
+        timeArr = []
+        attemptsArr = []
+        numCompQ = 0
+        allQs = Submission.query.filter_by(user_id=current_user.id).order_by(Submission.id).all()
+        for Ques in allQs:
+            if Ques.passed ==True:
+                numCompQ+=1
+                timeArr.append(Ques.runtime_sec)
+                attemptsArr.append(Ques.attempts)
+        compQ =len(allQs)
+        AvgTime = statistics.fmean(timeArr)
+        stdTime = statistics.stdev(timeArr)
+        AvgAtt = statistics.fmean(attemptsArr)
+        user_stats = {
+            "username":current_user.username,
+            "average_time":AvgTime, 
+            "stdev_time":stdTime, 
+            "average_attempts":AvgAtt, 
+            "completed_total":numCompQ, 
+            "total_started":compQ,
+            "completion_rate":numCompQ/compQ*100,
+            "best_question": current_user.best_question_id,
+            "best_time":current_user.best_time_sec,
+        }
+        
+        graphingQs = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
         submission_data = [
             {"question": s.question.title, "time": s.runtime_sec}
-            for s in submissions if s.runtime_sec is not None
+            for s in graphingQs if s.runtime_sec is not None
         ]
-        return render_template("UserPage.html", user=current_user, submission_data=submission_data)
+
+        return render_template("UserPage.html", user=user_stats, submission_data=submission_data)
     if request.method == 'POST':
         form = request.form
         #this is a security risk
@@ -305,11 +332,6 @@ def QuestionAnswer():
         submission.tests_run = len(question.test_cases.split(":")) #this is not needed
         submission.passed = True
         db.session.add(submission)
-
-        userdb = User.query.filter_by(id=current_user.id).first()
-        userdb.completed_questions += 1
-        userdb.completion_rate = userdb.completed_questions / userdb.attempted_questions 
-        db.session.add(userdb)
 
         db.session.commit()
 
