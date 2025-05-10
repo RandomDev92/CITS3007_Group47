@@ -91,7 +91,7 @@ def validate_image(stream):
 @login_required
 def UserPage():
     if request.method == 'GET':
-        submissions = Submission.query.filter_by(user_id=current_user.username).filter(Submission.passed == True).order_by(Submission.id).all()
+        submissions = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
         submission_data = [
             {"question": s.question.title, "time": s.runtime_sec}
             for s in submissions if s.runtime_sec is not None
@@ -99,7 +99,8 @@ def UserPage():
         return render_template("UserPage.html", user=current_user, submission_data=submission_data)
     if request.method == 'POST':
         form = request.form
-        if int(form["id"])!= current_user.id:
+        #this is a security risk
+        if form["userid"] != current_user.id:
             return ('', 204)
         
         if form["type"] == "shareProfileChange":
@@ -318,4 +319,9 @@ def QuestionAnswer():
 
         db.session.commit()
 
-        return redirect(url_for('main.QuestionStatPage', id=question_id))
+        return redirect(url_for('QuestionStatPage', id=question_id))
+    
+
+@app.route('/LandingUpload')
+def LandingUpload():
+    return render_template("UploadSuccess.html")

@@ -115,7 +115,7 @@ def testCode(stringCode, stringTest):
     
     for test in testingDict:
         try:
-            if hasattr(test, '__iter__') and type(test) != type(str()):
+            if hasattr(test, '__iter__'):
                 result = execute_user_code(stringCode, funcName, *test)
             else:
                 result = execute_user_code(stringCode, funcName, test)
