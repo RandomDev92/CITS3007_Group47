@@ -169,7 +169,7 @@
                             console.log(En.style.display)
 
                             var fd = new FormData();
-                            fd.append("username","{{current_user.username}}");
+                            fd.append("id","{{current_user.id}}");
                             fd.append("type", "shareProfileChange");
                             if (box){
                                 En.style.display = "block";
