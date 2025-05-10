@@ -53,6 +53,7 @@ def UploadPage():
 @app.route('/SearchPage', methods=['GET'])
 @login_required
 def SearchPage():
+    session["code_submitted"] = False
     title_query = request.args.get('title', '').strip()
     difficulty_query = request.args.get('difficulty', '').strip()
     tag_query = request.args.get('tag', '').strip()
@@ -266,6 +267,12 @@ def QuestionAnswer():
     # Retrieve the question from the database
     question = Question.query.get_or_404(question_id)
     if request.method == 'GET':
+        
+        #Not allowing people to resubmit existing code for faster time
+        if session["code_submitted"]:
+            return redirect(url_for("SearchPage"))
+        
+
         oldsubmission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).order_by(Submission.id.desc()).first()
         print(oldsubmission)
         if(oldsubmission and oldsubmission.passed == False):
@@ -315,6 +322,7 @@ def QuestionAnswer():
 
         db.session.commit()
 
+        session["code_submitted"] = True
         return redirect(url_for('QuestionStatPage', id=question_id))
     
 
