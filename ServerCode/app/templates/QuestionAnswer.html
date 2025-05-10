@@ -134,7 +134,7 @@
                     setInterval(updateTimerDisplay, 1000);
                 </script>
 
-                <form method="POST" action="{{ url_for('main.QuestionAnswer') }}?id={{ question.id }}">
+                <form method="POST" action="{{ url_for('QuestionAnswer') }}?id={{ question.id }}">
                     <textarea id="CodeInput" name="code" class="terminal-card bg-dark border border-white rounded p-2 text-white" placeholder="Enter your code..." required>{{submitedcode}}</textarea>
                     <script>
                         //copied from https://stackoverflow.com/a/10456255 
@@ -161,7 +161,7 @@
                 
                     <div class="row row-cols-2 mt-3">
                         <div class="col-6 pe-1">
-                            <a class="btn bg-dark text-white border border-white w-100" href="{{ url_for('main.QuestionDescriptionPage', id=question.id) }}">Back</a>
+                            <a class="btn bg-dark text-white border border-white w-100" href="{{ url_for('QuestionDescriptionPage', id=question.id) }}">Back</a>
                         </div>
                         <div class="col-6 ps-1">
                             <button type="submit" class="btn btn-danger w-100">Test and Submit</button>

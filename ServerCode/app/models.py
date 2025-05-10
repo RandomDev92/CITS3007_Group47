@@ -1,11 +1,10 @@
+from datetime import datetime
 import enum
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db
 from app import login_manager
 import numpy as np
-
-
 
 @login_manager.user_loader
 def load_user(id):
