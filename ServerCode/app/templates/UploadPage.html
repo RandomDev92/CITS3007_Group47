@@ -50,7 +50,7 @@
               <div class="d-flex">
                   <a 
                   class="d-flex align-items-center text-left flex-shrink-0" 
-                  href="UserPage"
+                  href="{{url_for('main.UserPage')}}"
                   aria-label="User-home">
                   <img
                   src="{{url_for('static', filename='avatars/' + current_user.avatar_url)}}"
@@ -68,7 +68,7 @@
               <!--Centred, clickable logo-->
               <a
                   class="navbar-brand navbar-brand-center"
-                  href="HomePage"
+                  href="{{url_for('main.HomePage')}}"
                   aria-label="Speed‑Code home"
               >
                   <img
@@ -81,10 +81,10 @@
             <!--Stats button-->
             <div class="ml-auto d-flex">
               <div class="ms-2">
-                <a href="SearchPage" class="btn btn-outline-light nav-btn">Search</a>
+                <a href="{{url_for('main.SearchPage')}}" class="btn btn-outline-light nav-btn">Search</a>
               </div>
               <div class="ms-2">
-                <a href="UploadPage" class="btn btn-outline-light nav-btn">Upload</a>
+                <a href="{{url_for('main.UploadPage')}}" class="btn btn-outline-light nav-btn">Upload</a>
               </div>
           </div>
           </nav>
