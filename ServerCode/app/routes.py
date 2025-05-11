@@ -303,20 +303,21 @@ def QuestionStatPage():
     if request.method == "POST":
         review = request.form.get('ratingInput', type=int)
         existing = Rating.query.filter_by(user_id=current_user.id, question_id=question_id).first()
-        if existing:
-            flash("You Have Already Submitted A Review")
+        if review is None:
+            flash("Have To Select A Star First Before Submitting Review", "error")
         else:
-            if review != None:
+            if existing:
+                existing.score = review
+                flash("Your review has been updated.", "success")
+            else:
                 rating = Rating(
                     score=review,
                     user_id=current_user.id, 
                     question_id=question_id
                 )
                 db.session.add(rating)
-                db.session.commit()
                 flash("Submitted! Thank You For Your Input", "success")
-            else:
-                flash("Have To Select A Star First Before Submitting Review", "error")
+            db.session.commit()
         
         return redirect(url_for('main.QuestionStatPage', id=question_id))
 
