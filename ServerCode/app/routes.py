@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash
 from . import db
 from app.models import User, Question, Difficulty, Tag, Submission, Rating
 from app.sandbox import testCode
+from sqlalchemy.sql import func
 
 main = Blueprint('main', __name__,)
 
@@ -77,6 +78,18 @@ def SearchPage():
         query = query.join(Question.tags).filter(Tag.name.ilike(f"%{tag_query}%"))
     
     results = query.distinct().all()
+    # Add average rating to each question object
+    question_ids = [q.id for q in results]
+    ratings = (
+        db.session.query(Rating.question_id, func.avg(Rating.score))
+        .filter(Rating.question_id.in_(question_ids))
+        .group_by(Rating.question_id)
+        .all()
+    )
+    rating_map = {qid: round(avg, 1) for qid, avg in ratings}
+    for q in results:
+        q.avg_rating = rating_map.get(q.id, None)
+    
     return render_template("SearchPage.html", questions=results)
 
 

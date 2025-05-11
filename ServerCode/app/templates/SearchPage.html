@@ -175,6 +175,11 @@
                     {% endfor %}
                   </small>
                   <small class="d-block">{{ question.short_desc }}</small>
+                  {% if question.avg_rating %}
+                    <small class="text-warning">⭐ {{ question.avg_rating }}/5</small>
+                  {% else %}
+                    <small class="text-muted">No ratings yet</small>
+                  {% endif %}
                 </div>
               {% endfor %}
             {% else %}
