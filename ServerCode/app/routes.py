@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash
 from . import db
 from app.models import User, Question, Difficulty, Tag, Submission, Rating
 from app.sandbox import testCode
+from sqlalchemy.sql import func
 
 main = Blueprint('main', __name__,)
 
@@ -77,6 +78,18 @@ def SearchPage():
         query = query.join(Question.tags).filter(Tag.name.ilike(f"%{tag_query}%"))
     
     results = query.distinct().all()
+    # Add average rating to each question object
+    question_ids = [q.id for q in results]
+    ratings = (
+        db.session.query(Rating.question_id, func.avg(Rating.score))
+        .filter(Rating.question_id.in_(question_ids))
+        .group_by(Rating.question_id)
+        .all()
+    )
+    rating_map = {qid: round(avg, 1) for qid, avg in ratings}
+    for q in results:
+        q.avg_rating = rating_map.get(q.id, None)
+    
     return render_template("SearchPage.html", questions=results)
 
 
@@ -197,7 +210,11 @@ def QuestionDescriptionPage():
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
-    return render_template("QuestionDescription.html", question=question)
+    author = User.query.get(question.author_id)
+    question.author_username = author.username if author else "Unknown"
+    avg_rating = db.session.query(func.avg(Rating.score)).filter_by(question_id=question_id).scalar()
+    avg_rating = round(avg_rating, 1) if avg_rating else None
+    return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating)
 
 @main.route('/QuestionStat', methods = ['GET', 'POST'])
 @login_required
@@ -286,20 +303,21 @@ def QuestionStatPage():
     if request.method == "POST":
         review = request.form.get('ratingInput', type=int)
         existing = Rating.query.filter_by(user_id=current_user.id, question_id=question_id).first()
-        if existing:
-            flash("You Have Already Submitted A Review")
+        if review is None:
+            flash("Have To Select A Star First Before Submitting Review", "error")
         else:
-            if review != None:
+            if existing:
+                existing.score = review
+                flash("Your review has been updated.", "success")
+            else:
                 rating = Rating(
                     score=review,
                     user_id=current_user.id, 
                     question_id=question_id
                 )
                 db.session.add(rating)
-                db.session.commit()
                 flash("Submitted! Thank You For Your Input", "success")
-            else:
-                flash("Have To Select A Star First Before Submitting Review", "error")
+            db.session.commit()
         
         return redirect(url_for('main.QuestionStatPage', id=question_id))
 

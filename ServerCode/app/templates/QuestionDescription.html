@@ -101,6 +101,11 @@
                   {% endfor %}
                 </small>
                 <a href="{{ url_for('main.UserPage', username=question.author_username) }}" class="mb-2 link-light">Author: {{ question.author_username }}</a>
+                {% if avg_rating %}
+                  <small class="text-warning">⭐ Average Rating: {{ avg_rating }}/5</small>
+                {% else %}
+                  <small class="text-muted">No ratings yet</small>
+                {% endif %}
               </div>
               <div class="text-left">
                 <h5 class="m-2">Description:</h5>
