@@ -112,6 +112,15 @@ def UserPage():
         else:
             AvgTime = 0
             AvgAtt = 0
+        bestQ = Question.query.filter_by(id=current_user.best_question_id).first()
+        if bestQ == None:
+            bestQid = -1
+            bestQtime = 0
+            bestQtitle = "No Best Question"
+        else:
+            bestQid = bestQ.id
+            bestQtime = current_user.best_time_sec
+            bestQtitle = bestQ.title
         user_stats = {
             "username":current_user.username,
             "average_time":AvgTime, 
@@ -120,9 +129,9 @@ def UserPage():
             "completed_total":numCompQ, 
             "total_started":startedQ,
             "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
-            "best_question": current_user.best_question_id,
-            "best_question_title": Question.query.filter_by(id=current_user.best_question_id).first().title,
-            "best_time":current_user.best_time_sec,
+            "best_question": bestQid,
+            "best_question_title": bestQtitle,
+            "best_time": bestQtime,
         }
         
         graphingQs = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
