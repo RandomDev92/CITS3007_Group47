@@ -322,7 +322,7 @@ def QuestionAnswer():
     
     if request.method == 'POST':
         print("Form submitting")
-        code = request.form.get('code')
+        code = request.form.get('Code')
         submission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).order_by(Submission.id.desc()).first()
         submission.attempts +=1
         
