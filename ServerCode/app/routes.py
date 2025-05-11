@@ -201,7 +201,11 @@ def QuestionDescriptionPage():
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
-    return render_template("QuestionDescription.html", question=question)
+    author = User.query.get(question.author_id)
+    question.author_username = author.username if author else "Unknown"
+    avg_rating = db.session.query(func.avg(Rating.score)).filter_by(question_id=question_id).scalar()
+    avg_rating = round(avg_rating, 1) if avg_rating else None
+    return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating)
 
 @main.route('/QuestionStat', methods = ['GET', 'POST'])
 @login_required
