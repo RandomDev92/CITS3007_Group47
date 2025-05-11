@@ -1,6 +1,7 @@
 import imghdr
 import os
 import time
+import statistics
 from flask import render_template,  request, redirect, flash, url_for, abort, Blueprint, current_app
 from flask_login import current_user, login_required
 from werkzeug.security import generate_password_hash
@@ -91,16 +92,51 @@ def validate_image(stream):
 @login_required
 def UserPage():
     if request.method == 'GET':
-        submissions = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
+        timeArr = []
+        attemptsArr = []
+        numCompQ = 0
+        allQs = Submission.query.filter_by(user_id=current_user.id).order_by(Submission.id).all()
+        for Ques in allQs:
+            if Ques.passed ==True:
+                numCompQ+=1
+                timeArr.append(Ques.runtime_sec)
+                attemptsArr.append(Ques.attempts)
+        startedQ = len(allQs) 
+        if numCompQ >= 2:
+            stdTime = statistics.stdev(timeArr)
+        else:
+            stdTime = 0
+        if numCompQ >=1:
+            AvgTime = statistics.fmean(timeArr)
+            AvgAtt = statistics.fmean(attemptsArr)
+        else:
+            AvgTime = 0
+            AvgAtt = 0
+        user_stats = {
+            "username":current_user.username,
+            "average_time":AvgTime, 
+            "stdev_time":stdTime, 
+            "average_attempts":AvgAtt, 
+            "completed_total":numCompQ, 
+            "total_started":startedQ,
+            "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
+            "best_question": current_user.best_question_id,
+            "best_question_title": Question.query.filter_by(id=current_user.best_question_id).first().title,
+            "best_time":current_user.best_time_sec,
+        }
+        
+        graphingQs = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
         submission_data = [
             {"question": s.question.title, "time": s.runtime_sec}
-            for s in submissions if s.runtime_sec is not None
+            for s in graphingQs if s.runtime_sec is not None
         ]
-        return render_template("UserPage.html", user=current_user, submission_data=submission_data)
+
+        return render_template("UserPage.html", user=user_stats, submission_data=submission_data)
+    
     if request.method == 'POST':
         form = request.form
         #this is a security risk
-        if form["userid"] != current_user.id:
+        if int(form["userid"]) != current_user.id:
             return ('', 204)
         
         if form["type"] == "shareProfileChange":
@@ -115,8 +151,10 @@ def UserPage():
         
         if form["type"] == "Change":
             user = User.query.get_or_404(current_user.id)
+            print(user)
             uploaded_file = request.files['newpfp']
             filename = uploaded_file.filename
+            print(filename)
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(uploaded_file.stream):
@@ -124,6 +162,7 @@ def UserPage():
                 filepath = current_app.config["UPLOAD_FOLDER"]+current_user.username
                 uploaded_file.save(filepath)
                 user.avatar_url = current_user.username
+                print(user.avatar_url)
             if form["newUsername"].strip() != "":
                 user.username = form["newUsername"]
             if form["newPassword"] != "":
@@ -267,12 +306,9 @@ def QuestionAnswer():
         oldsubmission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).order_by(Submission.id.desc()).first()
         print(oldsubmission)
         if(oldsubmission and oldsubmission.passed == False):
-            submission = Submission(
-                user_id=current_user.id, 
-                question_id=question_id, 
-                start_time = time.time(),
-                attempts = oldsubmission.attempts + 1,
-                )
+            oldsubmission.attempts+=1
+            oldsubmission.start_time = time.time()
+            db.session.add(oldsubmission)
         else:
             submission = Submission(
                 user_id=current_user.id, 
@@ -281,11 +317,6 @@ def QuestionAnswer():
                 attempts = 0,
                 )
             db.session.add(submission)
-        
-        userdb = User.query.filter_by(id=current_user.id).first()
-        userdb.attempted_questions += 1
-        userdb.completion_rate = userdb.completed_questions / userdb.attempted_questions 
-        db.session.add(userdb)
         db.session.commit()
         return render_template('QuestionAnswer.html', question=question)
     
@@ -297,7 +328,9 @@ def QuestionAnswer():
         
         result = testCode(code, question.test_cases)
         if result != "All tests passed.":
-            return render_template("QuestionAnswer.html", submitedcode=code, question=question, testResult=result)
+            flash(code, 'code')
+            flash(result, 'error')
+            return redirect(url_for("main.QuestionAnswer", id=question_id))
         
         submission.end_time = time.time() 
         submission.runtime_sec = submission.end_time - submission.start_time
@@ -306,10 +339,11 @@ def QuestionAnswer():
         submission.passed = True
         db.session.add(submission)
 
-        userdb = User.query.filter_by(id=current_user.id).first()
-        userdb.completed_questions += 1
-        userdb.completion_rate = userdb.completed_questions / userdb.attempted_questions 
-        db.session.add(userdb)
+        if submission.runtime_sec <= current_user.best_time_sec or current_user.best_time_sec == 0:
+            cUser = User.query.filter_by(id=current_user.id).first()
+            cUser.best_time_sec = submission.runtime_sec
+            cUser.best_question_id = question_id
+            db.session.add(cUser)
 
         db.session.commit()
 

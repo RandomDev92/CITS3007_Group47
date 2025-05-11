@@ -106,7 +106,13 @@
               <div class="col-12 col-lg-5">
                 <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
                   <h3>Test Case and Results</h3>
-                  <p class="mb-2">{{ testResult }}</p>
+                    {% with messages = get_flashed_messages(category_filter=["error"])%}
+                    {% if messages%}
+                    {% for message in messages%}
+                    <p class="mb-2">{{ message }}</p>
+                    {%endfor%}
+                    {%endif%}
+                    {%endwith%}
                 </div>
               </div>
             </div>
