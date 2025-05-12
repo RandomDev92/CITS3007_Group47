@@ -281,6 +281,7 @@ def QuestionStatPage():
         if passing_submissions:
             avg_time = round(sum(s.runtime_sec for s in passing_submissions if s.runtime_sec) / len(passing_submissions), 2)
             avg_attempts = round(sum(s.attempts for s in passing_submissions if s.attempts) / len(passing_submissions), 2)
+            best_time = min(s.runtime_sec for s in passing_submissions if s.runtime_sec)
             best_code_length = min(s.lines_of_code for s in passing_submissions if s.lines_of_code)
             completed_count = len(set(s.user_id for s in passing_submissions))
         else:
@@ -289,6 +290,7 @@ def QuestionStatPage():
             # Attach these values to the question object or pass as a separate dict
         question.avg_time = avg_time
         question.avg_attempts = avg_attempts
+        question.best_time = best_time
         question.best_code_length = best_code_length
         question.completed_count = completed_count
         # Render the template with necessary context

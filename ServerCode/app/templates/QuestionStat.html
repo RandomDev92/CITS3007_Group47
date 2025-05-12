@@ -120,7 +120,7 @@
               <p class="mb-2">Time taken: {{ user_score.time_taken }}s</p>
               <p class="mb-2">Attempts: {{ user_score.attempts }}</p>
               <p class="mb-2">Code length: {{ user_score.code_length }} lines</p>
-              <p class="mb-0">Passed: {{ 'Yes' if user_score.passed else 'No' }}</p>
+              <p class="mb-2">Passed: {{ 'Yes' if user_score.passed else 'No' }}</p>
             </div>
           </div>
 
@@ -133,7 +133,8 @@
               <canvas id="histogramChart" width="400" height="250"></canvas>
               <p class="mb-2">Average attempts: {{ question.avg_attempts }}</p>
               <p class="mb-2">Best code length: {{ question.best_code_length }} lines</p>
-              <p class="mb-0">People completed: {{ question.completed_count }}</p>
+              <p class="mb-2">People completed: {{ question.completed_count }}</p>
+              <p>Best Time: {{ question.best_time }}s</p>
 
 
             </div>
