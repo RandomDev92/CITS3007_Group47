@@ -333,11 +333,14 @@ def QuestionAnswer():
     question = Question.query.get_or_404(question_id)
     if request.method == 'GET':
         oldsubmission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).order_by(Submission.id.desc()).first()
-        print(oldsubmission)
+        start_time = 0 
         if(oldsubmission and oldsubmission.passed == False):
+            diff = time.time() - oldsubmission.start_time
+            if diff > 86400:
+                oldsubmission.start_time = time.time()
             oldsubmission.attempts+=1
-            oldsubmission.start_time = time.time()
             db.session.add(oldsubmission)
+            start_time = oldsubmission.start_time
         else:
             submission = Submission(
                 user_id=current_user.id, 
@@ -347,6 +350,7 @@ def QuestionAnswer():
                 )
             db.session.add(submission)
         db.session.commit()
+        flash(start_time, "time")
         return render_template('QuestionAnswer.html', question=question)
     
     if request.method == 'POST':
@@ -357,6 +361,7 @@ def QuestionAnswer():
         
         result = testCode(code, question.test_cases)
         if result != "All tests passed.":
+            flash(submission.start_time, "time")
             flash(code, 'code')
             flash(result, 'error')
             return redirect(url_for("main.QuestionAnswer", id=question_id))
