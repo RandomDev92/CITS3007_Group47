@@ -190,6 +190,24 @@
                     </script>
                 </div>  
                 </div> 
+                <div class="d-flex align-items-center justify-content-center my-4 flex-wrap gap-4">
+                <!-- Whitelist Add Form -->
+                <form method="POST" class="d-flex align-items-center" style="gap: 0.5rem;">
+                    <input type="hidden" name="type" value="addWhitelist">
+                    <input type="text" class="form-control" name="whitelist_username" placeholder="Whitelist a user" style="min-width: 220px;">
+                    <button class="btn btn-outline-light" type="submit">Add</button>
+                </form>
+
+                <!-- Whitelist Remove Form -->
+                <form method="POST" class="d-flex align-items-center" style="gap: 0.5rem;">
+                    <input type="hidden" name="type" value="removeWhitelist">
+                    <select class="form-select" name="whitelist_remove_id" style="min-width: 180px;">
+                        {% for entry in current_user.shared_profiles %}
+                            <option value="{{ entry.shared_with.id }}">{{ entry.shared_with.username }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-outline-danger" type="submit">Remove</button>
+                </form>
                 <div class="d-flex mx-4">
                     <button class="btn btn-danger mx-3" onclick="toggleEdit()">Edit profile </button>
                     <script>

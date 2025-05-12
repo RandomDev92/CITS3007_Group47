@@ -157,9 +157,7 @@ def UserPage():
     
     if request.method == 'POST':
         form = request.form
-        #this is a security risk
-        if int(form["userid"]) != current_user.id:
-            return ('', 204)
+        form_type = form.get("type", "")
         
         if form["type"] == "shareProfileChange":
             user = User.query.get_or_404(current_user.id)
@@ -193,7 +191,31 @@ def UserPage():
             db.session.commit()
             flash("Profile Changed.", "success")
             return redirect('/UserPage')
+        
+        if form["type"] == "addWhitelist":
+            username = form.get("whitelist_username").strip()
+            target_user = User.query.filter_by(username=username).first()
+            if target_user and target_user != current_user:
+                from app.models import ProfileShare
+                already_shared = ProfileShare.query.filter_by(owner_id=current_user.id, shared_with_id=target_user.id).first()
+                if not already_shared:
+                    new_entry = ProfileShare(owner_id=current_user.id, shared_with_id=target_user.id)
+                    db.session.add(new_entry)
+                    db.session.commit()
+                    flash(f"{username} has been whitelisted!", "success")
+            else:
+                flash("User not found or invalid.", "error")
+            return redirect('/UserPage')
 
+        if form["type"] == "removeWhitelist":
+            from app.models import ProfileShare
+            shared_id = int(form.get("whitelist_remove_id"))
+            entry = ProfileShare.query.filter_by(owner_id=current_user.id, shared_with_id=shared_id).first()
+            if entry:
+                db.session.delete(entry)
+                db.session.commit()
+                flash("User removed from whitelist.", "success")
+            return redirect('/UserPage')
 
 @main.route('/UserPage/<userid>')
 def SpecificUserPage(userid):
