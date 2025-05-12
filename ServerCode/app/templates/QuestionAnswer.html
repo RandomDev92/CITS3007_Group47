@@ -139,7 +139,8 @@
                         const seconds = String(elapsed % 60).padStart(2, '0');
                         document.getElementById('timer').textContent = `${minutes}:${seconds}`;
                     }
-                
+                    
+                    updateTimerDisplay()
                     // Start timer update loop
                     setInterval(updateTimerDisplay, 1000);
                 </script>
