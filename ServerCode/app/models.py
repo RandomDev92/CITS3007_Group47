@@ -93,7 +93,8 @@ class Question(db.Model):
 
     #denormalised stats for quick access (updated after each submission)
     avg_time_sec = db.Column(db.Float, default=0)
-    avg_tests = db.Column(db.Float, default=0)
+    avg_attempts = db.Column(db.Float, default=0)
+    best_time = db.Column(db.Float, default=0)
     best_code_length = db.Column(db.Integer)
     completed_count = db.Column(db.Integer, default=0)
 

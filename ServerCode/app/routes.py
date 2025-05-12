@@ -236,14 +236,14 @@ def QuestionStatPage():
         if submission:
             user_score = {
                 'time_taken': submission.runtime_sec,
-                'tests_ran': submission.tests_run,
+                'attempts': submission.attempts,
                 'code_length': submission.lines_of_code,
                 'passed': submission.passed
             }
         else:
             user_score = {
                 'time_taken': "N/A",
-                'tests_ran': "N/A",
+                'attempts': "N/A",
                 'code_length': "N/A",
                 'passed': "N/A"
             }
@@ -280,15 +280,17 @@ def QuestionStatPage():
 
         if passing_submissions:
             avg_time = round(sum(s.runtime_sec for s in passing_submissions if s.runtime_sec) / len(passing_submissions), 2)
-            avg_tests = round(sum(s.tests_run for s in passing_submissions if s.tests_run) / len(passing_submissions), 2)
+            avg_attempts = round(sum(s.attempts for s in passing_submissions if s.attempts) / len(passing_submissions), 2)
+            best_time = min(s.runtime_sec for s in passing_submissions if s.runtime_sec)
             best_code_length = min(s.lines_of_code for s in passing_submissions if s.lines_of_code)
             completed_count = len(set(s.user_id for s in passing_submissions))
         else:
-            avg_time = avg_tests = best_code_length = completed_count = 0
+            avg_time = avg_attempts = best_code_length = completed_count = 0
 
             # Attach these values to the question object or pass as a separate dict
         question.avg_time = avg_time
-        question.avg_tests = avg_tests
+        question.avg_attempts = avg_attempts
+        question.best_time = best_time
         question.best_code_length = best_code_length
         question.completed_count = completed_count
         # Render the template with necessary context
@@ -365,7 +367,7 @@ def QuestionAnswer():
             return redirect(url_for("main.QuestionAnswer", id=question_id))
         
         submission.end_time = time.time() 
-        submission.runtime_sec = submission.end_time - submission.start_time
+        submission.runtime_sec = round(submission.end_time - submission.start_time, 2)
         submission.lines_of_code = len(code.split("\n"))
         submission.tests_run = len(question.test_cases.split(":")) #this is not needed
         submission.passed = True
