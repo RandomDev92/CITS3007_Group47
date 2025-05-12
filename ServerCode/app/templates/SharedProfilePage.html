@@ -93,7 +93,7 @@
         <!--upload button-->
         <div class="ml-auto d-flex">
           <div class="ms-2">
-            <a href="{{ url_for('main.SharedProfilePage') }}" class="btn btn-outline-light nav-btn">Shared Profiles</a>
+            <a href="{{url_for('main.SearchPage')}}" class="btn btn-outline-light nav-btn">Search</a>
           </div>
           <div class="ms-2">
             <a href="{{url_for('main.UploadPage')}}" class="btn btn-outline-light nav-btn">Upload</a>
@@ -102,84 +102,29 @@
     </nav>
 
     <!--CONTENT-->
-    <div class="container-fluid mt-4">
-      <div class="row justify-content-center">
-        <!--Left filter column-->
-        <div class="filter-panel px-3 mb-4">
-          <!--Title search-->
-          <form action="{{url_for('main.SearchPage')}}" method="GET" id="search-form">
-            <!-- Title input -->
-            <div class="mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="title"
-                value="{{ request.args.get('title', '') }}"
-                placeholder="Title"
-              />
-            </div>
-          
-            <!-- Difficulty select (auto-submit) -->
-            <div class="mb-3">
-              <select
-                class="form-select"
-                name="difficulty"
-                onchange="document.getElementById('search-form').submit();"
-              >
-                <option value="">Difficulty</option>
-                <option value="easy" {% if request.args.get('difficulty') == 'easy' %}selected{% endif %}>Easy</option>
-                <option value="medium" {% if request.args.get('difficulty') == 'medium' %}selected{% endif %}>Medium</option>
-                <option value="hard" {% if request.args.get('difficulty') == 'hard' %}selected{% endif %}>Hard</option>
-              </select>
-            </div>
-          
-            <!-- Tag input -->
-            <div class="mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="tag"
-                value="{{ request.args.get('tag', '') }}"
-                placeholder="Tags"
-              />
-            </div>
-          
-            <!-- Hidden submit button (so Enter works) -->
-            <button type="submit" hidden></button>
+  <div class="container mt-4">
+    <form method="GET" action="{{ url_for('main.SharedProfilePage') }}">
+      <div class="input-group mb-4">
+        <input type="text" name="search" class="form-control" placeholder="Search shared profiles..."
+               value="{{ search }}">
+        <button class="btn btn-danger" type="submit">Search</button>
+      </div>
+    </form>
 
-            <div class="d-grid mt-3">
-              <button type="submit" class="btn btn-danger btn-lg py-3">Search</button>
-            </div> 
-          </form>
-        </div>
-        
-        <!--Questions list column-->
-        <div class="col-12 col-md-8 col-lg-6">
-          <div class="question-scroll pr-md-2">
-            {% if questions %}
-              {% for question in questions %}
-                <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
-                  <a href="{{ url_for('main.QuestionDescriptionPage') }}?id={{ question.id }}" class="stretched-link"></a>
-                  <h5 class="mb-2">{{ question.title }}</h5>
-                  <small class="mb-2">
-                    {% for tag in question.tags %}
-                      <span class="badge bg-danger">{{ tag.name }}</span>
-                    {% endfor %}
-                  </small>
-                  <small class="d-block">{{ question.short_desc }}</small>
-                  {% if question.avg_rating %}
-                    <small class="text-warning">⭐ {{ question.avg_rating }}/5</small>
-                  {% else %}
-                    <small class="text-muted">No ratings yet</small>
-                  {% endif %}
-                </div>
-              {% endfor %}
-            {% else %}
-              <div class="text-white">No results found.</div>
-            {% endif %}
+    {% if users %}
+      {% for user in users %}
+        <div class="card question-card bg-dark text-white mb-3 p-3">
+          <a href="{{ url_for('main.SpecificUserPage', userid=user.username) }}" class="stretched-link"></a>
+          <div class="d-flex align-items-center">
+            <img src="{{ url_for('static', filename='avatars/' + user.avatar_url) }}"
+                 alt="avatar" class="rounded-circle me-3" width="48" height="48">
+            <h5 class="mb-0">{{ user.username }}</h5>
           </div>
         </div>
-      </div>
-    </div>
+      {% endfor %}
+    {% else %}
+      <div>No shared profiles found.</div>
+    {% endif %}
+  </div>
   </body>
 </html>
