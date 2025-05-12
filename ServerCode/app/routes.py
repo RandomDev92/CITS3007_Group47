@@ -6,7 +6,7 @@ from flask import render_template,  request, redirect, flash, url_for, abort, Bl
 from flask_login import current_user, login_required
 from werkzeug.security import generate_password_hash
 from . import db
-from app.models import User, Question, Difficulty, Tag, Submission, Rating
+from app.models import User, Question, Difficulty, Tag, Submission, Rating, ProfileShare
 from app.sandbox import testCode
 from sqlalchemy.sql import func
 
@@ -376,3 +376,19 @@ def QuestionAnswer():
 
         return redirect(url_for('main.QuestionStatPage', id=question_id))
     
+@main.route('/SharedProfilesPage', methods=['GET'])
+@login_required
+def SharedProfilePage():
+    search_query = request.args.get('search', '').strip()
+
+    # Query all users who shared their profile with the current user
+    shared_users = db.session.query(User).join(ProfileShare, ProfileShare.owner_id == User.id) \
+        .filter(ProfileShare.shared_with_id == current_user.id)
+
+    # Optional search
+    if search_query:
+        shared_users = shared_users.filter(User.username.ilike(f"%{search_query}%"))
+
+    shared_users = shared_users.all()
+
+    return render_template("SharedProfilePage.html", users=shared_users, search=search_query)
