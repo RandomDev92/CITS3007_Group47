@@ -114,7 +114,8 @@
     {% if users %}
       {% for user in users %}
         <div class="card question-card bg-dark text-white mb-3 p-3">
-          <a href="{{ url_for('main.SpecificUserPage', userid=user.username) }}" class="stretched-link"></a>
+          <a href="{{ url_for('main.SpecificUserPage', userid=user.id) }}" class="stretched-link"></a>
+
           <div class="d-flex align-items-center">
             <img src="{{ url_for('static', filename='avatars/' + user.avatar_url) }}"
                  alt="avatar" class="rounded-circle me-3" width="48" height="48">

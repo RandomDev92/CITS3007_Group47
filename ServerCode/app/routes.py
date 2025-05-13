@@ -101,6 +101,7 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+
 @main.route('/UserPage', methods = ['GET', 'POST'])
 @login_required
 def UserPage():
@@ -217,13 +218,71 @@ def UserPage():
                 flash("User removed from whitelist.", "success")
             return redirect('/UserPage')
 
-@main.route('/UserPage/<userid>')
+
+
+@main.route('/SpecificUserPage/<int:userid>')
 def SpecificUserPage(userid):
-    userDB = User.query.filter_by(username=userid).first()
-    if userDB == None or userDB.share_profile == False or userDB == current_user:
-        flash("User Either Doesn't Exist Or Has Share Disabled.", "error")
-        return redirect('/main.UserPage')
-    return render_template("UserPage.html", user=userDB)
+    user = User.query.get_or_404(userid)
+    
+    #check if user profile is privated
+    if user.share_profile == 1:
+        #Check to make sure that current user is shared with user they're trying to access
+        share = ProfileShare.query.filter_by(owner_id=userid, shared_with_id=current_user.id).first()  
+        if not share:
+            abort(403)  # Forbidden if not shared with current_user
+
+    
+
+    timeArr = []
+    attemptsArr = []
+    numCompQ = 0
+    allQs = Submission.query.filter_by(user_id=user.id).order_by(Submission.id).all()
+    for Ques in allQs:
+        if Ques.passed ==True:
+            numCompQ+=1
+            timeArr.append(Ques.runtime_sec)
+            attemptsArr.append(Ques.attempts)
+    startedQ = len(allQs) 
+    if numCompQ >= 2:
+        stdTime = statistics.stdev(timeArr)
+    else:
+        stdTime = 0
+    if numCompQ >=1:
+        AvgTime = statistics.fmean(timeArr)
+        AvgAtt = statistics.fmean(attemptsArr)
+    else:
+        AvgTime = 0
+        AvgAtt = 0
+    bestQ = Question.query.filter_by(id=user.best_question_id).first()
+    if bestQ == None:
+        bestQid = -1
+        bestQtime = 0
+        bestQtitle = "No Best Question"
+    else:
+        bestQid = bestQ.id
+        bestQtime = user.best_time_sec
+        bestQtitle = bestQ.title
+    user_stats = {
+        "username":user.username,
+        "average_time":AvgTime, 
+        "stdev_time":stdTime, 
+        "average_attempts":AvgAtt, 
+        "completed_total":numCompQ, 
+        "total_started":startedQ,
+        "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
+        "best_question": bestQid,
+        "best_question_title": bestQtitle,
+        "best_time": bestQtime,
+    }
+    graphingQs = Submission.query.filter_by(user_id=user.id).filter(Submission.passed == True).order_by(Submission.id).all()
+    submission_data = [
+        {"question": s.question.title, "time": s.runtime_sec}
+        for s in graphingQs if s.runtime_sec is not None
+    ]
+
+    return render_template("SpecificUserPage.html", user=user_stats, submission_data=submission_data)
+
+
 
 @main.route('/QuestionDescription')
 @login_required
