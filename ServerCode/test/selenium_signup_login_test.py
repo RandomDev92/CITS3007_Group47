@@ -19,15 +19,12 @@ from app import create_app
 
 
 class SeleniumTest(unittest.TestCase):
-    def run_flask(app):
-        app.run()
-    
     
     def setUp(self):
         self.app = create_app()
         self.app_context = self.app.app_context()
         self.app_context.push()
-        self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run')
+        self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
         
         options = Options()
         options.add_argument("--no-sandbox")
@@ -40,11 +37,9 @@ class SeleniumTest(unittest.TestCase):
         db.session.remove()
         self.app_context.pop()
         self.driver.quit()
-        self.server_thread.kill()
-        self.server_thread.terminate()
         os.kill(self.server_thread.pid, signal.CTRL_C_EVENT)
+        self.server_thread.terminate()
         self.server_thread.wait()
-        print("test")
         pass
 
 
@@ -74,7 +69,7 @@ class SeleniumTest(unittest.TestCase):
         submitButton = self.driver.find_element(By.ID, "Submit")
         submitButton.click()
         wait = WebDriverWait(self.driver, timeout=2)
-        HomePage = wait.until(EC.title_is((By.ID, 'Home')))
+        HomePage = wait.until(EC.title_is("Speed‑Code–Userpage"))
         self.assertIsNotNone(HomePage, "HomePage not Found")
         
         

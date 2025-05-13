@@ -24,8 +24,9 @@ def create_app(isTest=False):
    from app.auth import auth as auth_bp
    app.register_blueprint(auth_bp)
    
-   with app.app_context():
-      db.create_all()
+   if isTest:
+      with app.app_context():
+         db.create_all()
    return app
 
 
