@@ -15,7 +15,7 @@ def create_app(isTest=False):
    else:
       app.config.from_object(DeploymentConfig)
    db.init_app(app)
-   migrate.init_app(app, db)
+   migrate.init_app(app, db, render_as_batch=True)
    login_manager.init_app(app)
 
    from app.routes import main as main_bp
@@ -24,7 +24,10 @@ def create_app(isTest=False):
    from app.auth import auth as auth_bp
    app.register_blueprint(auth_bp)
    
+   with app.app_context():
+      db.create_all()
    return app
+
 
 
 '''

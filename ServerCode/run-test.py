@@ -1,5 +1,11 @@
 import unittest
 
+def run_selenium_tests():
+    test_loader = unittest.TestLoader()
+    test_suite = test_loader.discover('test', pattern='selenium_*.py')
+    test_runner = unittest.TextTestRunner(verbosity=2)
+    test_runner.run(test_suite)
+
 def run_unittest_tests():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover('test', pattern='unittest_*.py')
@@ -8,4 +14,5 @@ def run_unittest_tests():
 
 if __name__ == '__main__':
     run_unittest_tests()
+    run_selenium_tests()
     
