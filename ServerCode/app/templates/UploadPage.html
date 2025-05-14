@@ -127,7 +127,7 @@
                 </div>
                 <div class="col">
                   <h4>Tags: </h4>
-                  <input id="title" type="text" class="form-control bg-dark text-white" id="tacks" placeholder="Tag1, Tag2, Tag3..." name="tags" value="{{form.tags}}" required>
+                  <input type="text" class="form-control bg-dark text-white" id="tag" placeholder="Tag1, Tag2, Tag3..." name="tags" value="{{form.tags}}" required>
                   <a class="link link-light" data-bs-toggle="popover" title="List of Tags" data-bs-content="Tag1, Tag2, Tag3">List Available Tags.</a>
                 </div>
               </div>
@@ -184,7 +184,7 @@
               </div>
           </div>
         </div>
-        <button type="submit" class=" btn btn-lg btn-danger w-100" >Submit and Test</button>
+        <button type="submit" id="submitQu" class=" btn btn-lg btn-danger w-100" >Submit and Test</button>
       </form>
       <script>
         var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
