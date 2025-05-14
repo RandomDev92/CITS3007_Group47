@@ -230,9 +230,7 @@ def SpecificUserPage(userid):
         share = ProfileShare.query.filter_by(owner_id=userid, shared_with_id=current_user.id).first()  
         if not share:
             abort(403)  # Forbidden if not shared with current_user
-
-    
-
+            
     timeArr = []
     attemptsArr = []
     numCompQ = 0
@@ -291,11 +289,13 @@ def QuestionDescriptionPage():
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
-    author = User.query.get(question.author_id)
+    print(question)
+    author = User.query.filter_by(username=question.author_id).first_or_404()
+    print(author)
     question.author_username = author.username if author else "Unknown"
     avg_rating = db.session.query(func.avg(Rating.score)).filter_by(question_id=question_id).scalar()
     avg_rating = round(avg_rating, 1) if avg_rating else None
-    return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating)
+    return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating, author=author)
 
 @main.route('/QuestionStat', methods = ['GET', 'POST'])
 @login_required
