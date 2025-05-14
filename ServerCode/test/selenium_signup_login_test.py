@@ -71,6 +71,48 @@ class SeleniumTest(unittest.TestCase):
         wait = WebDriverWait(self.driver, timeout=2)
         HomePage = wait.until(EC.title_is("Speed‑Code–Userpage"))
         self.assertIsNotNone(HomePage, "HomePage not Found")
-        
+
+    def testQuesrtion(self):
+        """Test Adding New Question For People to Speed Run"""
+        self.driver.get('http://localhost:5000/UploadPage')
+
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".cm-editor")))
+
+        title = self.driver.find_element(By.Id, "title")
+        short_desc = self.driver.find_element(By.Id, "shortDesc")
+        full_desc = self.driver.find_element(By.Id, "fullDesc")
+        tag = self.driver.find_element(By.Id, "tag")
+
+        title.send_keys("Return The Parameter * 5")
+        short_desc.send_keys("Assume you are given an integer and return the integer * 5")
+        full_desc.send_keys("e.g. Input: 3 , Output:15")
+        tag.send_keys("Tag1")
+        difficulty_medium = self.driver.find_element(By.Id, "medium")
+        difficulty_medium.click()
+
+        code_block = self.driver.find_element(By.Id, "codeBlock")
+        code_block.click()
+        existing_code = self.driver.execute_script("""
+            var editor = document.querySelector(".cm-editor").CodeMirror;
+            return editor.getDoc().getValue();
+        """)
+        new_code = existing_code.replace("value", "return param * 5")
+        self.driver.execute_script("""
+            var editor = document.querySelector(".cm-editor").CodeMirror;
+            editor.getDoc().setValue(arguments[0]);
+        """, new_code)
+
+
+        test_block = self.driver.find_element(By.Id, "testBlock")
+        test_block.click()
+        test_block.send_keys("{(3): 15, (10): 50, (13): 65}")
+
+        submit_button = self.driver.find_element(By.Id, "submitQu")
+        submit_button.click()
+
+        WebDriverWait(self.driver, 10).until(EC.url_changes(self.driver.current_url))
+
+
+
         
 
