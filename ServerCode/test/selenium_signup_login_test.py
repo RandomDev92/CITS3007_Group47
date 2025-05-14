@@ -28,8 +28,10 @@ class SeleniumTest(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         if os.name == 'posix':
-            self.server_thread = threading.Thread(target=self._run_app, args=(), daemon=True)
-        if os.name == 'nt':
+            multiprocessing.set_start_method("fork")
+            self.server_thread = multiprocessing.Process(target=self._run_app, args=(), daemon=True)
+            self.server_thread.start()
+        if os.name == 'nt' and False:
             self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
         options = Options()
         options.add_argument("--no-sandbox")
@@ -45,6 +47,8 @@ class SeleniumTest(unittest.TestCase):
             os.kill(self.server_thread.pid, signal.CTRL_C_EVENT)
             self.server_thread.terminate()
             self.server_thread.wait()
+        if os.name == 'posix':
+            self.server_thread.kill()
         pass
 
 
