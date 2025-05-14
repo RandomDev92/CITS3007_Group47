@@ -48,16 +48,14 @@ class SeleniumTest(unittest.TestCase):
             self.server_thread.terminate()
             self.server_thread.wait()
         if os.name == 'posix':
+            os.kill(self.server_thread.pid, signal.CTRL_C_EVENT)
             self.server_thread.kill()
         pass
 
 
     def testSignupAndLogin(self):
         """Test Signup New Account and Login to Account"""
-        if os.name == 'posix':
-            self.driver.get("http://127.0.0.1:5000")
-        if os.name == 'nt':
-            self.driver.get('http://localhost:5000')
+        self.driver.get("http://127.0.0.1:5000")
         signupButton = self.driver.find_element(By.ID, "Signup")
         signupButton.click()
         wait = WebDriverWait(self.driver, timeout=2)
