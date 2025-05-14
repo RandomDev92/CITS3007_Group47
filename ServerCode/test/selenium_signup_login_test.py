@@ -72,7 +72,7 @@ class SeleniumTest(unittest.TestCase):
         HomePage = wait.until(EC.title_is("Speed‑Code–Userpage"))
         self.assertIsNotNone(HomePage, "HomePage not Found")
 
-    def testQuesrtion(self):
+    def testQuestion(self):
         """Test Adding New Question For People to Speed Run"""
         self.driver.get('http://localhost:5000/UploadPage')
 
