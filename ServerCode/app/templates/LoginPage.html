@@ -43,7 +43,7 @@
           {%endfor%}
           {%endif%}
           {%endwith%}
-          <form method="post" action="">
+          <form id="LoginForm" method="post" action="">
                 <div class="mt-3 mb-4">
                   <label for="Username" class="form-label">Username:</label>
                   <input type="text" class="form-control bg-dark text-white" id="Username" placeholder="Enter Username" name="Username" required>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="mb-5 row row ">
                   <a href="{{url_for('main.HomePage')}}" class="col btn bg-dark text-white border border-white mx-2">Back</a>  
-                    <button type="submit" class="col btn btn-primary btn-danger" href="{{url_for('main.UserPage')}}">Submit</button>
+                    <button id="Submit" type="submit" class="col btn btn-primary btn-danger" href="{{url_for('main.UserPage')}}">Submit</button>
                 </div>
                 <a class="link-light" href="{{url_for('auth.SignupPage')}}">Don't have an account? Sign up</a><br>
 
