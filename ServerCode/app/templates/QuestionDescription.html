@@ -103,7 +103,7 @@
                   <span class="badge bg-danger">{{ tag.name }}</span>
                   {% endfor %}
                 </small>
-                <a href="{{ url_for('main.UserPage', username=question.author_username) }}" class="mb-2 link-light">Author: {{ question.author_username }}</a>
+                <a href="{{ url_for('main.SpecificUserPage', userid=author.id) }}" class="mb-2 link-light">Author: {{ question.author_username }}</a>
                 {% if avg_rating %}
                   <small class="text-warning">⭐ Average Rating: {{ avg_rating }}/5</small>
                 {% else %}
