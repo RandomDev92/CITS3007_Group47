@@ -21,7 +21,7 @@ from app import create_app
 class SeleniumTest(unittest.TestCase):
     
     def setUp(self):
-        self.app = create_app()
+        self.app = create_app(isTest=True)
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
@@ -34,7 +34,6 @@ class SeleniumTest(unittest.TestCase):
         time.sleep(2)
         
     def tearDown(self):
-        db.session.remove()
         self.app_context.pop()
         self.driver.quit()
         os.kill(self.server_thread.pid, signal.CTRL_C_EVENT)
