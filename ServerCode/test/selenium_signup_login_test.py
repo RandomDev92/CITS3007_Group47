@@ -1,4 +1,5 @@
 # import webdriver
+import multiprocessing.process
 import os
 import signal
 import unittest
@@ -24,8 +25,10 @@ class SeleniumTest(unittest.TestCase):
         self.app = create_app(isTest=True)
         self.app_context = self.app.app_context()
         self.app_context.push()
-        self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-        
+        if os.name == 'nt':
+            self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+        else:
+            self.server_thread = multiprocessing.Process(target=self.app.run)
         options = Options()
         options.add_argument("--no-sandbox")
 
@@ -36,9 +39,12 @@ class SeleniumTest(unittest.TestCase):
     def tearDown(self):
         self.app_context.pop()
         self.driver.quit()
-        os.kill(self.server_thread.pid, signal.CTRL_C_EVENT)
-        self.server_thread.terminate()
-        self.server_thread.wait()
+        if os.name == 'nt':
+            os.kill(self.server_thread.pid, signal.CTRL_C_EVENT)
+            self.server_thread.terminate()
+            self.server_thread.wait()
+        else:
+            self.server_thread.terminate()
         pass
 
 
