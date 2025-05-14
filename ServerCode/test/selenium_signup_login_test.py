@@ -54,7 +54,10 @@ class SeleniumTest(unittest.TestCase):
 
     def testSignupAndLogin(self):
         """Test Signup New Account and Login to Account"""
-        self.driver.get('http://localhost:5000')
+        if os.name == 'posix':
+            self.driver.get("http://127.0.0.1:5000")
+        if os.name == 'nt':
+            self.driver.get('http://localhost:5000')
         signupButton = self.driver.find_element(By.ID, "Signup")
         signupButton.click()
         wait = WebDriverWait(self.driver, timeout=2)
