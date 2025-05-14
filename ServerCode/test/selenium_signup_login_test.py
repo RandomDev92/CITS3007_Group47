@@ -25,10 +25,10 @@ class SeleniumTest(unittest.TestCase):
         self.app = create_app(isTest=True)
         self.app_context = self.app.app_context()
         self.app_context.push()
-        if os.name == 'nt':
-            self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-        else:
+        if os.name == 'posix':
             self.server_thread = multiprocessing.Process(target=self.app.run)
+        elif os.name == 'nt':
+            self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
         options = Options()
         options.add_argument("--no-sandbox")
 
