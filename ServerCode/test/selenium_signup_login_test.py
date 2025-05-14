@@ -27,7 +27,7 @@ class SeleniumTest(unittest.TestCase):
         self.app = create_app(isTest=True)
         self.app_context = self.app.app_context()
         self.app_context.push()
-        if os.name == 'posix' or True:
+        if os.name == 'posix':
             self.server_thread = threading.Thread(target=self._run_app, args=(), daemon=True)
         if os.name == 'nt':
             self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
@@ -41,12 +41,10 @@ class SeleniumTest(unittest.TestCase):
     def tearDown(self):
         self.app_context.pop()
         self.driver.quit()
-        if os.name == 'nt'and False:
+        if os.name == 'nt':
             os.kill(self.server_thread.pid, signal.CTRL_C_EVENT)
             self.server_thread.terminate()
             self.server_thread.wait()
-        else:
-            self.server_thread.terminate()
         pass
 
 
