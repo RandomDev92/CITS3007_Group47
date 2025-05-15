@@ -6,7 +6,7 @@ from flask import render_template,  request, redirect, flash, url_for, abort, Bl
 from flask_login import current_user, login_required
 from werkzeug.security import generate_password_hash
 from . import db
-from app.models import User, Question, Difficulty, Tag, Submission, Rating
+from app.models import User, Question, Difficulty, Tag, Submission, Rating, ProfileShare
 from app.sandbox import testCode
 from sqlalchemy.sql import func
 
@@ -109,6 +109,7 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+
 @main.route('/UserPage', methods = ['GET', 'POST'])
 @login_required
 def UserPage():
@@ -165,9 +166,7 @@ def UserPage():
     
     if request.method == 'POST':
         form = request.form
-        #this is a security risk
-        if int(form["userid"]) != current_user.id:
-            return ('', 204)
+        form_type = form.get("type", "")
         
         if form["type"] == "shareProfileChange":
             user = User.query.get_or_404(current_user.id)
@@ -201,15 +200,97 @@ def UserPage():
             db.session.commit()
             flash("Profile Changed.", "success")
             return redirect('/UserPage')
+        
+        if form["type"] == "addWhitelist":
+            username = form.get("whitelist_username").strip()
+            target_user = User.query.filter_by(username=username).first()
+            if target_user and target_user != current_user:
+                from app.models import ProfileShare
+                already_shared = ProfileShare.query.filter_by(owner_id=current_user.id, shared_with_id=target_user.id).first()
+                if not already_shared:
+                    new_entry = ProfileShare(owner_id=current_user.id, shared_with_id=target_user.id)
+                    db.session.add(new_entry)
+                    db.session.commit()
+                    flash(f"{username} has been whitelisted!", "success")
+            else:
+                flash("User not found or invalid.", "error")
+            return redirect('/UserPage')
+
+        if form["type"] == "removeWhitelist":
+            from app.models import ProfileShare
+            shared_id = int(form.get("whitelist_remove_id"))
+            entry = ProfileShare.query.filter_by(owner_id=current_user.id, shared_with_id=shared_id).first()
+            if entry:
+                db.session.delete(entry)
+                db.session.commit()
+                flash("User removed from whitelist.", "success")
+            return redirect('/UserPage')
 
 
-@main.route('/UserPage/<userid>')
+
+@main.route('/SpecificUserPage/<int:userid>')
 def SpecificUserPage(userid):
-    userDB = User.query.filter_by(username=userid).first()
-    if userDB == None or userDB.share_profile == False or userDB == current_user:
-        flash("User Either Doesn't Exist Or Has Share Disabled.", "error")
-        return redirect('/main.UserPage')
-    return render_template("UserPage.html", user=userDB)
+    user = User.query.get_or_404(userid)
+    
+    #check if user profile is privated
+    if user.share_profile == 1:
+        #Check to make sure that current user is shared with user they're trying to access
+        share = ProfileShare.query.filter_by(owner_id=userid, shared_with_id=current_user.id).first()  
+        if not share:
+            flash("This user has a private profile.", "error")
+            return redirect(request.referrer)
+
+            
+    timeArr = []
+    attemptsArr = []
+    numCompQ = 0
+    allQs = Submission.query.filter_by(user_id=user.id).order_by(Submission.id).all()
+    for Ques in allQs:
+        if Ques.passed ==True:
+            numCompQ+=1
+            timeArr.append(Ques.runtime_sec)
+            attemptsArr.append(Ques.attempts)
+    startedQ = len(allQs) 
+    if numCompQ >= 2:
+        stdTime = statistics.stdev(timeArr)
+    else:
+        stdTime = 0
+    if numCompQ >=1:
+        AvgTime = statistics.fmean(timeArr)
+        AvgAtt = statistics.fmean(attemptsArr)
+    else:
+        AvgTime = 0
+        AvgAtt = 0
+    bestQ = Question.query.filter_by(id=user.best_question_id).first()
+    if bestQ == None:
+        bestQid = -1
+        bestQtime = 0
+        bestQtitle = "No Best Question"
+    else:
+        bestQid = bestQ.id
+        bestQtime = user.best_time_sec
+        bestQtitle = bestQ.title
+    user_stats = {
+        "username":user.username,
+        "average_time":AvgTime, 
+        "stdev_time":stdTime, 
+        "average_attempts":AvgAtt, 
+        "completed_total":numCompQ, 
+        "total_started":startedQ,
+        "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
+        "best_question": bestQid,
+        "best_question_title": bestQtitle,
+        "best_time": bestQtime,
+    }
+    graphingQs = Submission.query.filter_by(user_id=user.id).filter(Submission.passed == True).order_by(Submission.id).all()
+    submission_data = [
+        {"question": s.question.title, "time": s.runtime_sec}
+        for s in graphingQs if s.runtime_sec is not None
+    ]
+
+    return render_template("SpecificUserPage.html", user=user_stats, submission_data=submission_data)
+
+
 
 @main.route('/QuestionDescription')
 @login_required
@@ -218,11 +299,13 @@ def QuestionDescriptionPage():
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
-    author = User.query.get(question.author_id)
+    print(question)
+    author = User.query.filter_by(username=question.author_id).first_or_404()
+    print(author)
     question.author_username = author.username if author else "Unknown"
     avg_rating = db.session.query(func.avg(Rating.score)).filter_by(question_id=question_id).scalar()
     avg_rating = round(avg_rating, 1) if avg_rating else None
-    return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating)
+    return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating, author=author)
 
 @main.route('/QuestionStat', methods = ['GET', 'POST'])
 @login_required
@@ -391,3 +474,19 @@ def QuestionAnswer():
 
         return redirect(url_for('main.QuestionStatPage', id=question_id))
     
+@main.route('/SharedProfilesPage', methods=['GET'])
+@login_required
+def SharedProfilePage():
+    search_query = request.args.get('search', '').strip()
+
+    # Query all users who shared their profile with the current user
+    shared_users = db.session.query(User).join(ProfileShare, ProfileShare.owner_id == User.id) \
+        .filter(ProfileShare.shared_with_id == current_user.id)
+
+    # Optional search
+    if search_query:
+        shared_users = shared_users.filter(User.username.ilike(f"%{search_query}%"))
+
+    shared_users = shared_users.all()
+
+    return render_template("SharedProfilePage.html", users=shared_users, search=search_query)
