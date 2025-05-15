@@ -4,7 +4,7 @@ from flask_login import UserMixin
 from app import db
 from app import login_manager
 import numpy as np
-
+from app.SetupTags import createTags
 
 
 @login_manager.user_loader
@@ -132,6 +132,14 @@ class Tag(db.Model):
 
     def __repr__(self):
         return f"<Tag {self.name}>"
+
+@db.event.listens_for(Tag.__table__, "after_create")
+def initialiseTags(*args, **kwargs):
+    for tag in createTags():
+        t = Tag(name=tag)
+        db.session.add(t)
+    db.session.commit()
+    
 
 class Submission(db.Model):
     __tablename__ = "submission"

@@ -15,4 +15,3 @@ def run_unittest_tests():
 if __name__ == '__main__':
     run_unittest_tests()
     run_selenium_tests()
-    

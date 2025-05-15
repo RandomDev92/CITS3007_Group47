@@ -34,7 +34,7 @@ class SeleniumTest(unittest.TestCase):
             ctx = multiprocessing.get_context("fork")
             self.server_thread = ctx.Process(target=self._run_app, daemon=True)
             self.server_thread.start()
-        if os.name == 'nt' and False:
+        if os.name == 'nt':
             self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
         options = Options()
         options.add_argument("--no-sandbox")
@@ -87,7 +87,6 @@ class SeleniumTest(unittest.TestCase):
    
     def testQuestion(self):
         """Test Adding New Question For People to Speed Run"""
-        #self.driver.get('http://localhost:5000/UploadPage')
         self.driver.get("http://127.0.0.1:5000")
 
         signupButton = self.driver.find_element(By.ID, "Signup")
