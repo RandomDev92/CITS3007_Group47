@@ -20,9 +20,13 @@ def HomePage():
 @main.route('/UploadPage', methods = ['GET', 'POST'])
 @login_required
 def UploadPage():
+    taglist = ""
+    for tag in Tag.query.all():
+        taglist = taglist + tag.name + ", "
+    
     if request.method == 'GET':
         blankform = {"title":"", "short_desc":"", "full_desc":"", "Code":"", "testCode":"", "tags":""}
-        return render_template("UploadPage.html", form=blankform)
+        return render_template("UploadPage.html", form=blankform, taglist=taglist)
     if request.method == 'POST':
         uploadedQ = request.form
         print(uploadedQ)
@@ -58,6 +62,10 @@ def LandingUpload():
 @main.route('/SearchPage', methods=['GET'])
 @login_required
 def SearchPage():
+    taglist = ""
+    for tag in Tag.query.all():
+        taglist = taglist + tag.name + ", "
+    
     title_query = request.args.get('title', '').strip()
     difficulty_query = request.args.get('difficulty', '').strip()
     tag_query = request.args.get('tag', '').strip()
@@ -90,7 +98,7 @@ def SearchPage():
     for q in results:
         q.avg_rating = rating_map.get(q.id, None)
     
-    return render_template("SearchPage.html", questions=results)
+    return render_template("SearchPage.html", questions=results, taglist=taglist)
 
 
 def validate_image(stream):
