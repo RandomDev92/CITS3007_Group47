@@ -79,6 +79,9 @@
       <!--Stats button-->
       <div class="ml-auto d-flex">
         <div class="ms-2">
+          <a href="{{ url_for('main.SharedProfilePage') }}" class="btn btn-outline-light nav-btn">Shared Profiles</a>
+        </div>
+        <div class="ms-2">
           <a href="{{url_for('main.SearchPage')}}" class="btn btn-outline-light nav-btn">Search</a>
         </div>
         <div class="ms-2">
@@ -92,6 +95,13 @@
         <div class="row g-4 justify-content-center">
           <div class="col-12 col-lg-7">
             <div class="desc-card d-flex bg-dark flex-column p-5 border border-white rounded text-white">
+              {% with messages = get_flashed_messages(category_filter=["error"]) %}
+              {% if messages %}
+                  {% for message in messages %}
+                      <p class="bg-danger text-white border rounded text-center">{{ message }}</p>
+                  {% endfor %}
+              {% endif %}
+              {% endwith %}
               <div class="text-center">
                 <h3 class="m-3">{{ question.title }}</h3>
                 <small class="m-2">Difficulty: <span class="badge bg-danger">{{ question.difficulty.value.upper() }}</span></small>
@@ -100,7 +110,7 @@
                   <span class="badge bg-danger">{{ tag.name }}</span>
                   {% endfor %}
                 </small>
-                <a href="{{ url_for('main.UserPage', username=question.author_username) }}" class="mb-2 link-light">Author: {{ question.author_username }}</a>
+                <a href="{{ url_for('main.SpecificUserPage', userid=author.id) }}" class="mb-2 link-light">Author: {{ question.author_username }}</a>
                 {% if avg_rating %}
                   <small class="text-warning">⭐ Average Rating: {{ avg_rating }}/5</small>
                 {% else %}
