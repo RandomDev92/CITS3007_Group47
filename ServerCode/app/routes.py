@@ -229,7 +229,9 @@ def SpecificUserPage(userid):
         #Check to make sure that current user is shared with user they're trying to access
         share = ProfileShare.query.filter_by(owner_id=userid, shared_with_id=current_user.id).first()  
         if not share:
-            abort(403)  # Forbidden if not shared with current_user
+            flash("This user has a private profile.", "error")
+            return redirect(request.referrer)
+
             
     timeArr = []
     attemptsArr = []

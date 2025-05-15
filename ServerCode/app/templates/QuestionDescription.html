@@ -95,6 +95,13 @@
         <div class="row g-4 justify-content-center">
           <div class="col-12 col-lg-7">
             <div class="desc-card d-flex bg-dark flex-column p-5 border border-white rounded text-white">
+              {% with messages = get_flashed_messages(category_filter=["error"]) %}
+              {% if messages %}
+                  {% for message in messages %}
+                      <p class="bg-danger text-white border rounded text-center">{{ message }}</p>
+                  {% endfor %}
+              {% endif %}
+              {% endwith %}
               <div class="text-center">
                 <h3 class="m-3">{{ question.title }}</h3>
                 <small class="m-2">Difficulty: <span class="badge bg-danger">{{ question.difficulty.value.upper() }}</span></small>
