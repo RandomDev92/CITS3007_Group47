@@ -81,6 +81,7 @@ class User(UserMixin, db.Model):
     def get_id(self):
         return self.id
 
+
 class Question(db.Model):
     __tablename__ = "question"
 
@@ -121,7 +122,8 @@ class Question(db.Model):
     
     def __repr__(self):
         return f"<Question {self.title}>"
-    
+
+
 class Tag(db.Model):
     __tablename__ = "tag"
 

@@ -15,8 +15,6 @@ import multiprocessing
 import threading
 import time 
 import subprocess
-
-from app import db
 from app import create_app
 
 
@@ -36,6 +34,7 @@ class SeleniumTest(unittest.TestCase):
             self.server_thread.start()
         if os.name == 'nt':
             self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+        
         options = Options()
         options.add_argument("--no-sandbox")
 
@@ -67,7 +66,7 @@ class SeleniumTest(unittest.TestCase):
         Password = self.driver.find_element(By.ID, "pwd")
         confPassword = self.driver.find_element(By.ID, "cnf-pwd")
         submitButton = self.driver.find_element(By.ID, "Submit")
-        Username.send_keys("TestUser")
+        Username.send_keys("SeleniumUser")
         Password.send_keys("testPassword")
         confPassword.send_keys("testPassword")
         submitButton.click()
@@ -76,50 +75,46 @@ class SeleniumTest(unittest.TestCase):
         self.assertIsNotNone(LoginForm, "Login Form not Found")
         Username = self.driver.find_element(By.ID, "Username")
         Password = self.driver.find_element(By.ID, "pwd")
-        Username.send_keys("TestUser")
+        Username.send_keys("SeleniumUser")
         Password.send_keys("testPassword")
         submitButton = self.driver.find_element(By.ID, "Submit")
         submitButton.click()
         wait = WebDriverWait(self.driver, timeout=2)
-        HomePage = wait.until(EC.title_is("Speed‑Code–Userpage"))
-        self.assertIsNotNone(HomePage, "HomePage not Found")
+        UserPage = wait.until(EC.title_is("Speed‑Code–Userpage"))
+        self.assertIsNotNone(UserPage, "UserPage not Found")
         
    
     def testQuestion(self):
         """Test Adding New Question For People to Speed Run"""
-        self.driver.get("http://127.0.0.1:5000")
+        self.driver.get("http://127.0.0.1:5000/LoginPage")
 
-        signupButton = self.driver.find_element(By.ID, "Signup")
-        signupButton.click()
-        wait = WebDriverWait(self.driver, timeout=2)
-        signupForm = wait.until(EC.presence_of_element_located((By.ID, 'SignUpForm')))
-        self.assertIsNotNone(signupForm, "Signup Form not Found")
-        Username = self.driver.find_element(By.ID, "Username")
-        Password = self.driver.find_element(By.ID, "pwd")
-        confPassword = self.driver.find_element(By.ID, "cnf-pwd")
-        submitButton = self.driver.find_element(By.ID, "Submit")
-        Username.send_keys("NewUser")
-        Password.send_keys("NewBlskass")
-        confPassword.send_keys("NewBlskass")
-        submitButton.click()
+        # signupButton = self.driver.find_element(By.ID, "Signup")
+        # signupButton.click()
+        # wait = WebDriverWait(self.driver, timeout=2)
+        # signupForm = wait.until(EC.presence_of_element_located((By.ID, 'SignUpForm')))
+        # self.assertIsNotNone(signupForm, "Signup Form not Found")
+        # Username = self.driver.find_element(By.ID, "Username")
+        # Password = self.driver.find_element(By.ID, "pwd")
+        # confPassword = self.driver.find_element(By.ID, "cnf-pwd")
+        # submitButton = self.driver.find_element(By.ID, "Submit")
+        # Username.send_keys("NewUser")
+        # Password.send_keys("NewBlskass")
+        # confPassword.send_keys("NewBlskass")
+        # submitButton.click()
         wait = WebDriverWait(self.driver, timeout=2)
         LoginForm = wait.until(EC.presence_of_element_located((By.ID, 'LoginForm')))
         self.assertIsNotNone(LoginForm, "Login Form not Found")
         Username = self.driver.find_element(By.ID, "Username")
         Password = self.driver.find_element(By.ID, "pwd")
-        Username.send_keys("NewUser")
-        Password.send_keys("NewBlskass")
+        Username.send_keys("TestUser")
+        Password.send_keys("Password")
         submitButton = self.driver.find_element(By.ID, "Submit")
         submitButton.click()
         wait = WebDriverWait(self.driver, timeout=2)
-        HomePage = wait.until(EC.title_is("Speed‑Code–Userpage"))
-        self.assertIsNotNone(HomePage, "HomePage not Found")
+        UserPage = wait.until(EC.title_is("Speed‑Code–Userpage"))
+        self.assertIsNotNone(UserPage, "UserPage not Found")
 
-
-        if os.name == 'posix':
-            self.driver.get("http://127.0.0.1:5000/UploadPage")
-        if os.name == 'nt':
-            self.driver.get('http://localhost:5000/UploadPage')
+        self.driver.get("http://127.0.0.1:5000/UploadPage")
         
         WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".cm-editor")))
 
@@ -131,7 +126,7 @@ class SeleniumTest(unittest.TestCase):
         title.send_keys("Return The Parameter * 5")
         short_desc.send_keys("Assume you are given an integer and return the integer * 5")
         full_desc.send_keys("e.g. Input: 3 , Output:15")
-        tag.send_keys("Tag1")
+        tag.send_keys("Math")
         
         
         difficulty_medium = self.driver.find_element(By.ID, "medium")
@@ -173,5 +168,8 @@ class SeleniumTest(unittest.TestCase):
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
         time.sleep(0.2)
         submit_button.click()
-
-        WebDriverWait(self.driver, 10).until(EC.url_changes(self.driver.current_url))        
+        wait = WebDriverWait(self.driver, timeout=2)
+        LandingPage = wait.until(EC.title_is("Landing Page"))
+        self.assertIsNotNone(LandingPage, "LandingPage not Found")
+        time.sleep(0.5)
+        # WebDriverWait(self.driver, 10).until(EC.url_changes(self.driver.current_url))        
