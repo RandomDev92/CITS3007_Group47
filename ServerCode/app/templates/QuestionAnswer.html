@@ -101,9 +101,12 @@
                 <div class="info-card d-flex flex-column align-items-center text-center p-4 bg-dark border border-white rounded">
                   <div class="container text-white text-center py-2">
                     <h5>Time Elapsed: <span id="timer">00:00</span></h5>
+                    {% with messages = get_flashed_messages(category_filter=["time"])%}
+                    <p id="existTime" hidden>{{messages[0] if messages is defined and messages|length > 0 else "0"}}</p>
+                    {%endwith%}
                   </div>
-                  <h3>{{ question.title }}</h3>
-                  <p class="mb-2">{{ question.description }}</p>
+                  <h3 class="mb-5">{{ question.title }}</h3>
+                  <h5 class="mb-2">{{ question.short_desc }}</h5>
                 </div>
               </div>
               <div class="col-12 col-lg-5">
@@ -127,8 +130,11 @@
             <div class="row g-4 justify-content-center">
             <div class="col-12 col-lg-10">
                 <script>
-                    let startTime = Date.now(); // Initialise timer
-                
+                    let startTime = Date.now();
+                    if(document.getElementById("existTime").textContent != "0"){
+                      startTime = parseInt(document.getElementById("existTime").textContent)*1000 ; // Initialise timer
+                    }
+
                     // Update timer display
                     function updateTimerDisplay() {
                         const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -136,11 +142,15 @@
                         const seconds = String(elapsed % 60).padStart(2, '0');
                         document.getElementById('timer').textContent = `${minutes}:${seconds}`;
                     }
-                
+                    
+                    updateTimerDisplay()
                     // Start timer update loop
                     setInterval(updateTimerDisplay, 1000);
                 </script>
                 <form method="POST" id="questionForm" action="{{ url_for('main.QuestionAnswer') }}?id={{ question.id }}">
+                  {% with messages = get_flashed_messages(category_filter=["code"])%}
+                  <p id="presetCode" hidden>{{ messages[0] if messages is defined and messages|length > 0 else "def myfunc(param):#YOUR CODE HERE  \n  return value"}}</p>
+                  {%endwith%}
                   <div id="codeBlock"   class="code-input border border-white rounded" rows="15" placeholder="def func(param1, param2...):&#10; return output" style="min-height: 400px; background-color: #282828;"></div>
 <!-- import from https://discuss.codemirror.net/t/esm-compatible-codemirror-build-directly-importable-in-browser/5933/13-->
 <script type="importmap">
@@ -165,7 +175,7 @@
   import { gruvboxDark } from "/static/themes/theme.js"
 
 	var editor = new EditorView({
-		doc: "def myfunc(param):#YOUR CODE HERE  \n  return value",
+		doc: document.getElementById("presetCode").textContent,
 		extensions: [minimalSetup, python(), keymap.of([indentWithTab]), gruvboxDark],
 		parent: document.getElementById("codeBlock"),
     
