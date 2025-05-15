@@ -29,7 +29,6 @@ def UploadPage():
         return render_template("UploadPage.html", form=blankform, taglist=taglist)
     if request.method == 'POST':
         uploadedQ = request.form
-        print(uploadedQ)
         strCode = uploadedQ["Code"]
         strTest = uploadedQ["testCode"]
         result = testCode(strCode, strTest)
@@ -109,52 +108,56 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+def calculateUserStats(Userid):
+    user = User.query.filter_by(id=Userid).first()
+    timeArr = []
+    attemptsArr = []
+    numCompQ = 0
+    allQs = Submission.query.filter_by(user_id=user.id).order_by(Submission.id).all()
+    for Ques in allQs:
+        if Ques.passed ==True:
+            numCompQ+=1
+            timeArr.append(Ques.runtime_sec)
+            attemptsArr.append(Ques.attempts)
+    startedQ = len(allQs) 
+    if numCompQ >= 2:
+        stdTime = statistics.stdev(timeArr)
+    else:
+        stdTime = 0
+    if numCompQ >=1:
+        AvgTime = statistics.fmean(timeArr)
+        AvgAtt = statistics.fmean(attemptsArr)
+    else:
+        AvgTime = 0
+        AvgAtt = 0
+    bestQ = Question.query.filter_by(id=user.best_question_id).first()
+    if bestQ == None:
+        bestQid = -1
+        bestQtime = 0
+        bestQtitle = "No Best Question"
+    else:
+        bestQid = bestQ.id
+        bestQtime = user.best_time_sec
+        bestQtitle = bestQ.title
+    user_stats = {
+        "username":user.username,
+        "average_time":AvgTime, 
+        "stdev_time":stdTime, 
+        "average_attempts":AvgAtt, 
+        "completed_total":numCompQ, 
+        "total_started":startedQ,
+        "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
+        "best_question": bestQid,
+        "best_question_title": bestQtitle,
+        "best_time": bestQtime,
+    }
+    return user_stats
 
 @main.route('/UserPage', methods = ['GET', 'POST'])
 @login_required
 def UserPage():
     if request.method == 'GET':
-        timeArr = []
-        attemptsArr = []
-        numCompQ = 0
-        allQs = Submission.query.filter_by(user_id=current_user.id).order_by(Submission.id).all()
-        for Ques in allQs:
-            if Ques.passed ==True:
-                numCompQ+=1
-                timeArr.append(Ques.runtime_sec)
-                attemptsArr.append(Ques.attempts)
-        startedQ = len(allQs) 
-        if numCompQ >= 2:
-            stdTime = statistics.stdev(timeArr)
-        else:
-            stdTime = 0
-        if numCompQ >=1:
-            AvgTime = statistics.fmean(timeArr)
-            AvgAtt = statistics.fmean(attemptsArr)
-        else:
-            AvgTime = 0
-            AvgAtt = 0
-        bestQ = Question.query.filter_by(id=current_user.best_question_id).first()
-        if bestQ == None:
-            bestQid = -1
-            bestQtime = 0
-            bestQtitle = "No Best Question"
-        else:
-            bestQid = bestQ.id
-            bestQtime = current_user.best_time_sec
-            bestQtitle = bestQ.title
-        user_stats = {
-            "username":current_user.username,
-            "average_time":AvgTime, 
-            "stdev_time":stdTime, 
-            "average_attempts":AvgAtt, 
-            "completed_total":numCompQ, 
-            "total_started":startedQ,
-            "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
-            "best_question": bestQid,
-            "best_question_title": bestQtitle,
-            "best_time": bestQtime,
-        }
+        user_stats = calculateUserStats(current_user.id)
         
         graphingQs = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
         submission_data = [
@@ -180,10 +183,8 @@ def UserPage():
         
         if form["type"] == "Change":
             user = User.query.get_or_404(current_user.id)
-            print(user)
             uploaded_file = request.files['newpfp']
             filename = uploaded_file.filename
-            print(filename)
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(uploaded_file.stream):
@@ -191,7 +192,6 @@ def UserPage():
                 filepath = current_app.config["UPLOAD_FOLDER"]+current_user.username
                 uploaded_file.save(filepath)
                 user.avatar_url = current_user.username
-                print(user.avatar_url)
             if form["newUsername"].strip() != "":
                 user.username = form["newUsername"]
             if form["newPassword"] != "":
@@ -240,48 +240,7 @@ def SpecificUserPage(userid):
             flash("This user has a private profile.", "error")
             return redirect(request.referrer)
 
-            
-    timeArr = []
-    attemptsArr = []
-    numCompQ = 0
-    allQs = Submission.query.filter_by(user_id=user.id).order_by(Submission.id).all()
-    for Ques in allQs:
-        if Ques.passed ==True:
-            numCompQ+=1
-            timeArr.append(Ques.runtime_sec)
-            attemptsArr.append(Ques.attempts)
-    startedQ = len(allQs) 
-    if numCompQ >= 2:
-        stdTime = statistics.stdev(timeArr)
-    else:
-        stdTime = 0
-    if numCompQ >=1:
-        AvgTime = statistics.fmean(timeArr)
-        AvgAtt = statistics.fmean(attemptsArr)
-    else:
-        AvgTime = 0
-        AvgAtt = 0
-    bestQ = Question.query.filter_by(id=user.best_question_id).first()
-    if bestQ == None:
-        bestQid = -1
-        bestQtime = 0
-        bestQtitle = "No Best Question"
-    else:
-        bestQid = bestQ.id
-        bestQtime = user.best_time_sec
-        bestQtitle = bestQ.title
-    user_stats = {
-        "username":user.username,
-        "average_time":AvgTime, 
-        "stdev_time":stdTime, 
-        "average_attempts":AvgAtt, 
-        "completed_total":numCompQ, 
-        "total_started":startedQ,
-        "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
-        "best_question": bestQid,
-        "best_question_title": bestQtitle,
-        "best_time": bestQtime,
-    }
+    user_stats = calculateUserStats(userid)
     graphingQs = Submission.query.filter_by(user_id=user.id).filter(Submission.passed == True).order_by(Submission.id).all()
     submission_data = [
         {"question": s.question.title, "time": s.runtime_sec}
@@ -299,9 +258,7 @@ def QuestionDescriptionPage():
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
-    print(question)
     author = User.query.filter_by(username=question.author_id).first()
-    print(author)
     question.author_username = author.username if author else "Unknown"
     if author == None:
         author = {"id":-1}
@@ -325,7 +282,6 @@ def QuestionStatPage():
             user_id=current_user.id, 
             question_id=question_id
         ).order_by(Submission.id.desc()).first()
-        print(str(submission))   
         # Prepare user score data
         if submission:
             user_score = {
