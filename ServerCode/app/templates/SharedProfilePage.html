@@ -113,7 +113,7 @@
 
     {% if users %}
       {% for user in users %}
-        <div class="card question-card bg-dark text-white mb-3 p-3">
+        <div class="user-card card question-card bg-dark text-white mb-3 p-3">
           <a href="{{ url_for('main.SpecificUserPage', userid=user.id) }}" class="stretched-link"></a>
 
           <div class="d-flex align-items-center">

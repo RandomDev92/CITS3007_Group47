@@ -36,7 +36,7 @@ class SeleniumTest(unittest.TestCase):
             self.server_thread = subprocess.Popen('flask --app "app:create_app(isTest=True)" run', creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
         
         options = Options()
-        options.add_argument("--no-sandbox")
+        options.add_argument("allow-running-insecure-content")
 
 
         self.driver = webdriver.Chrome(options=options)
@@ -79,10 +79,10 @@ class SeleniumTest(unittest.TestCase):
         submitButton.click()
         wait = WebDriverWait(self.driver, timeout=2)
         UserPage = wait.until(EC.title_is("Speed‑Code–Userpage"), "UserPage not Found")
-        time.sleep(0.5)        
-   
-    def testUpload(self):
-        """Test Adding New Question For People to Speed Run"""
+        time.sleep(0.5)
+
+    def loginTestUser(self):
+        #login chunk
         self.driver.get("http://127.0.0.1:5000/LoginPage")
         wait = WebDriverWait(self.driver, timeout=2)
         LoginForm = wait.until(EC.presence_of_element_located((By.ID, 'LoginForm')), "Login Form not Found")
@@ -93,7 +93,11 @@ class SeleniumTest(unittest.TestCase):
         submitButton = self.driver.find_element(By.ID, "Submit")
         submitButton.click()
         wait = WebDriverWait(self.driver, timeout=2)
-        UserPage = wait.until(EC.title_is("Speed‑Code–Userpage"), "UserPage not Found")
+        UserPage = wait.until(EC.title_is("Speed‑Code–Userpage"), "UserPage not Found")      
+   
+    def testUpload(self):
+        """Test Adding New Question For People to Speed Run"""
+        self.loginTestUser()
 
         self.driver.get("http://127.0.0.1:5000/UploadPage")
         
@@ -156,18 +160,7 @@ class SeleniumTest(unittest.TestCase):
 
     def testAnswering(self):
         """Test Answering a Question"""
-        #login chunk
-        self.driver.get("http://127.0.0.1:5000/LoginPage")
-        wait = WebDriverWait(self.driver, timeout=2)
-        LoginForm = wait.until(EC.presence_of_element_located((By.ID, 'LoginForm')), "Login Form not Found")
-        Username = self.driver.find_element(By.ID, "Username")
-        Password = self.driver.find_element(By.ID, "pwd")
-        Username.send_keys("TestUser")
-        Password.send_keys("Password")
-        submitButton = self.driver.find_element(By.ID, "Submit")
-        submitButton.click()
-        wait = WebDriverWait(self.driver, timeout=2)
-        UserPage = wait.until(EC.title_is("Speed‑Code–Userpage"), "UserPage not Found")
+        self.loginTestUser()
 
         #get to search page
         self.driver.get("http://127.0.0.1:5000/SearchPage")
@@ -230,4 +223,30 @@ class SeleniumTest(unittest.TestCase):
 
     def testSharing(self):
         self.testSignupAndLogin()
-        
+        whitelist = self.driver.find_element(By.ID, 'WriteUser')
+        addButton = self.driver.find_element(By.ID, 'AddUser')
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", addButton)
+        time.sleep(0.5)
+        whitelist.send_keys("TestUser")
+        addButton.click()
+        wait = WebDriverWait(self.driver, timeout=2)
+        whitelistAllert = wait.until(EC.presence_of_element_located((By.ID, 'successAlert')), "Whitelist not Submitted")
+        time.sleep(0.3)
+        LogoutButton = self.driver.find_element(By.ID, 'Logout')
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", LogoutButton)
+        time.sleep(0.5)
+        LogoutButton.click()
+        wait = WebDriverWait(self.driver, timeout=2)
+        HomePage = wait.until(EC.title_is("Home"), "HomePage not Found")
+
+        self.loginTestUser()
+        SharedPagesButton = self.driver.find_element(By.ID, 'SharedPages')
+        SharedPagesButton.click()
+        wait = WebDriverWait(self.driver, timeout=2)
+        SharedUser = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'user-card')), "SharePage not Found")
+        time.sleep(0.3)
+        SharedUser.click()
+        wait = WebDriverWait(self.driver, timeout=2)
+        UserPage = wait.until(EC.title_is("SeleniumUser's Page"), "UserPage not Found")
+        time.sleep(0.3)
+

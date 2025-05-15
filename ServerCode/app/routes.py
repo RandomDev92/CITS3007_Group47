@@ -233,7 +233,7 @@ def SpecificUserPage(userid):
     user = User.query.get_or_404(userid)
     
     #check if user profile is privated
-    if user.share_profile == 1:
+    if user.share_profile == False:
         #Check to make sure that current user is shared with user they're trying to access
         share = ProfileShare.query.filter_by(owner_id=userid, shared_with_id=current_user.id).first()  
         if not share:
@@ -300,9 +300,12 @@ def QuestionDescriptionPage():
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
     print(question)
-    author = User.query.filter_by(username=question.author_id).first_or_404()
+    author = User.query.filter_by(username=question.author_id).first()
     print(author)
     question.author_username = author.username if author else "Unknown"
+    if author == None:
+        author = {"id":-1}
+
     avg_rating = db.session.query(func.avg(Rating.score)).filter_by(question_id=question_id).scalar()
     avg_rating = round(avg_rating, 1) if avg_rating else None
     return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating, author=author)
