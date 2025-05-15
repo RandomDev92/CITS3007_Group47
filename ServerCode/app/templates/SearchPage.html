@@ -163,6 +163,7 @@
                 <div class="card question-card position-relative p-4 bg-dark text-white mb-3">
                   <a href="{{ url_for('main.QuestionDescriptionPage') }}?id={{ question.id }}" class="stretched-link"></a>
                   <h5 class="mb-2">{{ question.title }}</h5>
+                  <small class="text-info d-block mb-2">Difficulty: {{ question.difficulty.value.capitalize() }}</small>
                   <small class="mb-2">
                     {% for tag in question.tags %}
                       <span class="badge bg-danger">{{ tag.name }}</span>
