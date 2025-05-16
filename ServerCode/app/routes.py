@@ -6,7 +6,7 @@ from flask import render_template,  request, redirect, flash, url_for, abort, Bl
 from flask_login import current_user, login_required
 from werkzeug.security import generate_password_hash
 from . import db
-from app.models import User, Question, Difficulty, Tag, Submission, Rating
+from app.models import User, Question, Difficulty, Tag, Submission, Rating, ProfileShare
 from app.sandbox import testCode
 from sqlalchemy.sql import func
 
@@ -20,12 +20,15 @@ def HomePage():
 @main.route('/UploadPage', methods = ['GET', 'POST'])
 @login_required
 def UploadPage():
+    taglist = ""
+    for tag in Tag.query.all():
+        taglist = taglist + tag.name + ", "
+    
     if request.method == 'GET':
         blankform = {"title":"", "short_desc":"", "full_desc":"", "Code":"", "testCode":"", "tags":""}
-        return render_template("UploadPage.html", form=blankform)
+        return render_template("UploadPage.html", form=blankform, taglist=taglist)
     if request.method == 'POST':
         uploadedQ = request.form
-        print(uploadedQ)
         strCode = uploadedQ["Code"]
         strTest = uploadedQ["testCode"]
         result = testCode(strCode, strTest)
@@ -58,6 +61,10 @@ def LandingUpload():
 @main.route('/SearchPage', methods=['GET'])
 @login_required
 def SearchPage():
+    taglist = ""
+    for tag in Tag.query.all():
+        taglist = taglist + tag.name + ", "
+    
     title_query = request.args.get('title', '').strip()
     difficulty_query = request.args.get('difficulty', '').strip()
     tag_query = request.args.get('tag', '').strip()
@@ -90,7 +97,7 @@ def SearchPage():
     for q in results:
         q.avg_rating = rating_map.get(q.id, None)
     
-    return render_template("SearchPage.html", questions=results)
+    return render_template("SearchPage.html", questions=results, taglist=taglist)
 
 
 def validate_image(stream):
@@ -101,51 +108,56 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+def calculateUserStats(Userid):
+    user = User.query.filter_by(id=Userid).first()
+    timeArr = []
+    attemptsArr = []
+    numCompQ = 0
+    allQs = Submission.query.filter_by(user_id=user.id).order_by(Submission.id).all()
+    for Ques in allQs:
+        if Ques.passed ==True:
+            numCompQ+=1
+            timeArr.append(Ques.runtime_sec)
+            attemptsArr.append(Ques.attempts)
+    startedQ = len(allQs) 
+    if numCompQ >= 2:
+        stdTime = statistics.stdev(timeArr)
+    else:
+        stdTime = 0
+    if numCompQ >=1:
+        AvgTime = statistics.fmean(timeArr)
+        AvgAtt = statistics.fmean(attemptsArr)
+    else:
+        AvgTime = 0
+        AvgAtt = 0
+    bestQ = Question.query.filter_by(id=user.best_question_id).first()
+    if bestQ == None:
+        bestQid = -1
+        bestQtime = 0
+        bestQtitle = "No Best Question"
+    else:
+        bestQid = bestQ.id
+        bestQtime = user.best_time_sec
+        bestQtitle = bestQ.title
+    user_stats = {
+        "username":user.username,
+        "average_time":AvgTime, 
+        "stdev_time":stdTime, 
+        "average_attempts":AvgAtt, 
+        "completed_total":numCompQ, 
+        "total_started":startedQ,
+        "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
+        "best_question": bestQid,
+        "best_question_title": bestQtitle,
+        "best_time": bestQtime,
+    }
+    return user_stats
+
 @main.route('/UserPage', methods = ['GET', 'POST'])
 @login_required
 def UserPage():
     if request.method == 'GET':
-        timeArr = []
-        attemptsArr = []
-        numCompQ = 0
-        allQs = Submission.query.filter_by(user_id=current_user.id).order_by(Submission.id).all()
-        for Ques in allQs:
-            if Ques.passed ==True:
-                numCompQ+=1
-                timeArr.append(Ques.runtime_sec)
-                attemptsArr.append(Ques.attempts)
-        startedQ = len(allQs) 
-        if numCompQ >= 2:
-            stdTime = statistics.stdev(timeArr)
-        else:
-            stdTime = 0
-        if numCompQ >=1:
-            AvgTime = statistics.fmean(timeArr)
-            AvgAtt = statistics.fmean(attemptsArr)
-        else:
-            AvgTime = 0
-            AvgAtt = 0
-        bestQ = Question.query.filter_by(id=current_user.best_question_id).first()
-        if bestQ == None:
-            bestQid = -1
-            bestQtime = 0
-            bestQtitle = "No Best Question"
-        else:
-            bestQid = bestQ.id
-            bestQtime = current_user.best_time_sec
-            bestQtitle = bestQ.title
-        user_stats = {
-            "username":current_user.username,
-            "average_time":AvgTime, 
-            "stdev_time":stdTime, 
-            "average_attempts":AvgAtt, 
-            "completed_total":numCompQ, 
-            "total_started":startedQ,
-            "completion_rate":numCompQ/(startedQ if startedQ != 0 else 1)*100,
-            "best_question": bestQid,
-            "best_question_title": bestQtitle,
-            "best_time": bestQtime,
-        }
+        user_stats = calculateUserStats(current_user.id)
         
         graphingQs = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
         submission_data = [
@@ -157,9 +169,7 @@ def UserPage():
     
     if request.method == 'POST':
         form = request.form
-        #this is a security risk
-        if int(form["userid"]) != current_user.id:
-            return ('', 204)
+        form_type = form.get("type", "")
         
         if form["type"] == "shareProfileChange":
             user = User.query.get_or_404(current_user.id)
@@ -173,10 +183,8 @@ def UserPage():
         
         if form["type"] == "Change":
             user = User.query.get_or_404(current_user.id)
-            print(user)
             uploaded_file = request.files['newpfp']
             filename = uploaded_file.filename
-            print(filename)
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(uploaded_file.stream):
@@ -184,7 +192,6 @@ def UserPage():
                 filepath = current_app.config["UPLOAD_FOLDER"]+current_user.username
                 uploaded_file.save(filepath)
                 user.avatar_url = current_user.username
-                print(user.avatar_url)
             if form["newUsername"].strip() != "":
                 user.username = form["newUsername"]
             if form["newPassword"] != "":
@@ -193,15 +200,56 @@ def UserPage():
             db.session.commit()
             flash("Profile Changed.", "success")
             return redirect('/UserPage')
+        
+        if form["type"] == "addWhitelist":
+            username = form.get("whitelist_username").strip()
+            target_user = User.query.filter_by(username=username).first()
+            if target_user and target_user != current_user:
+                from app.models import ProfileShare
+                already_shared = ProfileShare.query.filter_by(owner_id=current_user.id, shared_with_id=target_user.id).first()
+                if not already_shared:
+                    new_entry = ProfileShare(owner_id=current_user.id, shared_with_id=target_user.id)
+                    db.session.add(new_entry)
+                    db.session.commit()
+                    flash(f"{username} has been whitelisted!", "success")
+            else:
+                flash("User not found or invalid.", "error")
+            return redirect('/UserPage')
+
+        if form["type"] == "removeWhitelist":
+            from app.models import ProfileShare
+            shared_id = int(form.get("whitelist_remove_id"))
+            entry = ProfileShare.query.filter_by(owner_id=current_user.id, shared_with_id=shared_id).first()
+            if entry:
+                db.session.delete(entry)
+                db.session.commit()
+                flash("User removed from whitelist.", "success")
+            return redirect('/UserPage')
 
 
-@main.route('/UserPage/<userid>')
+
+@main.route('/SpecificUserPage/<int:userid>')
 def SpecificUserPage(userid):
-    userDB = User.query.filter_by(username=userid).first()
-    if userDB == None or userDB.share_profile == False or userDB == current_user:
-        flash("User Either Doesn't Exist Or Has Share Disabled.", "error")
-        return redirect('/main.UserPage')
-    return render_template("UserPage.html", user=userDB)
+    user = User.query.get_or_404(userid)
+    
+    #check if user profile is privated
+    if user.share_profile == False:
+        #Check to make sure that current user is shared with user they're trying to access
+        share = ProfileShare.query.filter_by(owner_id=userid, shared_with_id=current_user.id).first()  
+        if not share:
+            flash("This user has a private profile.", "error")
+            return redirect(request.referrer)
+
+    user_stats = calculateUserStats(userid)
+    graphingQs = Submission.query.filter_by(user_id=user.id).filter(Submission.passed == True).order_by(Submission.id).all()
+    submission_data = [
+        {"question": s.question.title, "time": s.runtime_sec}
+        for s in graphingQs if s.runtime_sec is not None
+    ]
+
+    return render_template("SpecificUserPage.html", user=user_stats, submission_data=submission_data)
+
+
 
 @main.route('/QuestionDescription')
 @login_required
@@ -210,11 +258,14 @@ def QuestionDescriptionPage():
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
-    author = User.query.get(question.author_id)
+    author = User.query.filter_by(username=question.author_id).first()
     question.author_username = author.username if author else "Unknown"
+    if author == None:
+        author = {"id":-1}
+
     avg_rating = db.session.query(func.avg(Rating.score)).filter_by(question_id=question_id).scalar()
     avg_rating = round(avg_rating, 1) if avg_rating else None
-    return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating)
+    return render_template("QuestionDescription.html", question=question, avg_rating=avg_rating, author=author)
 
 @main.route('/QuestionStat', methods = ['GET', 'POST'])
 @login_required
@@ -231,19 +282,18 @@ def QuestionStatPage():
             user_id=current_user.id, 
             question_id=question_id
         ).order_by(Submission.id.desc()).first()
-        print(str(submission))   
         # Prepare user score data
         if submission:
             user_score = {
                 'time_taken': submission.runtime_sec,
-                'tests_ran': submission.tests_run,
+                'attempts': submission.attempts,
                 'code_length': submission.lines_of_code,
                 'passed': submission.passed
             }
         else:
             user_score = {
                 'time_taken': "N/A",
-                'tests_ran': "N/A",
+                'attempts': "N/A",
                 'code_length': "N/A",
                 'passed': "N/A"
             }
@@ -280,15 +330,17 @@ def QuestionStatPage():
 
         if passing_submissions:
             avg_time = round(sum(s.runtime_sec for s in passing_submissions if s.runtime_sec) / len(passing_submissions), 2)
-            avg_tests = round(sum(s.tests_run for s in passing_submissions if s.tests_run) / len(passing_submissions), 2)
+            avg_attempts = round(sum(s.attempts for s in passing_submissions if s.attempts) / len(passing_submissions), 2)
+            best_time = min(s.runtime_sec for s in passing_submissions if s.runtime_sec)
             best_code_length = min(s.lines_of_code for s in passing_submissions if s.lines_of_code)
             completed_count = len(set(s.user_id for s in passing_submissions))
         else:
-            avg_time = avg_tests = best_code_length = completed_count = 0
+            avg_time = avg_attempts = best_code_length = completed_count = 0
 
             # Attach these values to the question object or pass as a separate dict
         question.avg_time = avg_time
-        question.avg_tests = avg_tests
+        question.avg_attempts = avg_attempts
+        question.best_time = best_time
         question.best_code_length = best_code_length
         question.completed_count = completed_count
         # Render the template with necessary context
@@ -365,7 +417,7 @@ def QuestionAnswer():
             return redirect(url_for("main.QuestionAnswer", id=question_id))
         
         submission.end_time = time.time() 
-        submission.runtime_sec = submission.end_time - submission.start_time
+        submission.runtime_sec = round(submission.end_time - submission.start_time, 2)
         submission.lines_of_code = len(code.split("\n"))
         submission.tests_run = len(question.test_cases.split(":")) #this is not needed
         submission.passed = True
@@ -381,3 +433,19 @@ def QuestionAnswer():
 
         return redirect(url_for('main.QuestionStatPage', id=question_id))
     
+@main.route('/SharedProfilesPage', methods=['GET'])
+@login_required
+def SharedProfilePage():
+    search_query = request.args.get('search', '').strip()
+
+    # Query all users who shared their profile with the current user
+    shared_users = db.session.query(User).join(ProfileShare, ProfileShare.owner_id == User.id) \
+        .filter(ProfileShare.shared_with_id == current_user.id)
+
+    # Optional search
+    if search_query:
+        shared_users = shared_users.filter(User.username.ilike(f"%{search_query}%"))
+
+    shared_users = shared_users.all()
+
+    return render_template("SharedProfilePage.html", users=shared_users, search=search_query)

@@ -83,6 +83,9 @@
       <!--Stats button-->
       <div class="ml-auto d-flex">
         <div class="ms-2">
+          <a href="{{ url_for('main.SharedProfilePage') }}" class="btn btn-outline-light nav-btn">Shared Profiles</a>
+        </div>
+        <div class="ms-2">
           <a href="{{url_for('main.SearchPage')}}" class="btn btn-outline-light nav-btn">Search</a>
         </div>
         <div class="ms-2">
@@ -102,8 +105,8 @@
                     <p id="existTime" hidden>{{messages[0] if messages is defined and messages|length > 0 else "0"}}</p>
                     {%endwith%}
                   </div>
-                  <h3>{{ question.title }}</h3>
-                  <p class="mb-2">{{ question.description }}</p>
+                  <h3 class="mb-5">{{ question.title }}</h3>
+                  <h5 class="mb-2">{{ question.short_desc }}</h5>
                 </div>
               </div>
               <div class="col-12 col-lg-5">
@@ -199,7 +202,7 @@
                             <a class="btn bg-dark text-white border border-white w-100" href="{{ url_for('main.QuestionDescriptionPage', id=question.id) }}">Back</a>
                         </div>
                         <div class="col-6 ps-1">
-                            <button type="submit" class="btn btn-danger w-100">Test and Submit</button>
+                            <button id="TestSubmit" type="submit" class="btn btn-danger w-100">Test and Submit</button>
                         </div>
                     </div>
                 </form>
