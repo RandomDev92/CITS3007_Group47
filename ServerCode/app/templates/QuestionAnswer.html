@@ -148,6 +148,7 @@
                     setInterval(updateTimerDisplay, 1000);
                 </script>
                 <form method="POST" id="questionForm" action="{{ url_for('main.QuestionAnswer') }}?id={{ question.id }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   {% with messages = get_flashed_messages(category_filter=["code"])%}
                   <p id="presetCode" hidden>{{ messages[0] if messages is defined and messages|length > 0 else "def myfunc(param):#YOUR CODE HERE  \n  return value"}}</p>
                   {%endwith%}

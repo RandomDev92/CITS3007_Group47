@@ -62,6 +62,7 @@
           {%endif%}
           {%endwith%}
             <form method="post" action="" id="SignUpForm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mt-3 mb-4">
                   <label for="Username" class="form-label">Username:</label>
                   <input type="text" class="form-control bg-dark text-white" id="Username" placeholder="Enter Username" name="Username" required>

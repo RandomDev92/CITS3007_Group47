@@ -145,6 +145,7 @@
         </div>
       <!--Rating stars-->
       <form method="POST" action="{{ url_for('main.QuestionStatPage') }}?id={{ question.id }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="d-flex justify-content-center mt-5" id="rating">
           <i class="bi bi-star rating-star" data-value="1"></i>
           <i class="bi bi-star rating-star ms-3" data-value="2"></i>
