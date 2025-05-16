@@ -112,7 +112,9 @@ If successful it should host locally at `http://127.0.0.1:5000/`.
 
 ### Testing
 
-``python run-test.py```
+```bash
+python run-test.py
+```
 
 Will run unittests for the sandbox and logic and selenium tests for the website functionality.
 
