@@ -27,6 +27,9 @@ def create_app(isTest=False):
    migrate.init_app(app, db, render_as_batch=True)
    login_manager.init_app(app)
 
+   appdbPath = os.path.join(os.path.abspath(os.path.dirname(__file__)) , 'app.db')
+
+
    from app.routes import main as main_bp
    app.register_blueprint(main_bp)
 
@@ -51,4 +54,9 @@ def create_app(isTest=False):
             author_id=0,
          ))
          db.session.commit()
+   else:
+      if os.path.exists(appdbPath) == False:
+         with app.app_context():
+            db.create_all()
+            db.session.commit()
    return app
