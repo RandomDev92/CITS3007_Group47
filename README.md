@@ -49,12 +49,14 @@ All user data, submissions, and profiles are securely stored and managed, ensuri
 - **Code Submission & Evaluation:** Submit code, run tests, and receive instant feedback on correctness
     
 - **Performance Tracking:** View details like runtime, test results, and code statistics for every submission
+
+- **Profile Sharing:** Share your profile with just your friends or let the world see your abilities with either whitelists or public profile
     
 - **Question Contribution:** Users can create and submit their own coding problems to challenge others
     
 - **Secure Code Execution:** Code is executed in a restricted sandbox to ensure safety and isolation
     
-- **Profile Management (Optional):** Update account information and manage sharing between other users submissions
+- **Profile Management (Optional):** Update account information with your Username and Avatar
 
 ---
 
@@ -110,8 +112,9 @@ If successful it should host locally at `http://127.0.0.1:5000/`.
 
 ### Testing
 
-how to use selenium and unittests
+``python run-test.py```
 
+Will run unittests for the sandbox and logic and selenium tests for the website functionality.
 
 ---
 
@@ -121,7 +124,7 @@ how to use selenium and unittests
 | **Frontend**                  | HTML, CSS, Bootstrap, JavaScript, Jinja2                          |
 | **Backend**                   | Python, Flask                                                     |
 | **Database**                  | Flask-SQLAlchemy                                                  |
-| **Authentication & Security** | Flask-Login, Werkzeug, RestrictedPython                           |
+| **Authentication & Security** | Flask-Login, Werkzeug, CSRF from flask_wtf, RestrictedPython      |
 | **Other**                     | Flask-Migrate for database migrations, Codemirror for text editor |
 
 ---
