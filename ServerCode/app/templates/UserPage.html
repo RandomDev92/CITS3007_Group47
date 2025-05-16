@@ -155,9 +155,9 @@
             </div>
             
             {% if user.username == current_user.username %}
-            <div class="d-flex align-items-center justify-content-center my-4">
-                <div class="mx-4">
-                <div class="form-check form-switch" onchange="ShareProfile()">
+            <div class="row d-flex align-items-center justify-content-center my-4">
+                <div class="col mx-4">
+                <div class="form-check form-switch my-2" onchange="ShareProfile()">
                     <input class="form-check-input" type="checkbox" role="switch" id="ShareProfile"  {{'checked' if current_user.share_profile else '' }}>
                     <label class="form-check-label" for="ShareProfile">
                         Share Profile With Everyone
@@ -190,27 +190,27 @@
                         }
                     </script>
                 </div>  
-                </div> 
-                <div class="d-flex align-items-center justify-content-center my-4 flex-wrap gap-4">
                 <!-- Whitelist Add Form -->
-                <form method="POST" class="d-flex align-items-center" style="gap: 0.5rem;">
+                <form method="POST" class="d-flex align-items-center my-2">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="type" value="addWhitelist">
-                    <input id="WriteUser" type="text" class="form-control" name="whitelist_username" placeholder="Whitelist a user" style="min-width: 220px;">
+                    <input id="WriteUser" type="text" class="form-control w-100" name="whitelist_username" placeholder="Whitelist a user">
                     <button id="AddUser" class="btn btn-outline-light" type="submit">Add</button>
                 </form>
-
+                
                 <!-- Whitelist Remove Form -->
-                <form method="POST" class="d-flex align-items-center" style="gap: 0.5rem;">
+                <form method="POST" class="d-flex align-items-center my-2>
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="type" value="removeWhitelist">
-                    <select class="form-select" name="whitelist_remove_id" style="min-width: 180px;">
+                    <select class="form-select  w-100" name="whitelist_remove_id" style=>
                         {% for entry in current_user.shared_profiles %}
-                            <option value="{{ entry.shared_with.id }}">{{ entry.shared_with.username }}</option>
+                        <option value="{{ entry.shared_with.id }}">{{ entry.shared_with.username }}</option>
                         {% endfor %}
                     </select>
                     <button class="btn btn-outline-danger" type="submit">Remove</button>
                 </form>
+            </div> 
+                <div class="col d-flex align-items-center justify-content-center my-4 flex-wrap gap-4">
                 <div class="d-flex mx-4">
                     <button class="btn btn-danger mx-3" onclick="toggleEdit()">Edit profile </button>
                     <script>
