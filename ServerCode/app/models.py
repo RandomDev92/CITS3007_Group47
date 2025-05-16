@@ -18,6 +18,7 @@ class Difficulty(enum.Enum):
     HARD = "hard"
 
 
+#many to many association table
 question_tags = db.Table(
     "tags_associatioon",
     db.Column("question_id", db.Integer, db.ForeignKey("question.id"), primary_key=True),
@@ -81,7 +82,7 @@ class User(UserMixin, db.Model):
     def get_id(self):
         return self.id
 
-
+#Question table
 class Question(db.Model):
     __tablename__ = "question"
 
@@ -123,7 +124,7 @@ class Question(db.Model):
     def __repr__(self):
         return f"<Question {self.title}>"
 
-
+#Tags for Questions
 class Tag(db.Model):
     __tablename__ = "tag"
 
@@ -135,6 +136,8 @@ class Tag(db.Model):
     def __repr__(self):
         return f"<Tag {self.name}>"
 
+#Tags are initialised through Tags.txt via SetupTags' createTags here
+#this will setup tags when making the tables 
 @db.event.listens_for(Tag.__table__, "after_create")
 def initialiseTags(*args, **kwargs):
     for tag in createTags():
@@ -142,7 +145,7 @@ def initialiseTags(*args, **kwargs):
         db.session.add(t)
     db.session.commit()
     
-
+#submission table for each user to submit answers to questions
 class Submission(db.Model):
     __tablename__ = "submission"
 
@@ -178,6 +181,7 @@ class Submission(db.Model):
             output += '{}: {}\n'.format(c.name, getattr(self, c.name))
         return output
 
+#rating table for reviewing quesitons, each user gets one review per question to avoid floodding
 class Rating(db.Model):
     __tablename__ = "rating"
 
@@ -195,6 +199,7 @@ class Rating(db.Model):
     def __repr__(self):
         return f"<Rating {self.score} for c{self.question_id} by u{self.user_id}>"
 
+#Share table to track which users have shared their profile with who.
 class ProfileShare(db.Model):
     __tablename__ = "profile_share"
 

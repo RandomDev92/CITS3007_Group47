@@ -11,14 +11,17 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.LoginPage'
+#WTFforms through flask not available for codemirror 6 just codemirror 5 so doing CSRF by adding it as hidden to post 
 csrf = CSRFProtect()
 
+#using isTest as a bool because using the config object could not be resolved on cmd line
 def create_app(isTest=False):
    app = Flask(__name__)  
    if isTest:
       app.config.from_object(TestConfig)
    else:
       app.config.from_object(DeploymentConfig)
+   
    db.init_app(app)  
    csrf.init_app(app)
    migrate.init_app(app, db, render_as_batch=True)
@@ -30,6 +33,7 @@ def create_app(isTest=False):
    from app.auth import auth as auth_bp
    app.register_blueprint(auth_bp)
    
+   #for testing configuration, set up db and add testing values
    if isTest:
       with app.app_context():
          from app.models import User, Question, Difficulty
@@ -48,15 +52,3 @@ def create_app(isTest=False):
          ))
          db.session.commit()
    return app
-
-
-
-'''
-run in a virtual env 
-to install venv see pinned discord
-create venv with `python -m virtualenv venv`
-activate venv with `venv\scripts\activate`
-adjust as needed depending on OS
-
-run with `flask --app app run` or `flask run`
-'''
