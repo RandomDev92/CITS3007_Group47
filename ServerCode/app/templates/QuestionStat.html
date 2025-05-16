@@ -105,7 +105,7 @@
     {% with messages = get_flashed_messages() %}
     {% if messages%}
     {% for message in messages%}
-    <p class="bg-danger text-white border rounded text-center mt-5 p-3">{{message}}</p>
+    <p id="alert" class="bg-danger text-white border rounded text-center mt-5 p-3">{{message}}</p>
     {%endfor%}
     {%endif%}
     {%endwith%}
@@ -165,7 +165,7 @@
         
         <input type="hidden" name="ratingInput" id="ratingInput">
         <div class="d-flex justify-content-center mt-4">
-          <button type="Submit" class='btn btn-danger px-5'>Submit Review</button>
+          <button id="SubmitReview" type="Submit" class='btn btn-danger px-5'>Submit Review</button>
         </div>
         
       </form>
