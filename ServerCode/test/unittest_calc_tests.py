@@ -1,5 +1,5 @@
 import unittest
-from app.routes import calculateUserStats
+from app.routes import calculateUserStats, CalculateSubmission
 from app import create_app, db
 from app.models import User, Question, Difficulty, Submission
 from werkzeug.security import generate_password_hash
@@ -67,3 +67,64 @@ class testLogic(unittest.TestCase):
         self.assertEqual(3, user_stats["total_started"])
         self.assertAlmostEqual(66.66666, user_stats["completion_rate"], 4)
 
+    def test_CalculateSubmission(self):
+        sub1 = Submission(
+            user_id=1,
+            question_id=1,
+            start_time=0,
+            end_time=18,
+            attempts=4,
+            code="temp code",
+            passed=False,
+            runtime_sec=18,
+            lines_of_code=3,
+            tests_run=15
+        )
+        sub2 = Submission(
+            user_id=1,
+            question_id=1,
+            start_time=50,
+            end_time=200,
+            attempts=1,
+            code="temp code",
+            passed=True,
+            runtime_sec=150,
+            lines_of_code=15,
+            tests_run=15
+        )
+        sub3 = Submission(
+            user_id=3,
+            question_id=1,
+            start_time=5,
+            end_time=31,
+            attempts=37,
+            code="temp code",
+            passed=True,
+            runtime_sec=26,
+            lines_of_code=26,
+            tests_run=15
+        )
+        sub4 = Submission(
+            user_id=1,
+            question_id=1,
+            start_time=20,
+            end_time=90,
+            attempts=2,
+            code="temp code",
+            passed=True,
+            runtime_sec=70,
+            lines_of_code=3,
+            tests_run=15
+        )
+        db.session.add(sub1)
+        db.session.add(sub2)
+        db.session.add(sub3)
+        db.session.add(sub4)
+        db.session.commit()
+
+        test_submission = CalculateSubmission(1)
+        self.assertEqual(82, test_submission["average time"])
+        self.assertEqual(26, test_submission["best time"])
+        self.assertAlmostEqual(13.33, test_submission["average attempts"])
+        self.assertEqual(3, test_submission["best length"])
+        self.assertEqual(2, test_submission["total completed"])

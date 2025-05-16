@@ -373,6 +373,32 @@ def QuestionStatPage():
         
         return redirect(url_for('main.QuestionStatPage', id=question_id))
 
+
+def CalculateSubmission(questionID):
+    question = Question.query.filter_by(id=questionID).first()
+
+    all_subs = Submission.query.filter_by(question_id=question.id).order_by(Submission.id).all()
+
+    passing_subs = [s for s in all_subs if s.passed]
+
+    time_arr = [s.runtime_sec for s in passing_subs if s.runtime_sec]
+    att_arr = [s.attempts for s in passing_subs if s.attempts]
+    best_code_length = min(s.lines_of_code for s in passing_subs if s.lines_of_code)
+    completed_count = len(set(s.user_id for s in passing_subs))
+
+    avg_time = round(statistics.fmean(time_arr), 2) if time_arr else 0
+    avg_att = round(statistics.fmean(att_arr), 2) if att_arr else 0
+    best_time = min(time_arr) if time_arr else 0
+    best_code_length = best_code_length if best_code_length else 0
+    sub_stats = {
+        "average time": avg_time,
+        "average attempts": avg_att,
+        "best time": best_time,
+        "best length": best_code_length,
+        "total completed": completed_count
+    }
+    return sub_stats
+
 @main.route('/QuestionAnswer', methods=['GET', 'POST'])
 @login_required
 def QuestionAnswer():
