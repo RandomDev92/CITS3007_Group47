@@ -4,11 +4,14 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from app.config import *
 from werkzeug.security import generate_password_hash
+from flask_wtf.csrf import CSRFProtect
+
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.LoginPage'
+csrf = CSRFProtect()
 
 def create_app(isTest=False):
    app = Flask(__name__)  
@@ -16,7 +19,8 @@ def create_app(isTest=False):
       app.config.from_object(TestConfig)
    else:
       app.config.from_object(DeploymentConfig)
-   db.init_app(app)
+   db.init_app(app)  
+   csrf.init_app(app)
    migrate.init_app(app, db, render_as_batch=True)
    login_manager.init_app(app)
 

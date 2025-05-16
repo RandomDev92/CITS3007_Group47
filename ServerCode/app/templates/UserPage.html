@@ -172,6 +172,7 @@
                             var fd = new FormData();
                             fd.append("id","{{current_user.id}}");
                             fd.append("type", "shareProfileChange");
+                            fd.append("csrf_token", "{{ csrf_token() }}");
                             if (box){
                                 En.style.display = "block";
                                 Dis.style.display = "none";
@@ -193,6 +194,7 @@
                 <div class="d-flex align-items-center justify-content-center my-4 flex-wrap gap-4">
                 <!-- Whitelist Add Form -->
                 <form method="POST" class="d-flex align-items-center" style="gap: 0.5rem;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="type" value="addWhitelist">
                     <input id="WriteUser" type="text" class="form-control" name="whitelist_username" placeholder="Whitelist a user" style="min-width: 220px;">
                     <button id="AddUser" class="btn btn-outline-light" type="submit">Add</button>
@@ -200,6 +202,7 @@
 
                 <!-- Whitelist Remove Form -->
                 <form method="POST" class="d-flex align-items-center" style="gap: 0.5rem;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="type" value="removeWhitelist">
                     <select class="form-select" name="whitelist_remove_id" style="min-width: 180px;">
                         {% for entry in current_user.shared_profiles %}
@@ -229,6 +232,7 @@
         {% if user.username == current_user.username %}
         <div id="EditProfileContent" class="container-sm w-50 bg-dark text-white my-4 border border-white rounded">
             <form class="m-5" id="ChangeForm" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="userid" value="{{current_user.id}}" />
                 <input type="hidden" name="type" value="Change" />
                 <h3 class="text-center">Edit Profile</h3>
