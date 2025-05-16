@@ -5,6 +5,7 @@ import builtins
 import ast
 import re
 
+#basic user function execution from https://stackoverflow.com/a/63161071/30453860
 def execute_user_code(user_code, user_func, *args, **kwargs):
     """ Executed user code in restricted env
         Args:
@@ -20,11 +21,13 @@ def execute_user_code(user_code, user_func, *args, **kwargs):
         "itertools",
         ))
 
+    #import a set safe imports can be expanded 
     def _safe_import(name, *args, **kwargs):
         if name not in _SAFE_MODULES:
             raise Exception(f"{name!r} is not a supported import")
         return __import__(name, *args, **kwargs)
 
+    #Restricted python has checks for += but not added to basic env so this needs to be added 
     def _inplacevar_(op, var, expr):
         if op == "+=":
             return var + expr
@@ -95,7 +98,9 @@ def execute_user_code(user_code, user_func, *args, **kwargs):
     except Exception as e:
         raise e
 
+#the tescode function takes the formatted tests and user code and attempts to run it
 def testCode(stringCode, stringTest):
+    #using literal eval for security here with string manipulation to ensure the variables are unpacked properly 
     try:
         stringTest = stringTest.replace("))", "),)").replace("[", "(").replace("]", ",),").replace(",,", ",")
         testingDict = ast.literal_eval(stringTest)
@@ -115,6 +120,7 @@ def testCode(stringCode, stringTest):
     
     for test in testingDict:
         try:
+            #if the variables for the function need to be unpacked then do so 
             if hasattr(test, '__iter__') and type(test) != type(str()):
                 result = execute_user_code(stringCode, funcName, *test)
             else:

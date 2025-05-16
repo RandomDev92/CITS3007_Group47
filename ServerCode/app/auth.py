@@ -10,10 +10,11 @@ auth = Blueprint("auth", __name__)
 def LoginPage():
     if request.method == 'GET':
         return render_template("LoginPage.html")
+
     if request.method == 'POST':
         data = request.form
-        print(data)
         userDB = User.query.filter_by(username=data['Username']).first()
+
         if userDB == None or check_password_hash(userDB.password_hash, data["pswd"]) == False:
             flash("Login Failed. Double Check Your Details And Try Again.", 'error')
             return redirect("/LoginPage")
@@ -26,6 +27,7 @@ def LoginPage():
 def SignupPage():
     if request.method == 'GET':
         return render_template("SignupPage.html")
+    
     if request.method == 'POST':
         data = request.form
         userDB = User.query.filter_by(username=data['Username']).first()

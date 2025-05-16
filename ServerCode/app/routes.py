@@ -20,6 +20,7 @@ def HomePage():
 @main.route('/UploadPage', methods = ['GET', 'POST'])
 @login_required
 def UploadPage():
+    #establish list for tags for popup
     taglist = ""
     for tag in Tag.query.all():
         taglist = taglist + tag.name + ", "
@@ -27,27 +28,38 @@ def UploadPage():
     if request.method == 'GET':
         blankform = {"title":"", "short_desc":"", "full_desc":"", "Code":"", "testCode":"", "tags":""}
         return render_template("UploadPage.html", form=blankform, taglist=taglist)
+    
     if request.method == 'POST':
         uploadedQ = request.form
         strCode = uploadedQ["Code"]
         strTest = uploadedQ["testCode"]
+        
+        #test the user's code in the sandbox
         result = testCode(strCode, strTest)
+
+        #failed tests
         if result != "All tests passed.":
             flash(result, 'error')
             return render_template("UploadPage.html", form=uploadedQ)
+        
+        #title taken
         if None != Question.query.filter_by(title=uploadedQ["title"]).first():
             flash("Title is already taken", 'error')
             return render_template("UploadPage.html", form=uploadedQ)
+        
+        #establish question and tags into db before returning success 
         question = Question(title=uploadedQ["title"],
                         short_desc=uploadedQ["short_desc"],
                         full_desc=uploadedQ["full_desc"],
                         difficulty=uploadedQ["difficulty"],
                         test_cases=strTest,
                         author_id=current_user.username)
+        
         taglist = uploadedQ["tags"].replace(" ", "").split(',')
         for tag in taglist:
             if Tag.query.filter_by(name=tag).first() != None:
                 question.tags.append(Tag.query.filter_by(name=tag).first())
+        
         db.session.add(question)
         db.session.commit()
         return redirect(url_for('main.LandingUpload'))
@@ -61,6 +73,7 @@ def LandingUpload():
 @main.route('/SearchPage', methods=['GET'])
 @login_required
 def SearchPage():
+    #establish list for tags for popup
     taglist = ""
     for tag in Tag.query.all():
         taglist = taglist + tag.name + ", "
@@ -99,7 +112,7 @@ def SearchPage():
     
     return render_template("SearchPage.html", questions=results, taglist=taglist)
 
-
+#function for validating if a file is an image from https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
 def validate_image(stream):
     header = stream.read(512)
     stream.seek(0) 
@@ -109,6 +122,7 @@ def validate_image(stream):
     return '.' + (format if format != 'jpeg' else 'jpg')
 
 def calculateUserStats(Userid):
+    #for a given user calculate the stats to display
     user = User.query.filter_by(id=Userid).first()
     timeArr = []
     attemptsArr = []
@@ -159,6 +173,7 @@ def UserPage():
     if request.method == 'GET':
         user_stats = calculateUserStats(current_user.id)
         
+        #Get the graphing data
         graphingQs = Submission.query.filter_by(user_id=current_user.id).filter(Submission.passed == True).order_by(Submission.id).all()
         submission_data = [
             {"question": s.question.title, "time": s.runtime_sec}
@@ -169,9 +184,9 @@ def UserPage():
     
     if request.method == 'POST':
         form = request.form
-        form_type = form.get("type", "")
-        
+        #determine the type of post from this page, sharing page, or changing profile
         if form["type"] == "shareProfileChange":
+            #this is to share with everyone
             user = User.query.get_or_404(current_user.id)
             if form["shareProfile"] == "true":
                 user.share_profile = True
@@ -182,9 +197,18 @@ def UserPage():
             return ('', 204)
         
         if form["type"] == "Change":
+            #change any data of the account
             user = User.query.get_or_404(current_user.id)
             uploaded_file = request.files['newpfp']
             filename = uploaded_file.filename
+            #test username first as it needs to be unique
+            if form["newUsername"].strip() != "":
+                nUsername = form["newUsername"]
+                if User.query.filter_by(username=nUsername).first() == None:
+                    flash("UsernameTaken", "error")
+                    return redirect('/UserPage')
+                user.username =  nUsername
+            #if there is a change in image create the file in the static, and validate it 
             if filename != '':
                 file_ext = os.path.splitext(filename)[1]
                 if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or file_ext != validate_image(uploaded_file.stream):
@@ -192,8 +216,7 @@ def UserPage():
                 filepath = current_app.config["UPLOAD_FOLDER"]+current_user.username
                 uploaded_file.save(filepath)
                 user.avatar_url = current_user.username
-            if form["newUsername"].strip() != "":
-                user.username = form["newUsername"]
+            #otherwise if the password
             if form["newPassword"] != "":
                 user.password_hash = generate_password_hash(form["newPassword"])
             db.session.add(user)
@@ -202,6 +225,7 @@ def UserPage():
             return redirect('/UserPage')
         
         if form["type"] == "addWhitelist":
+            #whitelist a specific user to view your share page
             username = form.get("whitelist_username").strip()
             target_user = User.query.filter_by(username=username).first()
             if target_user and target_user != current_user:
@@ -217,6 +241,7 @@ def UserPage():
             return redirect('/UserPage')
 
         if form["type"] == "removeWhitelist":
+            #unshare from your whitelist 
             from app.models import ProfileShare
             shared_id = int(form.get("whitelist_remove_id"))
             entry = ProfileShare.query.filter_by(owner_id=current_user.id, shared_with_id=shared_id).first()
@@ -232,7 +257,7 @@ def UserPage():
 def SpecificUserPage(userid):
     user = User.query.get_or_404(userid)
     
-    #check if user profile is privated
+    #check if user profile is privated if so then redirect back
     if user.share_profile == False:
         #Check to make sure that current user is shared with user they're trying to access
         share = ProfileShare.query.filter_by(owner_id=userid, shared_with_id=current_user.id).first()  
@@ -254,12 +279,14 @@ def SpecificUserPage(userid):
 @main.route('/QuestionDescription')
 @login_required
 def QuestionDescriptionPage():
+    #display the questions description
     question_id = request.args.get('id', type=int)
     if question_id is None:
         abort(400, description="Missing question ID.")
     question = Question.query.get_or_404(question_id)
     author = User.query.filter_by(username=question.author_id).first()
     question.author_username = author.username if author else "Unknown"
+    #if the author is unknown set authorid to invalid
     if author == None:
         author = {"id":-1}
 
@@ -353,6 +380,7 @@ def QuestionStatPage():
         )
     
     if request.method == "POST":
+        #submit a review trhough the 5 star ratings
         review = request.form.get('ratingInput', type=int)
         existing = Rating.query.filter_by(user_id=current_user.id, question_id=question_id).first()
         if review is None:
@@ -375,6 +403,7 @@ def QuestionStatPage():
 
 
 def CalculateSubmission(questionID):
+    #calculate the graphing 
     question = Question.query.filter_by(id=questionID).first()
 
     all_subs = Submission.query.filter_by(question_id=question.id).order_by(Submission.id).all()
@@ -408,6 +437,8 @@ def QuestionAnswer():
     # Retrieve the question from the database
     question = Question.query.get_or_404(question_id)
     if request.method == 'GET':
+        #if they have an older submission they didnt complete and its been less than a day use that submission and its start time
+        #otherwise make a new submission with now as the start time
         oldsubmission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).order_by(Submission.id.desc()).first()
         start_time = 0 
         if(oldsubmission and oldsubmission.passed == False):
@@ -430,11 +461,12 @@ def QuestionAnswer():
         return render_template('QuestionAnswer.html', question=question)
     
     if request.method == 'POST':
-        print("Form submitting")
+        #user has submitted code for testign as an attempt 
         code = request.form.get('Code')
         submission = Submission.query.filter_by(user_id=current_user.id, question_id=question_id).order_by(Submission.id.desc()).first()
         submission.attempts +=1
         
+        #test code if they failed then display why 
         result = testCode(code, question.test_cases)
         if result != "All tests passed.":
             flash(submission.start_time, "time")
@@ -442,6 +474,7 @@ def QuestionAnswer():
             flash(result, 'error')
             return redirect(url_for("main.QuestionAnswer", id=question_id))
         
+        #if they passed add the results to submission and check if its their best time
         submission.end_time = time.time() 
         submission.runtime_sec = round(submission.end_time - submission.start_time, 2)
         submission.lines_of_code = len(code.split("\n"))
@@ -462,6 +495,7 @@ def QuestionAnswer():
 @main.route('/SharedProfilesPage', methods=['GET'])
 @login_required
 def SharedProfilePage():
+    #a feed page for all users who have explicity shared their page with you.
     search_query = request.args.get('search', '').strip()
 
     # Query all users who shared their profile with the current user
